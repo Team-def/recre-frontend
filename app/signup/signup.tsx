@@ -68,7 +68,6 @@ export default function SignUp() {
                     />
                 </label>
             </div>
-
             <button onClick={signUp}>로그인</button>
         </div>
     )
