@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import LoginModal from "./login_modal";
 
 export default function Header() {
     return (

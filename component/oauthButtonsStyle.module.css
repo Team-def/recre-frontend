@@ -1,0 +1,48 @@
+.imgDiv{
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+}
+.img{
+    width: 60%;
+    height: auto;
+    cursor: pointer;
+    margin: 10px;
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .2);
+    border-radius: 10px;
+}
+.img:first-child{
+    margin-top: 0px;
+}
+.google_btn{
+    width: 60%;
+    height: 56px;
+    background-color: #fcfcfc;
+    box-shadow: 0 3px 4px 0 rgba(0, 0, 0, .2);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin: 10px;
+}
+.google_btn .google_icon_wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+.google_btn .google_icon_svg {
+    width: 22px;
+    height: 22px;
+}
+.google_btn .btn_text {
+    color: #757575;
+    font-size: 20px;
+    font-family: Roboto;
+}
