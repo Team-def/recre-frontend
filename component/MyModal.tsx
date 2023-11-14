@@ -15,13 +15,14 @@ const modalStyle = {
     p: 3,
     borderRadius: '10px',
     textAlign: 'center' as 'center',
-};
+    
+  };
 
 export interface ModalProps {
-    isOpen: boolean,
-};
+  isOpen? : boolean,
+}
 
-export default function MyModal({open, modalHeader, modalContent, closeFunc}: {open: boolean, modalHeader: string, modalContent: JSX.Element, closeFunc: () => void}) {
+export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {open: boolean, modalHeader:string, modalContent:JSX.Element, closeFunc: () => void}) {
     return (
         <Modal
             open={open}
@@ -30,12 +31,12 @@ export default function MyModal({open, modalHeader, modalContent, closeFunc}: {o
             aria-describedby="modal-modal-description"
         >
             <Box sx={modalStyle}>
-                <Typography id="modal-modal-title" variant="h5" component="h2">
-                    {modalHeader}
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    {modalContent}
-                </Typography>
+            <Typography id="modal-modal-title" variant="h5" component="h2">
+                {modalHeader}
+            </Typography>
+            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {modalContent}
+            </Typography>
             </Box>
         </Modal>
     )

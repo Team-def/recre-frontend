@@ -1,24 +1,21 @@
-'use client';
+"use client";
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import { useState } from "react";
 import Image from 'next/image'
 import Button from '@mui/material/Button';
 import MyModal from '@/component/MyModal';
 import OauthButtons from '@/component/OauthButtons';
-import Modal from '@mui/material/Modal';
-import Login from './login/login'
-import SignUp from './signup/signup'
+import Login from './login/login';
+import SignUp from './signup/signup';
 
 export interface ModalProps {
-  isOpen: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  modalHeader: string,
-  setModalHeader: React.Dispatch<React.SetStateAction<string>>,
-  isLoginClicked: boolean,
-  setLoginClicked: React.Dispatch<React.SetStateAction<boolean>>,
+  isOpen : boolean,
+  setOpen : React.Dispatch<React.SetStateAction<boolean>>,
+  modalHeader : string,
+  setModalHeader : React.Dispatch<React.SetStateAction<string>>,
+  isLoginClicked : boolean,
+  setIsLoginClicked : React.Dispatch<React.SetStateAction<string>>,
 }
-
 
 export default function Home() {
   const [open, setOpen] = useState<ModalProps['isOpen']>(false);
@@ -26,25 +23,24 @@ export default function Home() {
   const [isLoginClicked, setIsLoginClicked] = useState<ModalProps['isLoginClicked']>(false);
 
   const handleOpenLogin = () => {
-    setModalHeader("로그인 할 방식을 선택하세요!");
+    setModalHeader('로그인 할 방식을 선택하세요!');
     setIsLoginClicked(true);
     setOpen(true);
-  };
-
-  const handleOpenSignUp = () => {
-    setModalHeader("회원가입 할 방식을 선택하세요!");
+  }
+  const handleOpenSignup = () => {
+    setModalHeader('회원가입 할 방식을 선택하세요!');
     setIsLoginClicked(false);
     setOpen(true);
   }
-
   const handleClose = () => {setOpen(false);}
 
   return (
     <div>
       {/* 비로그인시에 보이는 메뉴 */}
       <div className='no-login'>
-          <button onClick={handleOpenSignUp}>회원가입</button>
-          <button onClick={handleOpenLogin}>로그인</button>
+        <Button onClick={handleOpenSignup}>회원가입</Button>
+        <Button onClick={handleOpenLogin}>로그인</Button>
+
       </div>
       {/* 로그인시에만 보이는 문구 */}
       <div className="login">
@@ -56,7 +52,7 @@ export default function Home() {
         width={500}
         height={500}
       />
-      <MyModal open={open} modalHeader={modalHeader}  modalContent={<OauthButtons isLoginClicked={isLoginClicked}/>} closeFunc = {handleClose}/>
+      <MyModal open={open} modalHeader={modalHeader} modalContent={<OauthButtons isLoginClicked={isLoginClicked}/>} closeFunc = {handleClose}/>
     </div>
   )
 }
