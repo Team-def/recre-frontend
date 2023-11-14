@@ -22,7 +22,7 @@ export interface ModalProps {
   isOpen? : boolean,
 }
 
-export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {open: boolean, modalHeader:string, modalContent:JSX.Element, closeFunc: () => void}) {
+export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {open: boolean, modalHeader:string, modalContent:JSX.Element | undefined, closeFunc: () => void}) {
     return (
         <Modal
             open={open}
