@@ -71,12 +71,18 @@ export default function Profile() {
 
     return (
         <div>
-            <h1>프로필</h1>
-            {/* <h1>{currentNickname || "사용자" } 님의 프로필</h1>
-            <label>닉네임 :</label>
-            <input type="text" name="nickname" placeholder={currentNickname} onChange={(e) => setNewNickname(e.target.value)}/>
-            <Button onClick={handleNicknameChange}>변경하기</Button>
-
+            <h1>username의 프로필</h1>
+            {/* <h1>{currentNickname || "사용자" } 님의 프로필</h1> */}
+            <label>닉네임 : </label>
+            {/* <input type="text" name="nickname" placeholder={currentNickname} onChange={(e) => setNewNickname(e.target.value)}/> */}
+            <input type="text" name="nickname"></input>
+            <Button>변경하기</Button>
+            <div>
+                <Button className="withdrawl">회원 탈퇴</Button>
+                <Button className="logout">로그아웃</Button>
+            </div>
+            
+            {/* <Button onClick={handleNicknameChange}>변경하기</Button>
             <Button onClick={handleWithdrawal}>회원 탈퇴</Button>
             <Button onClick={handleLogout}>로그아웃</Button> */}
         </div>

@@ -1,8 +1,10 @@
 "use client";
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import Button from '@mui/material/Button';
 
 export default function Home() {
+  const router = useRouter();
   return (<>
     <div className='container'>
       <div>
@@ -10,7 +12,7 @@ export default function Home() {
       </div>
       {/* login시에만 보이는 버튼 */}
       <div className="login">
-        <Button className='start-button'>RecRe 시작!</Button>
+        <Button className='start-button' onClick={() => router.push('/gameselect')}>RecRe 시작!</Button>
       </div>
     </div>
     <style jsx>{`
