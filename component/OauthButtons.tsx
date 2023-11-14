@@ -24,7 +24,7 @@ export default function OauthButtons() {
             <div className={oauthButtonsStyle.google_icon_wrapper}>
                 <img className={oauthButtonsStyle.google_icon_svg} src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
             </div>
-            <p className={oauthButtonsStyle.btn_text}><b>구글로 시작하기</b></p>
+            <p className={oauthButtonsStyle.btn_text}><b>구글 로그인</b></p>
         </div>
     </div>
         </>
