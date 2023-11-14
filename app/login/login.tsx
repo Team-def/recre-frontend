@@ -1,6 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from 'axios';
+
+interface LoginProps {
+    name: string,
+    setUsername: React.Dispatch<React.SetStateAction<string>>,
+    password: string,
+    setPassword: React.Dispatch<React.SetStateAction<string>>,
+}
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -8,8 +16,22 @@ export default function Login() {
     const router = useRouter();
 
     const login = () => {
-        console.log(username, password);
-        router.push("/");
+        axios.post('http://treepark.shop:3000/user', {
+            name: username,
+            password: password
+        
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                withCredentials: true
+            }
+        }). then(Response => {
+                alert("로그인 되었습니다.")
+                router.push("/");
+            })
+            .catch((res) => { alert(res.response.data.message) });
+
     };
 
     return (

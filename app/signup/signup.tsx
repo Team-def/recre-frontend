@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from 'axios';
 
 export default function signUp() {
     const [username, setUsername] = useState("");
@@ -13,10 +14,24 @@ export default function signUp() {
             alert("비밀번호가 일치하지 않습니다.");
             return;
         }
-        console.log(username, password);
+        axios.post('http://treepark.shop:3000/user', {
+            name: username,
+            password: password,
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            withCredentials: true
+        }
+    }).then(Response => {
+        alert("회원가입 되었습니다.")
         router.push("/");
-    };
-
+    })
+    .catch((res) => { alert(res.response.data.message) });
+    console.log(username, password);
+    router.push("/");
+    }
+    
     return (
         <div>
             <h1>회원가입하기</h1>
@@ -57,4 +72,5 @@ export default function signUp() {
             <button onClick={signUp}>로그인</button>
         </div>
     )
+    
 }

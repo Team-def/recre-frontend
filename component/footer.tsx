@@ -1,3 +1,5 @@
+import Button from '@mui/material/Button';
+
 export default function Footer() {
     return (
         <div>
@@ -6,7 +8,7 @@ export default function Footer() {
             </div>
             {/* login시에만 보이는 버튼 */}
             <div className="login">
-                <button className='start-button'>RecRe 시작!</button>
+                <Button className='start-button'>RecRe 시작!</Button>
             </div>
         </div>
     )
