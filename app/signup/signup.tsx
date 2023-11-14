@@ -30,8 +30,8 @@ export default function SignUp() {
             .catch((res) => { alert(res.response.data.message) })
         console.log(username, password);
         router.push("/");
-    };
-
+    }
+    
     return (
         <div>
             <h1>회원가입하기</h1>
@@ -71,4 +71,5 @@ export default function SignUp() {
             <button onClick={signUp}>로그인</button>
         </div>
     )
+    
 }
