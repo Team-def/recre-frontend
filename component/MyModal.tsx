@@ -13,7 +13,7 @@ const modalStyle = {
     border: '0px solid #000',
     boxShadow: 24,
     p: 3,
-    borderRadius: '10px',
+    borderRadius: '20px',
     textAlign: 'center' as 'center',
     
   };
