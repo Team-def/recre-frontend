@@ -1,15 +1,20 @@
-import Button from '@mui/material/Button';
-
+"use client";
 export default function Footer() {
-    return (
-        <div>
+    return (<>
+        <div className="footerContainer">
             <div>
                 <h4>SWJUNGLE Team.def()</h4>
             </div>
-            {/* login시에만 보이는 버튼 */}
-            <div className="login">
-                <Button className='start-button'>RecRe 시작!</Button>
-            </div>
         </div>
+        <style jsx>{`
+                .footerContainer{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 60px;
+                    background-color: #f2f2f2;
+                }
+            `}</style>
+        </>
     )
 }
