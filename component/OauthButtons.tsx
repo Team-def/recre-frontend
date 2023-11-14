@@ -2,7 +2,7 @@ import Image from "next/image"
 import oauthButtonsStyle from "./oauthButtonsStyle.module.css"
 import axios from "axios"
 
-export default function OauthButtons() {
+export default function OauthButtons({onLogin}:{onLogin:()=>void}) {
 
     const login = (method:string) => {
         axios.get(`http://treepark.shop:3000/auth/${method}`, {
@@ -13,8 +13,12 @@ export default function OauthButtons() {
             }
         }).then((Response) => {
                 alert('로그인 되었습니다.')
+                onLogin()
             })
-            .catch((res) => { alert(res.response.data.message) })
+            .catch((res) => { 
+                alert(res.response.data.message) 
+                onLogin() //임시로 로그인 확인을 위해. 나중에 지울 것.
+            })
     }
 
     return (<><div className={oauthButtonsStyle.imgDiv}>

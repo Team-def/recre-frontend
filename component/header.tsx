@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import OauthButtons from "./OauthButtons";
 import Profile from "../app/profile/profile";
 import MyModal from "./MyModal";
+import { useAtom } from 'jotai';
+import { loginAtom } from "@/app/modules/loginAtoms";
 import Login from "@/app/login/login";
 import SignUp from "@/app/signup/signup";
 
@@ -21,11 +23,18 @@ export default function Header() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
     const [modalHeader, setModalHeader] = useState('');
     const [modalContent, setModalContent] = useState<JSX.Element>();
-    const [isLogin, setIsLogin] = useState<boolean>(false);
+    const [isLogin,setIsLogin] = useAtom(loginAtom)
+
+    useEffect(() => {
+        if (isLogin) {
+            setModalHeader('로그인 / 회원가입');
+            setOpen(false);
+        }
+    },[isLogin]);
 
     useEffect(() => {
         if (modalHeader === '로그인 / 회원가입') {
-            setModalContent(<OauthButtons />);
+            setModalContent(<OauthButtons  onLogin={setAtomLogin}/>);
         } else if (modalHeader === '프로필') {
             setModalContent(<Profile />);
         }
@@ -40,7 +49,15 @@ export default function Header() {
         setModalHeader('프로필');
         setOpen(true);
     }
+    const handleLogout = () => {
+        setIsLogin(false);
+    }
+
     const handleClose = () => { setOpen(false); }
+
+    const setAtomLogin = () => {
+        setIsLogin(true);
+    }
 
     return (<><div className="headerContainer">
         <div className="logo">
@@ -51,7 +68,7 @@ export default function Header() {
             {isLogin?<div className="login" onClick={handleOpenProfile}>username님! 안녕하세요!</div>:null}
             {/* 로그인 버튼 */}
             <div className='no-login'>
-                <Button onClick={handleOpenLogin}>{isLogin?"로그아웃":"로그인 / 회원가입"}</Button>
+                <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin?"로그아웃":"로그인 / 회원가입"}</Button>
             </div>
         </div>
     </div>
