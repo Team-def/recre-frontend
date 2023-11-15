@@ -23,7 +23,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 export default function GameSelect() {
-    const [selectedGame, setSelectedGame] = useState<string | null>(null);
+    const [selectedGame, setSelectedGame] = useAtom(gameAtoms);
     const [isLogin,] = useAtom(loginAtom);
     const [numberOfPeople, setNumberOfPeople] = useAtom(numberOfPeopleAtom);
     const [isReady, setIsReady] = useState<boolean>(false);
@@ -56,7 +56,7 @@ export default function GameSelect() {
 
     const handleGameSelect = (game: string) => {
         if (selectedGame === game) {
-            setSelectedGame(null);
+            setSelectedGame("");
         } else {
             setSelectedGame(game);
         }
