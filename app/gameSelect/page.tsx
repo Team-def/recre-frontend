@@ -26,13 +26,21 @@ export default function GameSelect() {
     const [numberOfPeople, setNumberOfPeople] = useState<number | null>(null);
     const [isReady, setIsReady] = useState<boolean>(false);
     const router = useRouter();
+    const [isHovering, setIsHovered] = useState(false);
+    const [hoverElement, setHoverElement] = useState('');
+
+    const onMouseEnter = (gameName:string) => {
+        setIsHovered(true);
+        setHoverElement(gameName);
+    }
+    const onMouseLeave = () => setIsHovered(false);
 
     useEffect(() => {
         if (!isLogin) {
             alert('로그인이 필요합니다.')
             router.push("/")
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
         if (numberOfPeople && numberOfPeople > 0 && selectedGame) {
@@ -41,7 +49,7 @@ export default function GameSelect() {
         else {
             setIsReady(false);
         }
-    }, [numberOfPeople,selectedGame]);
+    }, [numberOfPeople, selectedGame]);
 
     const handleGameSelect = (game: string) => {
         if (selectedGame === game) {
@@ -51,48 +59,58 @@ export default function GameSelect() {
         }
     };
 
+    type Game = {
+        name: string,
+        image: string
+    }
+
+    const drawGame: Game = {
+        name: '그림 맞추기',
+        image: '/drawGame.jpeg'
+    }
+    const greenLightGame: Game = {
+        name: '무궁화 꽃이 피었습니다',
+        image: '/greenLightGame.png'
+    }
+    const jumpRope: Game = {
+        name: '줄넘기',
+        image: '/jumpRope.jpeg'
+    }
+
+    const gameList: Game[] = [drawGame, greenLightGame, jumpRope]
+
     return (<>
         <div className='gameSelectContainer'>
             <h1>게임 선택</h1>
             <div>
                 <Box sx={{ width: '100%' }}>
-                    <Grid container spacing={12}>
-                        {/* xs는 12가 최대 */}
-                        <Grid className='gameGrid ${}' xs={4} onClick={() => handleGameSelect(`'그림 맞추기'`)}>
-                                <div className={`gameDiv ${selectedGame === "'그림 맞추기'" ? "gameDivClicked" : ""}`}><Item>
-                                    {/* {selectedGame === '게임 1' ? '선택 해제' : '게임 1 선택'} */}
-                                    <Image src='/drawGame.jpeg' alt='그림 맞추기' layout='fill' width={0} height={0}/>
-                                    <p className='gameTitle'>그림 맞추기</p>
-                                    </Item></div>
-                        </Grid>
-                        <Grid className='gameGrid' xs={4} onClick={() => handleGameSelect(`'무궁화 꽃이 피었습니다'`)}>
-                            <div className={`gameDiv ${selectedGame === "'무궁화 꽃이 피었습니다'" ? "gameDivClicked" : ""}`}><Item>
-                                {/* {selectedGame === '게임 2' ? '선택 해제' : '게임 2 선택'} */}
-                                <Image src='/greenLightGame.png' alt='무궁화 꽃이 피었습니다' layout='fill' width={0} height={0}/>
-                                <p className='gameTitle'>무궁화 꽃이 피었습니다</p>
-                                </Item></div>
-                        </Grid>
-                        <Grid className='gameGrid' xs={4} onClick={() => handleGameSelect(`'줄넘기'`)}>
-                        <div className={`gameDiv ${selectedGame === "'줄넘기'" ? "gameDivClicked" : ""}`}><Item>
-                            {/* {selectedGame === '게임 3' ? '선택 해제' : '게임 3 선택'} */}
-                            <Image src='/jumpRope.jpeg' alt='줄넘기' layout='fill' width={0} height={0}/>
-                            <p className='gameTitle'>줄넘기</p>
-                            </Item></div>
-                        </Grid>
+                    <Grid container spacing={12}>{/* xs는 12가 최대 */}
+                        {gameList.map((game) => {
+                            return (
+                                <Grid className='gameGrid ${}' xs={4} onClick={() => handleGameSelect(game.name)}>
+                                    <div onMouseEnter={()=>onMouseEnter(game.name)}
+                                        onMouseLeave={onMouseLeave} className={`gameDiv ${selectedGame === game.name ? "gameDivClicked" : ""}`}><Item>
+                                            <div className={`imageDiv ${isHovering&&hoverElement===game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
+                                            <p className='gameTitle'>{game.name}</p>
+                                        </Item></div>
+                                </Grid>
+                            )
+                        })}
+
                     </Grid>
                 </Box>
             </div>
             <TextField
-          id="outlined-number"
-          label="인원 수"
-          placeholder='인원 수를 입력해주세요'
-          type="number"
-          value={numberOfPeople}
-          onChange={(e) => setNumberOfPeople(e.target.value as unknown as number)}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
+                id="outlined-number"
+                label="인원 수"
+                placeholder='인원 수를 입력해주세요'
+                type="number"
+                value={numberOfPeople}
+                onChange={(e) => setNumberOfPeople(e.target.value as unknown as number)}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+            />
             <Button disabled={!isReady}>{selectedGame ? `${selectedGame} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
@@ -104,8 +122,8 @@ export default function GameSelect() {
                 align-items: center;
             }
             .gameGrid{
-                width:10vw;
-                height:10vw;
+                width:20vw;
+                height:20vw;
             }
             .gameDiv{
                 width: 20vw;
@@ -117,10 +135,12 @@ export default function GameSelect() {
                 position: relative;
                 box-shadow: 0 0 10px rgba(0,0,0,0.5);
                 border: 5px solid transparent;
+                overflow: hidden;
             }
             .gameDiv:hover{
                 scale: 1.05;
-                border: 5px solid red;
+                border: 5px solid #ff7878;
+                z-index: 6;
             }
             .gameDivClicked{
                 scale: 1.05;
@@ -129,21 +149,27 @@ export default function GameSelect() {
             .gameTitle{
                 z-index: 3;
                 position: relative;
-                font-size: 1.5vw;
+                font-size: 2vw;
                 font-weight: bold;
-                filter: blur(1rem);
+                filter: opacity(0);
                 transition: filter 0.2s ease-in-out;
+                color: white;
+                text-shadow: 0 0 12px rgba(0,0,0,0.5);
             }
             .gameDiv:hover .gameTitle{
-                filter: blur(0);
+                filter: opacity(1);
             }
-            Image{
-                z-index:1;
-                filter: blur(0);
+            .imgBlur{
+                filter: blur(8px);
                 transition: filter 0.2s ease-in-out;
             }
-            .gameDiv:hover Image{
-                filter: blur(1rem);
+            .imageDiv{
+                width: 20vw;
+                height: 20vw;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 1;
             }
         `}</style>
     </>
