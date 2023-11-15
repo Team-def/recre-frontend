@@ -1,18 +1,23 @@
-"use client";
+'use client';
 import Button from '@mui/material/Button';
 import Image from 'next/image';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { numberOfPeopleAtom } from "@/app/modules/numberOfPeopleAtoms";
 import { gameAtoms } from "@/app/modules/gameAtoms";
 import { useState, useEffect } from 'react';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { useRouter } from "next/navigation";
+import { useAtom } from 'jotai';
 
-export default function QR() {
-    const [numberOfPeople, setNumberOfPeople] = useAtom(numberOfPeopleAtom);
-    const [currNumOfPeople, setCurrNumOfPeople] = useState<number>(0);
+
+export default function QR () {
+    const nowPeople = 0;
+    const maxPeople = useAtomValue(numberOfPeopleAtom);
+    const gameName = useAtomValue(gameAtoms);
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
+    console.log(maxPeople);
+    console.log(gameName);
 
     useEffect(() => {
         if (!isLogin) {
@@ -26,25 +31,22 @@ export default function QR() {
 
     }
 
-    return (
-        <><div className='qrPageCon'>
-            <div className='headers'>
-                <h1>여기에 게임 이름</h1>
-                <h3>카메라로 QR코드를 찍어 게임에 참여해주세요!</h3>
-            </div>
+    return (<>
+        <div>
+            <h1>{gameName}</h1>
             <div className='QR-code'>
                 <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=https://taeme.tistory.com/"`} alt="QR" layout='fill' unoptimized={true} />
             </div>
             <div className='online-number'>
-                <label>
-                    <Image src="/pngegg.png" alt="QR" width={20} height={20} />
-                </label>
-                {currNumOfPeople} / {numberOfPeople}
+            <label>
+                <Image src="/pngegg.png" alt="QR" width={20} height={20} />
+            </label>
+             {nowPeople} / {maxPeople} 명
             </div>
 
 
             <div className='game-start-button'>
-                <Button disabled={currNumOfPeople===0} onClick={startGame}>게임 시작</Button>
+                <Button disabled={nowPeople===0} onClick={startGame}>게임 시작</Button>
             </div>
         </div>
             <style jsx>{`
