@@ -25,7 +25,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function GameSelect() {
     const [selectedGame, setSelectedGame] = useState<string | null>(null);
     const [isLogin,] = useAtom(loginAtom);
-    const [numberOfPeople, setNumberOfPeople] = useAtom<number>(numberOfPeopleAtom);
+    const [numberOfPeople, setNumberOfPeople] = useAtom(numberOfPeopleAtom);
     const [isReady, setIsReady] = useState<boolean>(false);
     const router = useRouter();
     const [isHovering, setIsHovered] = useState(false);
@@ -45,6 +45,8 @@ export default function GameSelect() {
     }, []);
 
     useEffect(() => {
+        console.log(numberOfPeople)
+        console.log(typeof (numberOfPeople))
         if (numberOfPeople && numberOfPeople > 0 && selectedGame) {
             setIsReady(true);
         }
@@ -116,7 +118,7 @@ export default function GameSelect() {
                 placeholder='인원 수를 입력해주세요'
                 type="number"
                 value={numberOfPeople}
-                onChange={(e) => setNumberOfPeople(e.target.valueAsNumber)}
+                onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
                 InputLabelProps={{
                     shrink: true,
                 }}
