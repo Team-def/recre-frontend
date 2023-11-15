@@ -6,6 +6,9 @@ import Profile from "../app/profile/profile";
 import MyModal from "./MyModal";
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
+import Login from "@/app/login/login";
+import SignUp from "@/app/signup/signup";
+import { useRouter } from "next/navigation";
 
 export interface ModalProps {
     isOpen: boolean,
@@ -22,6 +25,7 @@ export default function Header() {
     const [modalHeader, setModalHeader] = useState('');
     const [modalContent, setModalContent] = useState<JSX.Element>();
     const [isLogin,setIsLogin] = useAtom(loginAtom)
+    const router = useRouter();
 
     useEffect(() => {
         if (isLogin) {
@@ -49,6 +53,8 @@ export default function Header() {
     }
     const handleLogout = () => {
         setIsLogin(false);
+        alert("로그아웃 되었습니다.");
+        router.push("/");
     }
 
     const handleClose = () => { setOpen(false); }
@@ -59,7 +65,7 @@ export default function Header() {
 
     return (<><div className="headerContainer">
         <div className="logo">
-            <h1>RecRe</h1>
+            <h1 onClick={()=>router.push("/")}>RecRe</h1>
         </div>
         <div className="userInfoBtn">
             {/* 로그인시에만 보이는 문구 */}
@@ -72,6 +78,9 @@ export default function Header() {
     </div>
         <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} />
         <style jsx>{`
+            .logo{
+                cursor: pointer;
+            }
             .headerContainer{
                 display: flex;
                 justify-content: space-between;
@@ -79,6 +88,7 @@ export default function Header() {
                 padding: 0 20px;
                 height: 60px;
                 background-color: #f2f2f2;
+                color: black;
             }
             .userInfoBtn{
                 display: flex;

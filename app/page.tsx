@@ -2,9 +2,21 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@mui/material/Button';
+import { useAtom } from 'jotai';
+import { loginAtom } from "@/app/modules/loginAtoms";
 
 export default function Home() {
-  const router = useRouter();
+      const [isLogin,] = useAtom(loginAtom)
+      const router = useRouter();
+
+      const selectGame = () => {
+        if (isLogin) {
+          router.push("/gameSelect");
+        } else {
+          alert('로그인이 필요합니다.')
+        }
+      }
+
   return (<>
     <div className='container'>
       <div>
@@ -12,7 +24,7 @@ export default function Home() {
       </div>
       {/* login시에만 보이는 버튼 */}
       <div className="login">
-        <Button className='start-button' onClick={() => router.push('/gameselect')}>RecRe 시작!</Button>
+        <Button className='start-button' onClick={selectGame}>RecRe 시작!</Button>
       </div>
     </div>
     <style jsx>{`
