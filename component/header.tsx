@@ -6,9 +6,9 @@ import Profile from "../app/profile/profile";
 import MyModal from "./MyModal";
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
-import Login from "@/app/login/login";
-import SignUp from "@/app/signup/signup";
+import { tokenAtoms } from "@/app/modules/tokenAtoms";
 import { useRouter } from "next/navigation";
+import { userInfoAtoms } from "@/app/modules/userInfoAtom";
 
 export interface ModalProps {
     isOpen: boolean,
@@ -25,6 +25,8 @@ export default function Header() {
     const [modalHeader, setModalHeader] = useState('');
     const [modalContent, setModalContent] = useState<JSX.Element>();
     const [isLogin,setIsLogin] = useAtom(loginAtom)
+    const [,setToken] = useAtom(tokenAtoms)
+    const [userInfo,] = useAtom(userInfoAtoms)
     const router = useRouter();
 
     useEffect(() => {
@@ -36,7 +38,7 @@ export default function Header() {
 
     useEffect(() => {
         if (modalHeader === '로그인 / 회원가입') {
-            setModalContent(<OauthButtons  onLogin={setAtomLogin}/>);
+            setModalContent(<OauthButtons/>);
         } else if (modalHeader === '프로필') {
             setModalContent(<Profile />);
         }
@@ -52,6 +54,7 @@ export default function Header() {
         setOpen(true);
     }
     const handleLogout = () => {
+        setToken([]);
         setIsLogin(false);
         alert("로그아웃 되었습니다.");
         router.push("/");
@@ -69,7 +72,7 @@ export default function Header() {
         </div>
         <div className="userInfoBtn">
             {/* 로그인시에만 보이는 문구 */}
-            {isLogin?<div className="login" onClick={handleOpenProfile}>username님! 안녕하세요!</div>:null}
+            {isLogin?<div className="login" onClick={handleOpenProfile}>{}님! 안녕하세요!</div>:null}
             {/* 로그인 버튼 */}
             <div className='no-login'>
                 <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin?"로그아웃":"로그인 / 회원가입"}</Button>

@@ -39,14 +39,13 @@ export default function GameSelect() {
 
     useEffect(() => {
         if (!isLogin) {
+            console.log(isLogin)
             alert('로그인이 필요합니다.')
             router.push("/")
         }
     }, []);
 
     useEffect(() => {
-        console.log(numberOfPeople)
-        console.log(typeof (numberOfPeople))
         if (numberOfPeople && numberOfPeople > 0 && selectedGame) {
             setIsReady(true);
         }
