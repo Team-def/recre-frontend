@@ -1,3 +1,4 @@
+'use client';
 import Button from '@mui/material/Button';
 import Image from 'next/image';
 import { useAtomValue } from 'jotai';
@@ -8,6 +9,8 @@ export default function QR () {
     const nowPeople = "?";
     const maxPeople = useAtomValue(numberOfPeopleAtom);
     const gameName = useAtomValue(gameAtoms);
+    console.log(maxPeople);
+    console.log(gameName);
     return (
         <>
             <h1>{gameName}</h1>
