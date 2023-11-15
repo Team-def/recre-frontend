@@ -8,6 +8,8 @@ import Image from 'next/image';
 import Button from '@mui/material/Button';
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
+import { numberOfPeopleAtom } from '../modules/numberOfPeopleAtoms';
+import { gameAtoms } from '../modules/gameAtoms';
 import { useRouter } from "next/navigation";
 import TextField from '@mui/material/TextField';
 
@@ -22,8 +24,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function GameSelect() {
     const [selectedGame, setSelectedGame] = useState<string | null>(null);
-    const [isLogin,] = useAtom(loginAtom)
-    const [numberOfPeople, setNumberOfPeople] = useState<number | null>(null);
+    const [isLogin,] = useAtom(loginAtom);
+    const [numberOfPeople, setNumberOfPeople] = useAtom<number | null>(null);
     const [isReady, setIsReady] = useState<boolean>(false);
     const router = useRouter();
 
@@ -50,6 +52,14 @@ export default function GameSelect() {
             setSelectedGame(game);
         }
     };
+
+    const goQRPage = () => {
+        if (isReady === false) {
+            alert('게임과 인원 수를 선택해주세요.')
+        } else {
+            router.push("/QRPage");
+        }
+    }
 
     return (<>
         <div className='gameSelectContainer'>
@@ -93,7 +103,7 @@ export default function GameSelect() {
             shrink: true,
           }}
         />
-            <Button disabled={!isReady}>{selectedGame ? `${selectedGame} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+            <Button onClick={goQRPage} disabled={!isReady}>{selectedGame ? `${selectedGame} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
             .gameSelectContainer{
