@@ -1,13 +1,16 @@
 import Button from '@mui/material/Button';
 import Image from 'next/image';
-import { useAtom } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { numberOfPeopleAtom } from "@/app/modules/numberOfPeopleAtoms";
 import { gameAtoms } from "@/app/modules/gameAtoms";
 
 export default function QR () {
+    const nowPeople = "?";
+    const maxPeople = useAtomValue(numberOfPeopleAtom);
+    const gameName = useAtomValue(gameAtoms);
     return (
         <>
-            <h1>여기에 게임 이름</h1>
+            <h1>{gameName}</h1>
             <div className='QR-code'>
                 <h1>여기에 QR 코드</h1>
             </div>
@@ -15,7 +18,7 @@ export default function QR () {
             <label>
                 <Image src="/pngegg.png" alt="QR" width={20} height={20} />
             </label>
-             현재 접속 인원 / 최대 인원
+             {nowPeople} / {maxPeople} 명
             </div>
             
 
