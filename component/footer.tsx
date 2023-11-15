@@ -13,6 +13,7 @@ export default function Footer() {
                     align-items: center;
                     height: 60px;
                     background-color: #f2f2f2;
+                    color: gray;
                 }
             `}</style>
         </>
