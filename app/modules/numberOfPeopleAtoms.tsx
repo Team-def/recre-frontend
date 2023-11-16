@@ -1,6 +1,7 @@
 import { atom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 
-export const numberOfPeopleAtom = atom<number | null>(null)
+export const numberOfPeopleAtom = atomWithStorage<number | null>("numberOfPeople", null);
 
 export const setNumberOfPeopleAtom = atom(
     null,

@@ -1,6 +1,7 @@
 import { atom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 
-export const gameAtoms = atom("")
+export const gameAtoms = atomWithStorage("game", "");
 
 export const setGameAtoms = atom(
     null,

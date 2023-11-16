@@ -1,4 +1,5 @@
 import { atom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 
 type userInfo = {
     id:string,
@@ -8,7 +9,7 @@ type userInfo = {
     provider:string,
 }
 
-export const userInfoAtoms = atom<userInfo>({
+export const userInfoAtoms = atomWithStorage<userInfo>("userInfo", {
     id: '',
     nickname: '',
     email: '',
