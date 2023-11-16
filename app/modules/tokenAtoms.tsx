@@ -1,6 +1,7 @@
 import { atom } from "jotai"
+import { atomWithStorage } from "jotai/utils"
 
-export const tokenAtoms = atom<string[]>([])
+export const tokenAtoms = atomWithStorage<string[]>('token',[]);
 
 export const setTokenAtoms = atom(
     null,

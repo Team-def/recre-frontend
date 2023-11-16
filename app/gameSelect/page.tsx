@@ -21,7 +21,6 @@ const Item = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
 }));
-const gameAtom = atomWithStorage('game', '');
 
 export default function GameSelect() {
     const [selectedGame, setSelectedGame] = useAtom(gameAtoms);
