@@ -11,9 +11,10 @@ import { useAtom } from 'jotai';
 
 
 export default function QR () {
-    const nowPeople = 0;
+    const nowPeople = 20;
     const maxPeople = useAtomValue(numberOfPeopleAtom);
     const gameName = useAtomValue(gameAtoms);
+    const gamePageUrl = 'naver.com';
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     console.log(maxPeople);
@@ -35,13 +36,13 @@ export default function QR () {
         <div>
             <h1>{gameName}</h1>
             <div className='QR-code'>
-                <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=https://taeme.tistory.com/"`} alt="QR" layout='fill' unoptimized={true} />
+                <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
             </div>
             <div className='online-number'>
             <label>
-                <Image src="/pngegg.png" alt="QR" width={20} height={20} />
+                <Image className="icon" src="/pngegg.png" alt="people" width={20} height={20} />
             </label>
-             {nowPeople} / {maxPeople} 명
+             <p>{nowPeople} / {maxPeople} 명</p>
             </div>
 
 
