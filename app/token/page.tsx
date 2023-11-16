@@ -17,7 +17,7 @@ const GetTokenParams = () => {
     useEffect(() => {
         if (access_token && refresh_token) {
             setToken(access_token);
-            cookies.set('refresh_token', refresh_token)
+            cookies.set('refresh_token', refresh_token, {secure:true, sameSite:'Lax'})
             router.push("/");
         }else{
             alert('로그인에 실패했습니다.')
