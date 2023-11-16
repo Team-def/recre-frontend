@@ -29,6 +29,13 @@ export default function QR () {
     }, []);
 
     const startGame = () => {
+        if (gameName === '그림 맞추기') {
+            router.push("/catch");
+        } else if (gameName === '무궁화 꽃이 피었습니다') {
+            router.push("/flower");
+        } else if (gameName === '줄넘기') {
+            router.push("/jump");
+        }
 
     }
 
