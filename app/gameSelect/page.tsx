@@ -7,7 +7,6 @@ import Box from '@mui/material/Box';
 import Image from 'next/image';
 import Button from '@mui/material/Button';
 import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { numberOfPeopleAtom } from '../modules/numberOfPeopleAtoms';
 import { gameAtoms } from '../modules/gameAtoms';
