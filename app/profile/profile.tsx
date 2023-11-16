@@ -7,7 +7,6 @@ import { userInfoAtoms } from '../modules/userInfoAtom';
 import axios from 'axios';
 
 export default function Profile() {
-    const [nickname, setNickname] = useState<string>('');
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nickChange, setNickChange] = useState<boolean>(false);
 
