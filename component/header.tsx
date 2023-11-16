@@ -6,8 +6,6 @@ import Profile from "../app/profile/profile";
 import MyModal from "./MyModal";
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
-import Login from "@/app/login/login";
-import SignUp from "@/app/signup/signup";
 import { useRouter } from "next/navigation";
 
 export interface ModalProps {

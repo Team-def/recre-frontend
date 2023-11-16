@@ -66,6 +66,8 @@ export default function GameSelect() {
     const goQRPage = () => {
         if (isReady === false) {
             alert('게임과 인원 수를 선택해주세요.')
+        } else if (numberOfPeople && numberOfPeople > 1000) {
+            alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
         } else {
             router.push("/QRPage");
         }
