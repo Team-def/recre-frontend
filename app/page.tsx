@@ -12,11 +12,10 @@ import { useEffect } from 'react';
 export default function Home() {
   const [isLogin, setIsLogin] = useAtom(loginAtom)
   const [token, setToken] = useAtom(tokenAtoms);
-  const [, setUserInfo] = useAtom(userInfoAtoms);
+  const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
   const router = useRouter();
 
   useEffect(() => {
-    console.log(token)
     checkLogin()
   }, []);
 
@@ -41,7 +40,6 @@ export default function Home() {
         withCredentials: true
       }
     }).then((response) => {
-      console.log('user 성공')
       setUserInfo(response.data)
       setIsLogin(true)
     })

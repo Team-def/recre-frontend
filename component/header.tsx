@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Button from '@mui/material/Button';
 import OauthButtons from "./OauthButtons";
 import Profile from "../app/profile/profile";
@@ -9,6 +9,7 @@ import { loginAtom } from "@/app/modules/loginAtoms";
 import { tokenAtoms } from "@/app/modules/tokenAtoms";
 import { useRouter } from "next/navigation";
 import { userInfoAtoms } from "@/app/modules/userInfoAtom";
+import Image from 'next/image';
 
 export interface ModalProps {
     isOpen: boolean,
@@ -22,7 +23,7 @@ export interface ModalProps {
 
 export default function Header() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
-    const [modalHeader, setModalHeader] = useState('');
+    const [modalHeader, setModalHeader] = useState<string | ReactNode>('');
     const [modalContent, setModalContent] = useState<JSX.Element>();
     const [isLogin,setIsLogin] = useAtom(loginAtom)
     const [,setToken] = useAtom(tokenAtoms)
@@ -39,7 +40,7 @@ export default function Header() {
     useEffect(() => {
         if (modalHeader === '로그인 / 회원가입') {
             setModalContent(<OauthButtons/>);
-        } else if (modalHeader === '프로필') {
+        } else{
             setModalContent(<Profile />);
         }
     },[modalHeader])
@@ -50,7 +51,7 @@ export default function Header() {
     }
 
     const handleOpenProfile = () => {
-        setModalHeader('프로필');
+        setModalHeader(<div className="headerTitle"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/><h3>{userInfo.nickname}님</h3></div>);
         setOpen(true);
     }
     const handleLogout = () => {
@@ -72,7 +73,13 @@ export default function Header() {
         </div>
         <div className="userInfoBtn">
             {/* 로그인시에만 보이는 문구 */}
-            {isLogin?<div className="login" onClick={handleOpenProfile}>{}님! 안녕하세요!</div>:null}
+            {isLogin?
+            <div className="login" onClick={handleOpenProfile}>
+                <div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/></div>
+                <div>{userInfo.nickname}님
+                </div>
+            </div>
+            :null}
             {/* 로그인 버튼 */}
             <div className='no-login'>
                 <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin?"로그아웃":"로그인 / 회원가입"}</Button>
@@ -97,6 +104,20 @@ export default function Header() {
                 display: flex;
                 align-items: center;
                 flex-direction: row;
+            }
+            .login{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2px;
+                margin-right: 10px;
+                pointer:cusor;
+            }
+            .profileName{
+                margin-right: 10px;
+            }
+            .login:hover{
+                scale: 1.1;
             }
         `}</style>
     </>
