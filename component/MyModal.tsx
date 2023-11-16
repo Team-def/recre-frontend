@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { ReactNode } from 'react';
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -22,8 +23,8 @@ export interface ModalProps {
   isOpen? : boolean,
 }
 
-export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {open: boolean, modalHeader:string, modalContent:JSX.Element | undefined, closeFunc: () => void}) {
-    return (
+export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {open: boolean, modalHeader:string | ReactNode, modalContent:JSX.Element | undefined, closeFunc: () => void}) {
+    return (<>
         <Modal
             open={open}
             onClose={closeFunc}
@@ -39,5 +40,19 @@ export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {o
             </Typography>
             </Box>
         </Modal>
+        <style jsx global>{`
+            .headerTitle{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+            }
+            #modal-modal-description{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        `}</style>
+        </>
     )
 }

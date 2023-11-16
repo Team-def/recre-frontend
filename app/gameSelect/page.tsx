@@ -8,7 +8,6 @@ import Image from 'next/image';
 import Button from '@mui/material/Button';
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
-import { numberOfPeopleAtom } from '../modules/numberOfPeopleAtoms';
 import { gameAtoms } from '../modules/gameAtoms';
 import { useRouter } from "next/navigation";
 import TextField from '@mui/material/TextField';
@@ -21,11 +20,9 @@ const Item = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-
 export default function GameSelect() {
-    const [selectedGame, setSelectedGame] = useState<string | null>(null);
+    const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [isLogin,] = useAtom(loginAtom);
-    const [numberOfPeople, setNumberOfPeople] = useAtom(numberOfPeopleAtom);
     const [isReady, setIsReady] = useState<boolean>(false);
     const router = useRouter();
     const [isHovering, setIsHovered] = useState(false);
@@ -39,37 +36,32 @@ export default function GameSelect() {
 
     useEffect(() => {
         if (!isLogin) {
+            console.log(isLogin)
             alert('로그인이 필요합니다.')
             router.push("/")
         }
     }, []);
 
     useEffect(() => {
-        console.log(numberOfPeople)
-        console.log(typeof (numberOfPeople))
-        if (numberOfPeople && numberOfPeople > 0 && selectedGame) {
-            setIsReady(true);
+        if (gameInfo[1] && gameInfo[1] > 0 && gameInfo[0]) {
+            if(gameInfo[1] > 1000){
+                alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
+                setGameInfo([gameInfo[0], 0])
+            }
+            else setIsReady(true);
         }
         else {
             setIsReady(false);
         }
-    }, [numberOfPeople, selectedGame]);
+    }, [gameInfo]);
 
     const handleGameSelect = (game: string) => {
-        if (selectedGame === game) {
-            setSelectedGame(null);
+        if (gameInfo[0] === game) {
+            setGameInfo(["",gameInfo[1]]);
         } else {
-            setSelectedGame(game);
+            setGameInfo([game,gameInfo[1]]);
         }
     };
-
-    const goQRPage = () => {
-        if (isReady === false) {
-            alert('게임과 인원 수를 선택해주세요.')
-        } else {
-            router.push("/QRPage");
-        }
-    }
 
     type Game = {
         name: string,
@@ -101,7 +93,7 @@ export default function GameSelect() {
                             return (
                                 <Grid className='gameGrid ${}' xs={4} onClick={() => handleGameSelect(game.name)}>
                                     <div onMouseEnter={()=>onMouseEnter(game.name)}
-                                        onMouseLeave={onMouseLeave} className={`gameDiv ${selectedGame === game.name ? "gameDivClicked" : ""}`}><Item>
+                                        onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`}><Item>
                                             <div className={`imageDiv ${isHovering&&hoverElement===game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
                                             <p className='gameTitle'>{game.name}</p>
                                         </Item></div>
@@ -117,13 +109,13 @@ export default function GameSelect() {
                 label="인원 수"
                 placeholder='인원 수를 입력해주세요'
                 type="number"
-                value={numberOfPeople}
-                onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
+                value={gameInfo[1]}
+                onChange={(e) => setGameInfo([gameInfo[0],parseInt(e.target.value)])}
                 InputLabelProps={{
                     shrink: true,
                 }}
             />
-            <Button onClick={goQRPage} disabled={!isReady}>{selectedGame ? `${selectedGame} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+            <Button onClick={()=>router.push("/QRPage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
             .gameSelectContainer{

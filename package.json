@@ -18,9 +18,12 @@
     "jotai": "^2.5.1",
     "material": "^0.7.5",
     "next": "14.0.2",
+    "next-client-cookies": "^1.0.6",
+    "nextjs-current-url": "^1.0.3",
     "react": "^18",
     "react-dom": "^18",
     "react-router-dom": "^6.18.0",
+    "socket.io-client": "^4.7.2",
     "styled-components": "^6.1.1"
   },
   "devDependencies": {

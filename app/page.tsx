@@ -4,18 +4,78 @@ import { useRouter } from 'next/navigation';
 import Button from '@mui/material/Button';
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
+import { tokenAtoms } from './modules/tokenAtoms';
+import { userInfoAtoms } from './modules/userInfoAtom';
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useCookies } from 'next-client-cookies';
 
 export default function Home() {
-      const [isLogin,] = useAtom(loginAtom)
-      const router = useRouter();
+  const [isLogin, setIsLogin] = useAtom(loginAtom)
+  const [token, setToken] = useAtom(tokenAtoms);
+  const [, setUserInfo] = useAtom(userInfoAtoms);
+  const router = useRouter();
+  const cookies = useCookies();
 
-      const selectGame = () => {
-        if (isLogin) {
-          router.push("/gameSelect");
-        } else {
-          alert('로그인이 필요합니다.')
-        }
+  useEffect(() => {
+    checkLogin()
+  }, []);
+
+  const selectGame = () => {
+    if (isLogin) {
+      router.push("/gameSelect");
+    } else {
+      alert('로그인이 필요합니다.')
+    }
+  }
+
+  const checkLogin = () => {
+    axios.get(`http://treepark.shop:3000/user`, {
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'authorization': token,
+        withCredentials: true
       }
+    }).then((response) => {
+      setUserInfo(response.data)
+      setIsLogin(true)
+    })
+      .catch((res) => {
+        console.log(res)
+        if (res.response['status'] == 410 || res.response['status'] == 401) {
+          sendRefresh()
+        }
+        else {
+          // alert(res)
+          setIsLogin(false)
+          cookies.remove('refresh_token')
+          setToken('')
+        }
+      })
+  }
+
+  const sendRefresh = () => { //customHook 으로 만들어서 모든 요청에 대한 에러 핸들링으로 써야 함
+    axios.post(`http://treepark.shop:3000/auth/accesstoken`, {
+      refresh_token: cookies.get('refresh_token')
+    }, {
+      headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        withCredentials: true
+      }
+    }).then((response) => {
+      setToken(response.data.access_token)
+      router.push("/")
+    })
+      .catch((res) => {
+        alert('인증 시간이 만료되었습니다. 다시 로그인해주세요.')
+        setToken('')
+        cookies.remove('refresh_token')
+        setIsLogin(false)
+        router.push("/")
+      })
+  }
 
   return (<>
     <div className='container'>
@@ -48,6 +108,6 @@ export default function Home() {
               color: gray;
             }
         `}</style>
-    </>
+  </>
   )
 }
