@@ -1,7 +1,7 @@
 "use client";
 import { io } from "socket.io-client";
 import Button from '@mui/material/Button';
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useState } from "react";
 
@@ -13,7 +13,9 @@ const socket = io();
 
 export default function Player() {
     const router = useRouter();
-    const hostId = router.query.hostId || null;
+    //query string에서 hostId를 가져옴
+    const params = useSearchParams();
+    const hostId = params.get('hostId');
     const [playerNickname, setPlayerNickname] = useState<string>('');
 
     useEffect(() => {
