@@ -43,7 +43,58 @@ export default function Catch() {
   });
   const [, setAnsAtom] = useAtom(answerAtom);
 
+  const [userInfo,] = useAtom(userInfoAtoms)
+
   useEffect(() => {
+    
+
+    socket.timeout(5000).on("connect", () => {
+      console.log("connect_check:", socket.connected);
+      console.log("socket_id:", socket.id);
+    });
+
+    const listener = (data: any) => {
+      console.log(data);
+    }
+
+    socket.on("test", listener);
+
+    socket.on("session", ({sessionID, userID}) => {
+      socket.auth = { sessionID };
+      localStorage.setItem("sessionID", sessionID);
+      socket.userID = userID;
+    });
+
+    socket.emit('make_room', ({
+      "sessionID": localStorage.getItem("sessionID"),
+      "userID": socket.userID,
+      "accessToken": localStorage.getItem("accessToken"),
+      "gamename": "그림 맞추기",
+      }));
+
+    socket.on("disconnect", () => {
+      console.log("disconnect_check:", socket.connected);
+    });
+
+    socket.on("answer", (data: string) => {
+      localStorage.setItem("answer", data);
+    });
+
+    socket.on("incorrect", (data: string) => {
+      
+      //data를 보낸 사람의 닉네임
+      //오답
+      
+    });
+
+    socket.on("correct", (data: string) => {
+      //data를 보낸 사람의 닉네임
+      //정답
+    });
+
+    
+
+
     const canvas: HTMLCanvasElement | null = canvasRef.current;
 
     if (canvas) {
