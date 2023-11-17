@@ -42,10 +42,10 @@ export default function QR () {
             setGameContent(<Catch/>)
             setOpen(false);
         } else if (gameInfo[0] === '무궁화 꽃이 피었습니다') {
-            setGameContent(<Catch/>)
+            // setGameContent(<Catch/>)
             setOpen(false);
         } else if (gameInfo[0] === '줄넘기') {
-            setGameContent(<Catch/>)
+            // setGameContent(<Catch/>)
             setOpen(false);
         }
 
