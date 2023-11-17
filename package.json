@@ -18,7 +18,7 @@
     "jotai": "^2.5.1",
     "material": "^0.7.5",
     "next": "14.0.2",
-    "next-client-cookies": "^1.0.6",
+    "next-client-cookies": "^1.1.0",
     "nextjs-current-url": "^1.0.3",
     "react": "^18",
     "react-dom": "^18",
