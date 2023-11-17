@@ -20,7 +20,9 @@ export default function Home() {
 
   useEffect(() => {
     console.log(token)
-    checkLogin()
+    if (token) {
+      checkLogin()
+    }
   }, []);
 
   const selectGame = () => {
