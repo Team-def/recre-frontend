@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from 'axios'
+import { myApi } from "../modules/backApi";
 
 export default function SignUp() {
     const [username, setUsername] = useState("");
@@ -14,7 +15,7 @@ export default function SignUp() {
             alert("비밀번호가 일치하지 않습니다.");
             return;
         }
-        axios.post(`http://treepark.shop:3000/user`, {
+        axios.post(`${myApi}/user`, {
             name: username,
             password: password,
         }, {

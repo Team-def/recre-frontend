@@ -2,19 +2,22 @@
 import Button from '@mui/material/Button';
 import Image from 'next/image';
 import { gameAtoms } from "@/app/modules/gameAtoms";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
+import MyModal from '@/component/MyModal';
+import Catch from '../catch/page';
 
 
 export default function QR () {
-    const nowPeople = 0;
+    const [nowPeople,setNowPeople] = useState(2);
     const [gameInfo,] = useAtom(gameAtoms);
     const gamePageUrl = 'naver.com';
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
-    console.log(gameInfo);
+    const [open, setOpen] = useState(true);
+    const [gameContent, setGameContent] = useState<JSX.Element>();
 
     useEffect(() => {
         if (!isLogin) {
@@ -26,18 +29,23 @@ export default function QR () {
 
     const startGame = () => {
         if (gameInfo[0] === '그림 맞추기') {
-            router.push("/catch");
+            setGameContent(<Catch/>)
+            setOpen(false);
         } else if (gameInfo[0] === '무궁화 꽃이 피었습니다') {
-            router.push("/flower");
+            setGameContent(<Catch/>)
+            setOpen(false);
         } else if (gameInfo[0] === '줄넘기') {
-            router.push("/jump");
+            setGameContent(<Catch/>)
+            setOpen(false);
         }
 
     }
 
-    return (<>
+    const QRpage = () => {
+        return (
+            <>
         <div className='qrPageCon'>
-            <h1>{gameInfo[0]}</h1>
+            <h2>{gameInfo[0]}</h2>
             <div className='QR-code'>
                 <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
             </div>
@@ -55,15 +63,15 @@ export default function QR () {
         </div>
             <style jsx>{`
             .qrPageCon{
-                height: 100vh;
+                height: 70vh;
                 display: flex;
                 justify-content: space-evenly;
                 align-items: center;
                 flex-direction: column;
             }
             .QR-code{
-                width: 27vw;
-                height: 27vw;
+                width: 20vw;
+                height: 20vw;
                 margin: 0 auto;
                 display: flex;
                 justify-content: center;
@@ -84,6 +92,11 @@ export default function QR () {
             }
         `}</style>
         </>
+        )
+    }
 
-    )
+    return (<>
+        <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage/>} closeFunc={()=>{}}/>
+        {gameContent}
+    </>)
 }
