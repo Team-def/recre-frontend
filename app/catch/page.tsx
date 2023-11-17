@@ -18,6 +18,7 @@ export default function Catch() {
   const [isPainting, setIsPainting] = useState(false);
   const [color, setColor] = useState("black");
   const [lineWidth, setLineWidth] = useState(3);
+  const [eraserWidth, setEraserWidth] = useState(15);
   const [isEraser, setIsEraser] = useState(false);
 
   // 좌표 얻는 함수
@@ -44,7 +45,7 @@ export default function Catch() {
     if (context) {
       context.strokeStyle = isEraser?'white':color;  // 선 색깔
       context.lineJoin = 'round';	// 선 끄트머리(?)
-      context.lineWidth = lineWidth;		// 선 굵기
+      context.lineWidth = isEraser ? eraserWidth : lineWidth;		// 선 굵기
 
       context.beginPath();
       context.moveTo(originalMousePosition.x, originalMousePosition.y);
@@ -115,25 +116,29 @@ export default function Catch() {
     };
   }, [startPaint, paint, exitPaint]);
 
-  const drawColor = ["black", "red", "blue", "green", "yellow", "purple"]
-  const drawWidth = [1, 3, 5, 7, 9, 11, 13, 15]
+  const drawColor = ["black", "red", "blue", "green", "yellow"]
+  const drawWidth = [1, 5, 10]
+  const eraseWidth =[5, 15, 25]
 
   return(<>
         <div className="canvasContainer">
           <div className="ButtonContainer">
             <Button onClick={()=>setIsEraser(!isEraser)}>{isEraser?"붓":'지우개'}</Button>
-            <Button onClick={clearCanvas}>전체 지우기</Button>
             <div className="colorContainer">
-              붓 색
+            붓 색
               {drawColor.map((color) => <button className="colorButton" style={{backgroundColor: color}} onClick={()=>setColor(color)}></button>)}
             </div>
             <div className="lineWidthContainer">
               {isEraser?"지우개":'붓'} 굵기
-              {drawWidth.map((width) => <button className="lineWidthButton" onClick={()=>setLineWidth(width)}>{width}</button>)}
+              {isEraser?
+              eraseWidth.map((width) => <button className="lineWidthButton" onClick={()=>setEraserWidth(width)}>{width}</button>)
+              :
+              drawWidth.map((width) => <button className="lineWidthButton" onClick={()=>setLineWidth(width)}>{width}</button>)}
             </div>
+            <Button onClick={clearCanvas}>전체 지우기</Button>
           </div>
           <div className='canvasDiv'>
-            <canvas ref={canvasRef} height={600} width={800} className="canvas"/>
+            <canvas ref={canvasRef} height={window.innerHeight} width={window.innerWidth} className="canvas"/>
           </div>
         </div>
         <style jsx>{`
@@ -145,12 +150,12 @@ export default function Catch() {
           flex-direction: column;
         }
         .canvasDiv{
-          width: 70vw;
-          height: 75vh;
-          border: 1px solid black;
+          width: 60vw;
+          height: 65vh;
+          border: 1px solid gray;
           border-radius: 20px;
           overflow: hidden;
-          background-color: white;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .colorContainer{
           height: 50px;
@@ -160,6 +165,16 @@ export default function Catch() {
           height: 20px;
           border-radius: 50%;
           margin: 5px;
+        }
+        canvas{
+          background-color: white;
+        }
+        .ButtonContainer{
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
         }
         `}</style>
         </>

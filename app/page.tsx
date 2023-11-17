@@ -9,6 +9,7 @@ import { userInfoAtoms } from './modules/userInfoAtom';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
+import { myApi } from './modules/backApi';
 
 export default function Home() {
   const [isLogin, setIsLogin] = useAtom(loginAtom)
@@ -30,7 +31,7 @@ export default function Home() {
   }
 
   const checkLogin = () => {
-    axios.get(`http://treepark.shop:3000/user`, {
+    axios.get(`${myApi}/user`, {
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
@@ -56,7 +57,7 @@ export default function Home() {
   }
 
   const sendRefresh = () => { //customHook 으로 만들어서 모든 요청에 대한 에러 핸들링으로 써야 함
-    axios.post(`http://treepark.shop:3000/auth/accesstoken`, {
+    axios.post(`${myApi}/auth/accesstoken`, {
       refresh_token: cookies.get('refresh_token')
     }, {
       headers: {

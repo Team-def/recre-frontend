@@ -45,7 +45,7 @@ export default function QR () {
         return (
             <>
         <div className='qrPageCon'>
-            <h1>{gameInfo[0]}</h1>
+            <h2>{gameInfo[0]}</h2>
             <div className='QR-code'>
                 <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
             </div>
@@ -96,7 +96,7 @@ export default function QR () {
     }
 
     return (<>
-        <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage/>} closeFunc={startGame}/>
+        <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage/>} closeFunc={()=>{}}/>
         {gameContent}
     </>)
 }

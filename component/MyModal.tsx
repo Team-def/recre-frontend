@@ -16,7 +16,7 @@ const modalStyle = {
     p: 3,
     borderRadius: '20px',
     textAlign: 'center' as 'center',
-    
+    outline: 0
   };
 
 export interface ModalProps {
@@ -30,6 +30,7 @@ export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {o
             onClose={closeFunc}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            disableEscapeKeyDown = {modalHeader==="QR코드를 찍고 입장해주세요!" ? true : false}
         >
             <Box sx={modalStyle}>
             <Typography id="modal-modal-title" variant="h5" component="h2">
