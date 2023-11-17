@@ -20,6 +20,18 @@ export default function Catch() {
   const [lineWidth, setLineWidth] = useState(3);
   const [eraserWidth, setEraserWidth] = useState(15);
   const [isEraser, setIsEraser] = useState(false);
+  const [windowSize, setWindowSize] = useState({width: 0, height: 0});
+
+  useEffect(() => {
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+    if (canvas) {
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
+    }
+  }, []);
 
   // 좌표 얻는 함수
   const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
@@ -116,9 +128,9 @@ export default function Catch() {
     };
   }, [startPaint, paint, exitPaint]);
 
-  const drawColor = ["black", "red", "blue", "green", "yellow"]
-  const drawWidth = [1, 5, 10]
-  const eraseWidth =[5, 15, 25]
+  const drawColor = ["black", "red", "blue", "green", "#dec549"]
+  const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
+  const eraseWidth = [[5,'얇게'], [15,'중간'], [25,'굵게']]
 
   return(<>
         <div className="canvasContainer">
@@ -131,14 +143,14 @@ export default function Catch() {
             <div className="lineWidthContainer">
               {isEraser?"지우개":'붓'} 굵기
               {isEraser?
-              eraseWidth.map((width) => <button className="lineWidthButton" onClick={()=>setEraserWidth(width)}>{width}</button>)
+              eraseWidth.map((info) => <button className="lineWidthButton" onClick={()=>setEraserWidth(info[0] as number)}>{info[1] as string}</button>)
               :
-              drawWidth.map((width) => <button className="lineWidthButton" onClick={()=>setLineWidth(width)}>{width}</button>)}
+              drawWidth.map((info) => <button className="lineWidthButton" onClick={()=>setLineWidth(info[0] as number)}>{info[1] as string}</button>)}
             </div>
             <Button onClick={clearCanvas}>전체 지우기</Button>
           </div>
           <div className='canvasDiv'>
-            <canvas ref={canvasRef} height={window.innerHeight} width={window.innerWidth} className="canvas"/>
+            <canvas ref={canvasRef} height={windowSize.height} width={windowSize.width} className="canvas"/>
           </div>
         </div>
         <style jsx>{`
@@ -158,7 +170,10 @@ export default function Catch() {
           box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .colorContainer{
-          height: 50px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
         }
         .colorButton{
           width: 20px;
@@ -166,15 +181,27 @@ export default function Catch() {
           border-radius: 50%;
           margin: 5px;
         }
-        canvas{
-          background-color: white;
-        }
-        .ButtonContainer{
+        .lineWidthContainer{
           display: flex;
           flex-direction: row;
           align-items: center;
           justify-content: center;
+          gap: 5px;
+        }
+        canvas{
+          background-color: white;
+        }
+        .ButtonContainer{
+          width: 60vw;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-around;
           margin-bottom: 20px;
+          border: 1px solid gray;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5);
+          background-color: #f5f5f5;
         }
         `}</style>
         </>
