@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { userInfoAtoms } from "@/app/modules/userInfoAtom";
 import Image from 'next/image';
 import { useCookies } from 'next-client-cookies';
+import { gameAtoms } from "@/app/modules/gameAtoms";
 
 export interface ModalProps {
     isOpen: boolean,
@@ -28,7 +29,8 @@ export default function Header() {
     const [modalContent, setModalContent] = useState<JSX.Element>();
     const [isLogin,setIsLogin] = useAtom(loginAtom)
     const [,setToken] = useAtom(tokenAtoms)
-    const [userInfo,] = useAtom(userInfoAtoms)
+    const [userInfo,setUserInfo] = useAtom(userInfoAtoms)
+    const [,setGame] = useAtom(gameAtoms)
     const router = useRouter();
     const cookies = useCookies();
 
@@ -53,13 +55,21 @@ export default function Header() {
     }
 
     const handleOpenProfile = () => {
-        setModalHeader(<div className="headerTitle"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/><h3>{userInfo.nickname}님</h3></div>);
+        setModalHeader(<div className="headerTitle"><div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/></div><h3>{userInfo.nickname}님의 프로필</h3></div>);
         setOpen(true);
     }
     const handleLogout = () => {
         setToken('');
+        setUserInfo({
+            id: '',
+            nickname: '',
+            email: '',
+            profileImage: '',
+            provider: '',
+        });
         cookies.remove('refresh_token')
         setIsLogin(false);
+        setGame(["",null])
         alert("로그아웃 되었습니다.");
         router.push("/");
     }
@@ -90,7 +100,7 @@ export default function Header() {
         </div>
     </div>
         <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} />
-        <style jsx>{`
+        <style jsx global>{`
             .logo{
                 cursor: pointer;
             }
@@ -117,7 +127,11 @@ export default function Header() {
                 pointer:cusor;
             }
             .profileName{
-                margin-right: 10px;
+                margin-right: 4px;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                overflow: hidden;
             }
             .login:hover{
                 scale: 1.1;

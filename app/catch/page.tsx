@@ -160,6 +160,8 @@ export default function Catch() {
           justify-content: center;
           align-items: center;
           flex-direction: column;
+          white-space: nowrap; 
+          text-overflow: ellipsis;
         }
         .canvasDiv{
           width: 60vw;
