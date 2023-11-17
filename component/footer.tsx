@@ -18,7 +18,7 @@ export interface ModalProps {
 
 export default function Footer() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
-    const [isLogin, setIsLogin] = useAtom(loginAtom)
+    const [isLogin,setIsLogin] = useAtom(loginAtom)
 
     const handleClose = () => { setOpen(false); }
     const catch_answer = () => { setOpen(true); }
