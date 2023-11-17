@@ -10,6 +10,7 @@ import { tokenAtoms } from "@/app/modules/tokenAtoms";
 import { useRouter } from "next/navigation";
 import { userInfoAtoms } from "@/app/modules/userInfoAtom";
 import Image from 'next/image';
+import { useCookies } from 'next-client-cookies';
 
 export interface ModalProps {
     isOpen: boolean,
@@ -29,6 +30,7 @@ export default function Header() {
     const [,setToken] = useAtom(tokenAtoms)
     const [userInfo,] = useAtom(userInfoAtoms)
     const router = useRouter();
+    const cookies = useCookies();
 
     useEffect(() => {
         if (isLogin) {
@@ -55,7 +57,8 @@ export default function Header() {
         setOpen(true);
     }
     const handleLogout = () => {
-        setToken([]);
+        setToken('');
+        cookies.remove('refresh_token')
         setIsLogin(false);
         alert("로그아웃 되었습니다.");
         router.push("/");

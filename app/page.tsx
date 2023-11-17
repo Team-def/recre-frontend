@@ -8,20 +8,18 @@ import { tokenAtoms } from './modules/tokenAtoms';
 import { userInfoAtoms } from './modules/userInfoAtom';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { useCookies } from 'next-client-cookies';
 
 export default function Home() {
   const [isLogin, setIsLogin] = useAtom(loginAtom)
   const [token, setToken] = useAtom(tokenAtoms);
-  const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
+  const [, setUserInfo] = useAtom(userInfoAtoms);
   const router = useRouter();
+  const cookies = useCookies();
 
   useEffect(() => {
     checkLogin()
   }, []);
-
-  useEffect(() => {
-    console.log(isLogin)
-  }, [isLogin]);
 
   const selectGame = () => {
     if (isLogin) {
@@ -36,7 +34,7 @@ export default function Home() {
       headers: {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        'authorization': token[0],
+        'authorization': token,
         withCredentials: true
       }
     }).then((response) => {
@@ -46,18 +44,20 @@ export default function Home() {
       .catch((res) => {
         console.log(res)
         if (res.response['status'] == 410 || res.response['status'] == 401) {
-          // sendRefresh()
+          sendRefresh()
         }
         else {
           // alert(res)
           setIsLogin(false)
+          cookies.remove('refresh_token')
+          setToken('')
         }
       })
   }
 
   const sendRefresh = () => { //customHook 으로 만들어서 모든 요청에 대한 에러 핸들링으로 써야 함
     axios.post(`http://treepark.shop:3000/auth/accesstoken`, {
-      refresh_token: token[1]
+      refresh_token: cookies.get('refresh_token')
     }, {
       headers: {
         'Content-type': 'application/json',
@@ -65,16 +65,13 @@ export default function Home() {
         withCredentials: true
       }
     }).then((response) => {
-      console.log('accesstoken 성공')
-      console.log(response)
-      setToken([response.data.access_token, token[1]])
-      // setIsLogin(true)
+      setToken(response.data.access_token)
       router.push("/")
     })
       .catch((res) => {
-        console.log('accesstoken 실패')
         alert('인증 시간이 만료되었습니다. 다시 로그인해주세요.')
-        setToken([])
+        setToken('')
+        cookies.remove('refresh_token')
         setIsLogin(false)
         router.push("/")
       })

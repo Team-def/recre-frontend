@@ -1,24 +1,20 @@
 'use client';
 import Button from '@mui/material/Button';
 import Image from 'next/image';
-import { useAtomValue } from 'jotai';
-import { numberOfPeopleAtom } from "@/app/modules/numberOfPeopleAtoms";
 import { gameAtoms } from "@/app/modules/gameAtoms";
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 
 
 export default function QR () {
-    const nowPeople = 20;
-    const maxPeople = useAtomValue(numberOfPeopleAtom);
-    const gameName = useAtomValue(gameAtoms);
+    const nowPeople = 0;
+    const [gameInfo,] = useAtom(gameAtoms);
     const gamePageUrl = 'naver.com';
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
-    console.log(maxPeople);
-    console.log(gameName);
+    console.log(gameInfo);
 
     useEffect(() => {
         if (!isLogin) {
@@ -40,8 +36,8 @@ export default function QR () {
     }
 
     return (<>
-        <div>
-            <h1>{gameName}</h1>
+        <div className='qrPageCon'>
+            <h1>{gameInfo[0]}</h1>
             <div className='QR-code'>
                 <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
             </div>
@@ -49,11 +45,11 @@ export default function QR () {
             <label>
                 <Image className="icon" src="/pngegg.png" alt="people" width={20} height={20} />
             </label>
-             <p>{nowPeople} / {maxPeople} 명</p>
+             <p>{nowPeople} / {gameInfo[1]} 명</p>
             </div>
 
 
-            <div className='game-start-button'>
+            <div className='gameInfo-start-button'>
                 <Button disabled={nowPeople===0} onClick={startGame}>게임 시작</Button>
             </div>
         </div>

@@ -11,7 +11,9 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import './globals.css'
+import './globals.css';
+import { cookies } from 'next/headers';
+import { ClientCookiesProvider } from './provider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+    <ClientCookiesProvider value={cookies().getAll()}>
     <html lang="en">
       <body className={inter.className}>
         <Header />
@@ -33,5 +36,6 @@ export default function RootLayout({
         <Footer />
         </body>
     </html>
+    </ClientCookiesProvider>
   )
 }
