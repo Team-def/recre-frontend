@@ -19,8 +19,8 @@ export default function Home() {
   const cookies = useCookies();
 
   useEffect(() => {
-    checkLogin()
     console.log(token)
+    checkLogin()
   }, []);
 
   const selectGame = () => {
