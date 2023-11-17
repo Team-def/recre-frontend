@@ -17,9 +17,22 @@ export default function Catch() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
   const [isPainting, setIsPainting] = useState(false);
-  const [color, setColor] = useState("black");
-  const [lineWidth, setLineWidth] = useState(3);
+  const [curColor, setCurColor] = useState("black");
+  const [lineWidth, setLineWidth] = useState(5);
+  const [eraserWidth, setEraserWidth] = useState(50);
   const [isEraser, setIsEraser] = useState(false);
+  const [windowSize, setWindowSize] = useState({width: 0, height: 0});
+
+  useEffect(() => {
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+    if (canvas) {
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
+    }
+  }, []);
 
   // 좌표 얻는 함수
   const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
@@ -43,9 +56,9 @@ export default function Catch() {
     const context = canvas.getContext('2d');
 
     if (context) {
-      context.strokeStyle = isEraser?'white':color;  // 선 색깔
+      context.strokeStyle = isEraser?'white':curColor;  // 선 색깔
       context.lineJoin = 'round';	// 선 끄트머리(?)
-      context.lineWidth = lineWidth;		// 선 굵기
+      context.lineWidth = isEraser ? eraserWidth : lineWidth;		// 선 굵기
 
       context.beginPath();
       context.moveTo(originalMousePosition.x, originalMousePosition.y);
@@ -116,55 +129,115 @@ export default function Catch() {
     };
   }, [startPaint, paint, exitPaint]);
 
-  const drawColor = ["black", "red", "blue", "green", "yellow", "purple"]
-  const drawWidth = [1, 3, 5, 7, 9, 11, 13, 15]
+  const drawColor = ["black", "red", "blue", "green", "#dec549"]
+  const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
+  const eraseWidth = [[20,'얇게'], [45,'중간'], [70,'굵게']]
 
   return(<>
-    <div className="canvasContainer">
-      <div className="ButtonContainer">
-        <Button onClick={()=>setIsEraser(!isEraser)}>{isEraser?"붓":'지우개'}</Button>
-        <Button onClick={clearCanvas}>전체 지우기</Button>
-        <div className="colorContainer">
-          붓 색
-          {drawColor.map((color) => <button className="colorButton" style={{backgroundColor: color}} onClick={()=>setColor(color)}></button>)}
+        <div className="canvasContainer">
+          <div className="ButtonContainer">
+            <div className='eraseBtn'><button onClick={()=>setIsEraser(!isEraser)}>{isEraser?"붓":'지우개'}</button></div>
+            <div className="colorContainer">
+            붓 색 : 
+              {drawColor.map((color) => <button className={`colorButton ${curColor === color?'selectedColor':''}`} style={{backgroundColor: color}} onClick={()=>setCurColor(color)}></button>)}
+            </div>
+            <div className="lineWidthContainer">
+              {isEraser?"지우개":'붓'} 굵기 : 
+              {isEraser?
+              eraseWidth.map((info) => <button className={`lineWidthButton ${eraserWidth === info[0]?'selectedTool':''}` } onClick={()=>setEraserWidth(info[0] as number)}>{info[1] as string}</button>)
+              :
+              drawWidth.map((info) => <button className={`lineWidthButton  ${lineWidth === info[0]?'selectedTool':''}`} onClick={()=>setLineWidth(info[0] as number)}>{info[1] as string}</button>)}
+            </div>
+            <div className='eraseBtn'><button onClick={clearCanvas}>전체 지우기</button></div>
+          </div>
+          <div className='canvasDiv'>
+            <canvas ref={canvasRef} height={windowSize.height} width={windowSize.width} className="canvas"/>
+          </div>
         </div>
-        <div className="lineWidthContainer">
-          {isEraser?"지우개":'붓'} 굵기
-          {drawWidth.map((width) => <button className="lineWidthButton" onClick={()=>setLineWidth(width)}>{width}</button>)}
-        </div>
-      </div>
-      <div className='canvasDiv'>
-        <canvas ref={canvasRef} height={600} width={800} className="canvas"/>
-      </div>
-    </div>
-    <style jsx>{`
-    .canvasContainer {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    .canvasDiv{
-      width: 70vw;
-      height: 75vh;
-      border: 1px solid black;
-      border-radius: 20px;
-      overflow: hidden;
-      background-color: white;
-    }
-    .colorContainer{
-      height: 50px;
-    }
-    .colorButton{
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      margin: 5px;
-    }
-    `}</style>
-    </>
-  );
+        <style jsx>{`
+        .canvasContainer {
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+        .canvasDiv{
+          width: 60vw;
+          height: 65vh;
+          border: 1px solid gray;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .colorContainer{
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          width: 30%;
+        }
+        .colorButton{
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 0px solid gray;
+          margin: 5px;
+          box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .selectedColor{
+          border:2.7px solid rgba(255,255,255,0.7);
+        }
+        .lineWidthContainer{
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          gap: 5px;
+          width: 30%;
+        }
+        canvas{
+          background-color: white;
+        }
+        .ButtonContainer{
+          width: 60vw;
+          padding: 5px 0;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-around;
+          margin-bottom: 20px;
+          border: 1px solid gray;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5);
+          background-color: #636363;
+          color: white;
+        }
+        .lineWidthButton{
+          border: 0px solid gray;
+          border-radius: 5px;
+          padding: 3px 7px;
+          color: black;
+          margin: 0 3px;
+          background-color: white;
+          box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .selectedTool{
+          background-color: #197bbd;
+          color: white;
+          box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .eraseBtn{
+          width: 20%;
+        }
+        .eraseBtn{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        `}</style>
+        </>
+      );
 };
 
 // QR 페이지의 하위 컴포넌트로 게임들을 가각 불러오게.

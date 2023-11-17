@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from 'axios'
+import { myApi } from "../modules/backApi";
 
 interface LoginProps {
     name: string,
@@ -16,7 +17,7 @@ export default function Login() {
     const router = useRouter();
 
     const login = () => {
-        axios.post(`http://treepark.shop:3000/user`, {
+        axios.post(`${myApi}/user`, {
             name: username,
             password: password,
         }, {

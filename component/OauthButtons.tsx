@@ -2,13 +2,14 @@ import Image from "next/image"
 import oauthButtonsStyle from "./oauthButtonsStyle.module.css"
 import axios from "axios"
 import { useRouter } from 'next/navigation'
+import { myApi } from "@/app/modules/backApi"
 
 
 export default function OauthButtons() {
     const router = useRouter();
 
     // const login = (method:string) => {
-    //     axios.get(`http://treepark.shop:3000/auth/${method}`, {
+    //     axios.get(`${myApi}/auth/${method}`, {
     //         headers: {
     //             'Content-type': 'application/json',
     //             'Accept': 'application/json',
@@ -22,7 +23,7 @@ export default function OauthButtons() {
     // }
 
     const loginWithOauth = (method:string) => {
-        router.replace(`http://treepark.shop:3000/auth/${method}`)
+        router.replace(`${myApi}/auth/${method}`)
     }
 
     return (<><div className={oauthButtonsStyle.imgDiv}>

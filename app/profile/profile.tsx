@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
 import axios from 'axios';
+import { myApi } from '../modules/backApi';
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
@@ -31,7 +32,7 @@ export default function Profile() {
     //         return;
     //     } else if (currentNickname) {
     //         try {
-    //             const response = await axios.put("http://treepark.shop:3000/user/change", {
+    //             const response = await axios.put("${myApi}/user/change", {
     //                 nickname: newNickname,
     //             }, {
     //                 headers: {
@@ -58,7 +59,7 @@ export default function Profile() {
     //         if (confirm("정말로 탈퇴하시겠습니까?") === false) {
     //             return;
     //         } else {
-    //             const response = await axios.delete("http://treepark.shop:3000/user/withdrawal", {
+    //             const response = await axios.delete("${myApi}/user/withdrawal", {
     //             headers: {
     //                 "Content-Type": "application/json",
     //                 "Accept": "application/json",
