@@ -119,51 +119,51 @@ export default function Catch() {
   const drawWidth = [1, 3, 5, 7, 9, 11, 13, 15]
 
   return(<>
-        <div className="canvasContainer">
-          <div className="ButtonContainer">
-            <Button onClick={()=>setIsEraser(!isEraser)}>{isEraser?"붓":'지우개'}</Button>
-            <Button onClick={clearCanvas}>전체 지우기</Button>
-            <div className="colorContainer">
-              붓 색
-              {drawColor.map((color) => <button className="colorButton" style={{backgroundColor: color}} onClick={()=>setColor(color)}></button>)}
-            </div>
-            <div className="lineWidthContainer">
-              {isEraser?"지우개":'붓'} 굵기
-              {drawWidth.map((width) => <button className="lineWidthButton" onClick={()=>setLineWidth(width)}>{width}</button>)}
-            </div>
-          </div>
-          <div className='canvasDiv'>
-            <canvas ref={canvasRef} height={600} width={800} className="canvas"/>
-          </div>
+    <div className="canvasContainer">
+      <div className="ButtonContainer">
+        <Button onClick={()=>setIsEraser(!isEraser)}>{isEraser?"붓":'지우개'}</Button>
+        <Button onClick={clearCanvas}>전체 지우기</Button>
+        <div className="colorContainer">
+          붓 색
+          {drawColor.map((color) => <button className="colorButton" style={{backgroundColor: color}} onClick={()=>setColor(color)}></button>)}
         </div>
-        <style jsx>{`
-        .canvasContainer {
-          height: 100vh;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-direction: column;
-        }
-        .canvasDiv{
-          width: 70vw;
-          height: 75vh;
-          border: 1px solid black;
-          border-radius: 20px;
-          overflow: hidden;
-          background-color: white;
-        }
-        .colorContainer{
-          height: 50px;
-        }
-        .colorButton{
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin: 5px;
-        }
-        `}</style>
-        </>
-      );
+        <div className="lineWidthContainer">
+          {isEraser?"지우개":'붓'} 굵기
+          {drawWidth.map((width) => <button className="lineWidthButton" onClick={()=>setLineWidth(width)}>{width}</button>)}
+        </div>
+      </div>
+      <div className='canvasDiv'>
+        <canvas ref={canvasRef} height={600} width={800} className="canvas"/>
+      </div>
+    </div>
+    <style jsx>{`
+    .canvasContainer {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .canvasDiv{
+      width: 70vw;
+      height: 75vh;
+      border: 1px solid black;
+      border-radius: 20px;
+      overflow: hidden;
+      background-color: white;
+    }
+    .colorContainer{
+      height: 50px;
+    }
+    .colorButton{
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin: 5px;
+    }
+    `}</style>
+    </>
+  );
 };
 
 //지우개, 전체 지우기, 색

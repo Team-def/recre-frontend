@@ -13,6 +13,7 @@ import Catch from '../catch/page';
 export default function QR () {
     const [nowPeople,setNowPeople] = useState(2);
     const [gameInfo,] = useAtom(gameAtoms);
+    //https://treepark.shop/player?hostId=1234 같은 형식이어야 함
     const gamePageUrl = 'naver.com';
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
