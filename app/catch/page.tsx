@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { io } from "socket.io-client";
 import Button from '@mui/material/Button';
 
 interface CanvasProps {
@@ -166,5 +167,4 @@ export default function Catch() {
   );
 };
 
-//지우개, 전체 지우기, 색
 // QR 페이지의 하위 컴포넌트로 게임들을 가각 불러오게.

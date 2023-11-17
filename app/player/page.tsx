@@ -1,45 +1,49 @@
+"use client";
 import { io } from "socket.io-client";
 import Button from '@mui/material/Button';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
-const router = useRouter();
-const hostId = router.query.hostId || null;
+import { useState } from "react";
 
 //server와 front 가 같은 domain인 경우
 const socket = io();
 
 // //서버와 front 가 서로 다른 domain인 경우
 // const socket = io("http://server.domain.com");
-useEffect(() => {
-    if (hostId === null) {
-        alert('잘못된 접근입니다.');
-        router.push("/");
-    }
-
-    socket.on("connect", () => {
-        console.log(socket.id);
-        console.log(socket.connected);
-    });
-
-    socket.emit("host-data", { hostId });
-    
-    socket.on("join-room", (roomId) => {
-        console.log(roomId);
-    });
-    
-});
 
 export default function Player() {
+    const router = useRouter();
+    const hostId = router.query.hostId || null;
+    const [playerNickname, setPlayerNickname] = useState<string>('');
+
+    useEffect(() => {
+        if (hostId === null) {
+            alert('잘못된 접근입니다.');
+            router.push("/");
+        }
+    
+        socket.on("connect", () => {
+            console.log(socket.id);
+            console.log(socket.connected);
+        });
+    });
+
+    const readyToPlay = () => {
+        socket.emit("host-data", { 
+            "hostId": hostId,
+            "nickname": playerNickname});
+    };
+
     return (
         <>
         <div className="nickname-container">
             <label className="nickname-label">닉네임: </label>
-            <input type="text" className="nickname-input"></input>
-            <Button className="nickname-change">변경하기</Button>
-        </div>
-        <div className="ready-button-container">
-            <Button className="ready-button">준비하기</Button>
+            <input 
+                type="text" 
+                className="nickname-input"
+                value={playerNickname} 
+                onChange={(e)=>setPlayerNickname(e.target.value)}></input>
+            <Button className="nickname-change" onClick={readyToPlay} >Ready!</Button>
         </div>
         </>
     )
