@@ -1,6 +1,9 @@
 "use client";
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+
+import React, { useRef, useState, useCallback, useEffect, use } from 'react';
 import { io } from "socket.io-client";
+import { useAtom } from 'jotai';
+import { userInfoAtoms } from '../modules/userInfoAtom';
 import Button from '@mui/material/Button';
 
 interface CanvasProps {
@@ -14,6 +17,11 @@ interface Coordinate {
 };
 
 export default function Catch() {
+
+  const socket = io("http://treepark.shop:8000",{
+    withCredentials: true,
+    transports: ["websocket"]});
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
   const [isPainting, setIsPainting] = useState(false);
@@ -23,8 +31,60 @@ export default function Catch() {
   const [isEraser, setIsEraser] = useState(false);
   const [windowSize, setWindowSize] = useState({width: 0, height: 0});
 
+  const [userInfo,] = useAtom(userInfoAtoms)
+
   useEffect(() => {
+    
+
+    socket.timeout(5000).on("connect", () => {
+      console.log("connect_check:", socket.connected);
+      console.log("socket_id:", socket.id);
+    });
+
+    const listener = (data: any) => {
+      console.log(data);
+    }
+
+    socket.on("test", listener);
+
+    socket.on("session", ({sessionID, userID}) => {
+      socket.auth = { sessionID };
+      localStorage.setItem("sessionID", sessionID);
+      socket.userID = userID;
+    });
+
+    socket.emit('make_room', ({
+      "sessionID": localStorage.getItem("sessionID"),
+      "userID": socket.userID,
+      "accessToken": localStorage.getItem("accessToken"),
+      "gamename": "그림 맞추기",
+      }));
+
+    socket.on("disconnect", () => {
+      console.log("disconnect_check:", socket.connected);
+    });
+
+    socket.on("answer", (data: string) => {
+      localStorage.setItem("answer", data);
+    });
+
+    socket.on("incorrect", (data: string) => {
+      
+      //data를 보낸 사람의 닉네임
+      //오답
+      
+    });
+
+    socket.on("correct", (data: string) => {
+      //data를 보낸 사람의 닉네임
+      //정답
+    });
+
+    
+
+
     const canvas: HTMLCanvasElement | null = canvasRef.current;
+
     if (canvas) {
       canvas.style.width = '100%';
       canvas.style.height = '100%';
@@ -33,6 +93,14 @@ export default function Catch() {
       setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
     }
   }, []);
+  //게임 끝내는 함수 - 게임 끝내는 버튼에 할당해야 함
+  const end_game = () => {
+    socket.emit('end_game', {
+      "sessionID": localStorage.getItem("sessionID"),
+      "accessToken": localStorage.getItem("accessToken"),
+      });
+    }
+  
 
   // 좌표 얻는 함수
   const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
@@ -110,6 +178,7 @@ export default function Catch() {
   }
   
   useEffect(() => {
+
     if (!canvasRef.current) {
       return;
     }

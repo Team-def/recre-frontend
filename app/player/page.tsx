@@ -5,11 +5,18 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useState } from "react";
 
-//server와 front 가 같은 domain인 경우
-const socket = io();
+declare module "socket.io-client" {
+    
+    interface Socket {
+        sessionID?: string;
+        userID?: string;
+    }
+}
 
-// //서버와 front 가 서로 다른 domain인 경우
-// const socket = io("http://server.domain.com");
+const socket = io("http://treepark.shop:8000",{
+                withCredentials: true,
+                transports: ["websocket"]});
+
 
 export default function Player() {
     const router = useRouter();
@@ -27,6 +34,19 @@ export default function Player() {
         socket.on("connect", () => {
             console.log(socket.id);
             console.log(socket.connected);
+        });
+
+        socket.on("disconnect", () => {
+            console.log(socket.id);
+            console.log(socket.connected);
+        });
+
+        socket.on("session", ({sessionID, userID}) => {
+            console.log(sessionID);
+            console.log(userID);
+            socket.auth = { sessionID };
+            localStorage.setItem("sessionID", sessionID);
+            socket.userID = userID;
         });
     });
 
