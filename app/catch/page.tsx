@@ -35,7 +35,6 @@ export default function Catch() {
 
   useEffect(() => {
     
-
     socket.timeout(5000).on("connect", () => {
       console.log("connect_check:", socket.connected);
       console.log("socket_id:", socket.id);
@@ -58,7 +57,7 @@ export default function Catch() {
       "userID": socket.userID,
       "accessToken": localStorage.getItem("accessToken"),
       "gamename": "그림 맞추기",
-      }));
+    }));
 
     socket.on("disconnect", () => {
       console.log("disconnect_check:", socket.connected);
@@ -68,20 +67,24 @@ export default function Catch() {
       localStorage.setItem("answer", data);
     });
 
-    socket.on("incorrect", (data: string) => {
-      
+    socket.on("incorrect", (data) => {
       //data를 보낸 사람의 닉네임
+      const nickname = data.nickname;
       //오답
-      
+      const wrong_answer = data.wrong_answer;
+
+      //채팅창에 해당 닉네임과 오답을 출력하기
+
     });
 
-    socket.on("correct", (data: string) => {
+    socket.on("correct", (data) => {
       //data를 보낸 사람의 닉네임
+      const nickname = data.nickname;
       //정답
+      const correct_answer = data.correct_answer;
+      //게임 끝내는 함수 호출
+      end_game();
     });
-
-    
-
 
     const canvas: HTMLCanvasElement | null = canvasRef.current;
 
@@ -93,13 +96,17 @@ export default function Catch() {
       setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
     }
   }, []);
+
   //게임 끝내는 함수 - 게임 끝내는 버튼에 할당해야 함
   const end_game = () => {
     socket.emit('end_game', {
       "sessionID": localStorage.getItem("sessionID"),
       "accessToken": localStorage.getItem("accessToken"),
-      });
-    }
+    });
+
+    //정답 및 맞춘 사람 닉네임 출력
+    
+  }
   
 
   // 좌표 얻는 함수
