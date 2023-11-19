@@ -1,1 +1,1 @@
-export const myApi = 'https://api.choiwheatley.store'
+export const myApi = 'https://choiwheatley.store'

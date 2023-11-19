@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 import MyModal from '@/component/MyModal';
 import Catch from '../catch/page';
+import { io } from "socket.io-client";
+import { trace } from 'console';
 
 
 export default function QR () {
@@ -18,6 +20,7 @@ export default function QR () {
     const router = useRouter();
     const [open, setOpen] = useState(true);
     const [gameContent, setGameContent] = useState<JSX.Element>();
+    const socket = io("http://treepark.link:8000",{ transports: ['websocket'], forceNew: true });
 
     useEffect(() => {
         if (!isLogin) {
@@ -25,6 +28,12 @@ export default function QR () {
             alert('로그인이 필요합니다.')
             router.push("/")
         }
+        // socket.emit("connect", () => {
+        //     console.log(socket.id);
+        //   });
+          socket.on("connect", () => {
+            console.log(socket.id);
+          });
     }, []);
 
     const startGame = () => {
