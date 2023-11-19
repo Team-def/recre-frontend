@@ -3,23 +3,21 @@ import io from 'socket.io-client';
 import { useState } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from "@/app/modules/userInfoAtom";
+import { tokenAtoms } from '../modules/tokenAtoms';
+import { socket } from '../modules/socket';
+import { answerAtom } from '../modules/answerAtom';
 
-// //server와 front가 같은 domain인 경우
-// //다른 경우 수정해야 함!
-// const socket = io();
 
 export default function CatchAnswer() {
     const [userInfo,] = useAtom(userInfoAtoms);
     const [catchAnswer, setCatchAnswer] = useState<string>('');
+    const [token,] = useAtom(tokenAtoms);
+    const [,setAnswer] = useAtom(answerAtom);
 
-    // socket.on("connect", () => {
-    //     console.log(socket.id);
-    //     console.log(socket.connected);
-    // });
 
     const handleAnswerSubmit = () => {
-        socket.emit("hostId-submit", { nickname: userInfo.nickname });
-        socket.emit("answer-submit", { catchAnswer });
+        setAnswer(catchAnswer)
+        socket.emit("set_catch_answer", { room_id : userInfo.id , ans : catchAnswer , access_token : token });
     }
 
     return (

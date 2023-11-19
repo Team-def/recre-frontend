@@ -12,6 +12,7 @@ import { useCookies } from 'next-client-cookies';
 import { myApi } from './modules/backApi';
 import { gameAtoms } from './modules/gameAtoms';
 
+
 export default function Home() {
   const [isLogin, setIsLogin] = useAtom(loginAtom)
   const [token, setToken] = useAtom(tokenAtoms);
@@ -104,6 +105,7 @@ export default function Home() {
         router.push("/")
       })
   }
+
 
   return (<>
     <div className='container'>
