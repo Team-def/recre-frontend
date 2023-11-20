@@ -7,11 +7,13 @@ import { userInfoAtoms } from '../modules/userInfoAtom';
 import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 import { myApi } from '../modules/backApi';
+import Image from 'next/image';
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nickChange, setNickChange] = useState<boolean>(false);
     const [nick, setNick] = useState<string>('');
+    const gamePageUrl = `http://chltm.mooo.com:27017/catchAnswer`;
     
     useEffect(() => {
         setNick(userInfo.nickname);
@@ -119,6 +121,9 @@ export default function Profile() {
                     startAdornment: <InputAdornment position="start">{`공급자 : ${userInfo.provider}`}</InputAdornment>,
                   }}/>
             </Box>
+            <div className='QR-code'>
+                        <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
+                    </div>
             <div>
                 <Button className="withdrawl">회원 탈퇴</Button>
             </div>
@@ -140,6 +145,15 @@ export default function Profile() {
                 flex-direction: row;
                 align-items: center;
                 justify-content: space-between;
+            }
+            .QR-code{
+                width: 20vw;
+                height: 20vw;
+                margin: 20px 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
             }
         `}</style>
         </>

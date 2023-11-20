@@ -8,6 +8,7 @@ import { socket } from '../modules/socket';
 import { useRouter } from 'next/navigation';
 import MyModal from '@/component/MyModal';
 import IntegrationNotistack from '@/component/snackBar';
+import { answerAtom } from '../modules/answerAtom';
 
 interface recievedAns {
   ans: string;
@@ -40,6 +41,7 @@ export default function Catch() {
     nick : '', 
     isAns : false,
   });
+  const [, setAnsAtom] = useAtom(answerAtom);
 
   useEffect(() => {
     const canvas: HTMLCanvasElement | null = canvasRef.current;
@@ -183,12 +185,14 @@ export default function Catch() {
         socket.emit('end_game',{
           room_id : userInfo.id,
         });
+        setAnsAtom(null)
         router.push('/gameSelect');
       }
     } else{
       socket.emit('end_game',{
         room_id : userInfo.id,
       });
+      setAnsAtom(null)
       router.push('/gameSelect');
     }
   }

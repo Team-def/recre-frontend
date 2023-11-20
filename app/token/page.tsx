@@ -18,7 +18,6 @@ const GetTokenParams = () => {
     const [, setToken] = useAtom(tokenAtoms);
 
     useEffect(() => {
-        alert(`acc : ${access_token} refrewsh:${refresh_token}`)
         if (access_token && refresh_token) {
             setToken(access_token);
             cookies.remove('access_token')

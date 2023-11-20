@@ -24,7 +24,7 @@ export default function QR() {
     const [gameContent, setGameContent] = useState<JSX.Element>();
     const [uuid, setUuid] = useState<string>('');
     const [token,] = useAtom(tokenAtoms);
-    const [answer,] = useAtom(answerAtom);
+    const [answer,setAnswer] = useAtom(answerAtom);
 
     useEffect(() => {
         if (!isLogin) {
@@ -35,6 +35,12 @@ export default function QR() {
 
         socket.volatile.on("connect", () => {
             console.log("disconnect_check:", socket.connected);
+            socket.emit('make_room', {
+                game_type: gameInfo[0],
+                user_num: gameInfo[1], 
+                answer: null, 
+                access_token: token
+            })
         });
 
 
@@ -58,34 +64,22 @@ export default function QR() {
                 alert(response.message)
         });
 
-        socket.on("make_room", (response) => {
-            if(response.result === true)
-                startGame()
+        socket.on('set_catch_answer', (res)=>{
+            console.log(res)
+            if(res.result === true){
+                setAnswer(res.answer)
+        }
         });
 
-        socket.emit('make_room', {
-            game_type: gameInfo[0],
-            user_num: gameInfo[1],
-            answer: answer,
-            access_token: token
-        })
     }, []);
 
 
-    const makeRoom = () => {
+    const startGame = () => {
+        console.log(answer)
         if (!answer) {
             alert('먼저 정답을 입력해주세요.')
             return
         }
-        socket.emit('make_room', {
-            game_type: gameInfo[0],
-            user_num: gameInfo[1],
-            answer: answer,
-            access_token: token
-        })
-    }
-
-    const startGame = () => {
         socket.emit('start_catch_game', {
             access_token: token
         });
@@ -109,7 +103,7 @@ export default function QR() {
 
 
                     <div className='gameInfo-start-button'>
-                        <Button disabled={nowPeople === 0} onClick={makeRoom}>게임 시작</Button>
+                        <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
                     </div>
                 </div>
                 <style jsx>{`

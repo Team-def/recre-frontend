@@ -5,7 +5,6 @@ import MyModal from "./MyModal";
 
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
-import CatchAnswer from "@/app/catchAnswer/page";
 
 export interface ModalProps {
     isOpen: boolean,
@@ -28,16 +27,9 @@ export default function Footer() {
             <div>
                 <h4>SWJUNGLE Team.def()</h4>
             </div>
-            {isLogin?
-            <div>
-                {/* 캐치마인드 정답 제출용 모달 호출 버튼 */}
-                <Button onClick={catch_answer}> </Button>
-            </div>
-            :null}
             
 
         </div>
-        <MyModal open={open} modalHeader={'캐치마인드 정답 입력'} modalContent={<CatchAnswer />} closeFunc={handleClose} />
         <style jsx>{`
                 .footerContainer{
                     display: flex;
