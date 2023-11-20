@@ -6,10 +6,13 @@ import { userInfoAtoms } from '../modules/userInfoAtom';
 import Button from '@mui/material/Button';
 import { socket } from '../modules/socket';
 import { useRouter } from 'next/navigation';
+import MyModal from '@/component/MyModal';
+import IntegrationNotistack from '@/component/snackBar';
 
-interface CanvasProps {
-  width: number;
-  height: number;
+interface recievedAns {
+  ans: string;
+  nick: string;
+  isAns : boolean;
 }
 
 interface Coordinate {
@@ -29,6 +32,14 @@ export default function Catch() {
   const [windowSize, setWindowSize] = useState({width: 0, height: 0});
   const [userInfo,] = useAtom(userInfoAtoms)
   const router = useRouter();
+  const [answer, setAnswer] = useState('');
+  const [correctNick, setCorrectNick] = useState('');
+  const [isFinished, setIsFinished] = useState(false);
+  const [recievedAns, setRecievedAns] = useState<recievedAns>({
+    ans : '', 
+    nick : '', 
+    isAns : false,
+  });
 
   useEffect(() => {
     const canvas: HTMLCanvasElement | null = canvasRef.current;
@@ -40,6 +51,29 @@ export default function Catch() {
       canvas.height = canvas.offsetHeight;
       setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
     }
+
+    socket.on('correct',(res)=>{
+      if(res.result === true){
+        setAnswer(res.answer)
+        setCorrectNick(res.nickname)
+        setRecievedAns({
+          ans : res.answer,
+          nick : res.nickname,
+          isAns : true,
+        })
+        setIsFinished(true)
+      }
+    }); 
+
+    socket.on('incorrect',(res)=>{
+      if(res.result === true){
+        setRecievedAns({
+          ans : res.incorrectAnswer,
+          nick : res.nickname,
+          isAns : false,
+        })
+      }
+    }); 
   }, []);
   
 
@@ -144,12 +178,31 @@ export default function Catch() {
   const eraseWidth = [[20,'얇게'], [45,'중간'], [70,'굵게']]
 
   const leaveGame = () => {
-    if(confirm("게임을 나가시겠습니까?")){
+    if(!isFinished){
+      if(confirm("게임을 나가시겠습니까?")){
+        socket.emit('end_game',{
+          room_id : userInfo.id,
+        });
+        router.push('/gameSelect');
+      }
+    } else{
       socket.emit('end_game',{
         room_id : userInfo.id,
       });
       router.push('/gameSelect');
     }
+  }
+
+  const FinishedModal = () => {
+    return (
+      <div>
+        <div className="winnerInfo">
+          <div className="modalText">우승자 : {correctNick}</div>
+          <div className="modalText">정답 : {answer}</div>
+        </div>
+        <Button onClick={leaveGame}>게임 끝내기</Button>
+      </div>
+    )
   }
 
   return(<>
@@ -174,6 +227,8 @@ export default function Catch() {
           </div>
           <Button onClick={()=>{leaveGame()}}>나가기</Button>
         </div>
+        <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick}/>
+        <MyModal open={isFinished} modalHeader={`우승자 : ${correctNick}`} modalContent={<FinishedModal/>} closeFunc={()=>{}}/>
         <style jsx>{`
         .canvasContainer {
           height: 100vh;

@@ -200,7 +200,6 @@ export default function QR () {
 
     return (<>
         <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage/>} closeFunc={()=>{}}/>
-        <MyModal open={open} modalHeader={"정답을 입력해주세요"} modalContent={<QRpage/>} closeFunc={()=>{}}/>
         {gameContent}
     </>)
 }
