@@ -21,6 +21,7 @@
     "next": "14.0.2",
     "next-client-cookies": "^1.1.0",
     "nextjs-current-url": "^1.0.3",
+    "notistack": "^3.0.1",
     "react": "^18",
     "react-dom": "^18",
     "react-router-dom": "^6.18.0",
