@@ -7,6 +7,7 @@ import { useState } from "react";
 import { userInfoAtoms } from "../modules/userInfoAtom";
 import { useAtom } from "jotai";
 import CatchPlayer from "../playerComponent/catchPlayer";
+import { socket } from "../modules/socket";
 
 declare module "socket.io-client" {
     
@@ -15,10 +16,6 @@ declare module "socket.io-client" {
         userID?: string;
     }
 }
-
-const socket = io("http://chltm.mooo.com:8080",{
-                withCredentials: true,
-                transports: ["websocket"]});
 
 
 export default function Player() {
@@ -73,7 +70,7 @@ export default function Player() {
                     className="nickname-input"
                     value={playerNickname} 
                     onChange={(e)=>setPlayerNickname(e.target.value)}
-                    autoFocus></input>
+                    autoFocus></input><br></br>
                 <Button className="nickname-change" onClick={readyToPlay} disabled={ready}>{ready?"Waiting":"Ready!"}</Button>
             </div>
             </>
