@@ -25,7 +25,7 @@ export default function player_catch() {
     const throwCatchAnswer = () => {
         socket.emit("throw_catch_answer", {
             room_id: room_id,
-            ans: "정답",
+            ans: playerAnswer,
         })
     }
 
