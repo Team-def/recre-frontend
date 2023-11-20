@@ -8,17 +8,26 @@ import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 import { myApi } from '../modules/backApi';
 import { useRouter } from 'next/navigation';
+import { useCookies } from 'next-client-cookies';
+import { loginAtom } from '../modules/loginAtoms';
+import { ModalProps } from '@/component/MyModal';
+
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nickChange, setNickChange] = useState<boolean>(false);
     const [nick, setNick] = useState<string>('');
+    const [isLogin, setIsLogin] = useAtom(loginAtom);
+
+    const cookies = useCookies();
+    
 
     const router = useRouter();
     useEffect(() => {
         setNick(userInfo.nickname);
     }, []);
 
+    
     const cancleEditNick = () => { 
         setNick(userInfo.nickname);
         setNickChange(false);
@@ -99,14 +108,18 @@ export default function Profile() {
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "Authorization": localStorage.getItem('access_token')
+                "Authorization": localStorage.getItem('access_token')?.replace(/\"/gi, '')
             },
             data: {
                 email: userInfo.email,
             }
             });
             alert("회원 탈퇴가 완료되었습니다.");
+            setIsLogin(false);
+            localStorage.removeItem('access_token');
+            cookies.remove('refresh_token');
             router.push('/');
+            router.refresh();
         }
     }
 
