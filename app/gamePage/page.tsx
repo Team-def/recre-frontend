@@ -35,12 +35,6 @@ export default function QR() {
 
         socket.volatile.on("connect", () => {
             console.log("disconnect_check:", socket.connected);
-            socket.emit('make_room', {
-                game_type: gameInfo[0],
-                user_num: gameInfo[1], 
-                answer: null, 
-                access_token: token
-            })
         });
 
 
@@ -74,12 +68,20 @@ export default function QR() {
     }, []);
 
 
-    const startGame = () => {
-        console.log(answer)
+    const makeRoom = () => {
         if (!answer) {
             alert('먼저 정답을 입력해주세요.')
             return
         }
+        socket.emit('make_room', {
+            game_type: gameInfo[0],
+            user_num: gameInfo[1],
+            answer: answer,
+            access_token: token
+        })
+    }
+
+    const startGame = () => {
         socket.emit('start_catch_game', {
             access_token: token
         });
@@ -103,7 +105,7 @@ export default function QR() {
 
 
                     <div className='gameInfo-start-button'>
-                        <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
+                        <Button disabled={nowPeople === 0} onClick={makeRoom}>게임 시작</Button>
                     </div>
                 </div>
                 <style jsx>{`
