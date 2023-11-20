@@ -65,8 +65,8 @@ export default function QR() {
 
         socket.emit('make_room', {
             game_type: gameInfo[0],
-            user_num: gameInfo[1], 
-            answer: answer, 
+            user_num: gameInfo[1],
+            answer: answer,
             access_token: token
         })
     }, []);
