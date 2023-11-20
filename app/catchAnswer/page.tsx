@@ -1,3 +1,4 @@
+"use client"
 import Button from '@mui/material/Button';
 import io from 'socket.io-client';
 import { useState } from 'react';

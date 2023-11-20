@@ -16,7 +16,7 @@ declare module "socket.io-client" {
     }
 }
 
-const socket = io("http://treepark.shop:8000",{
+const socket = io("http://chltm.mooo.com:8080",{
                 withCredentials: true,
                 transports: ["websocket"]});
 
