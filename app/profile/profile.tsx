@@ -7,13 +7,14 @@ import { userInfoAtoms } from '../modules/userInfoAtom';
 import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 import { myApi } from '../modules/backApi';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nickChange, setNickChange] = useState<boolean>(false);
     const [nick, setNick] = useState<string>('');
-    
+
+    const router = useRouter();
     useEffect(() => {
         setNick(userInfo.nickname);
     }, []);
@@ -89,6 +90,26 @@ export default function Profile() {
 
     // }
 
+    const memberWithdrawl = async () => {
+
+        if (confirm("정말로 탈퇴하시겠습니까?") === false) {
+            return;
+        } else {
+            const response = await axios.delete(`${myApi}/user/`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": localStorage.getItem('access_token')
+            },
+            data: {
+                email: userInfo.email,
+            }
+            });
+            alert("회원 탈퇴가 완료되었습니다.");
+            router.push('/');
+        }
+    }
+
     return (<>
         <div className='textGroup'>
             <Box
@@ -121,7 +142,7 @@ export default function Profile() {
                   }}/>
             </Box>
             <div>
-                <Button className="withdrawl">회원 탈퇴</Button>
+                <Button className="withdrawl" onClick={memberWithdrawl}>회원 탈퇴</Button>
             </div>
 
             {/* <Button onClick={handleNicknameChange}>변경하기</Button>
