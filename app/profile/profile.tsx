@@ -4,12 +4,23 @@ import TextField from '@mui/material/TextField';
 import { useState, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
+import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 import { myApi } from '../modules/backApi';
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nickChange, setNickChange] = useState<boolean>(false);
+    const [nick, setNick] = useState<string>('');
+    
+    useEffect(() => {
+        setNick(userInfo.nickname);
+    }, []);
+
+    const cancleEditNick = () => { 
+        setNick(userInfo.nickname);
+        setNickChange(false);
+    }
 
     // //토큰(세션?)에서 현재 사용자의 nickname을 가져와야 함 (임시로 작성함)
     // const getNicknameFromToken = (token: string): string => {
@@ -79,7 +90,6 @@ export default function Profile() {
 
     return (<>
         <div className='textGroup'>
-            {/* <h1>{currentNickname || "사용자" } 님의 프로필</h1> */}
             <Box
                 component="form"
                 sx={{
@@ -88,8 +98,11 @@ export default function Profile() {
                 noValidate
                 autoComplete="off"
             >
-                <div className='nickDiv'><TextField id="outlined-nick" variant="standard" value={`닉네임 : ${userInfo.nickname}`} disabled={!nickChange}/> 
-                {nickChange?<><Button>변경</Button><Button onClick={()=>setNickChange(!nickChange)}>취소</Button></>:<Button onClick={()=>setNickChange(!nickChange)}>변경</Button>}</div>
+                <div className='nickDiv'><TextField id="outlined-nick" variant="standard" value={nick} disabled={!nickChange} 
+                InputProps={{
+                    startAdornment: <InputAdornment position="start">닉네임</InputAdornment>,
+                  }} onChange={(e)=>setNick(e.target.value)} placeholder={userInfo.nickname}/> 
+                {nickChange?<><Button className='editBtn'>변경</Button><Button onClick={cancleEditNick}>취소</Button></>:<Button onClick={()=>setNickChange(!nickChange)}>변경</Button>}</div>
             </Box>
             <Box
                 component="form"
@@ -99,12 +112,15 @@ export default function Profile() {
                 noValidate
                 autoComplete="off"
             >
-                <TextField id="outlined-basic" variant="standard" value={`이메일 : ${userInfo.email}`} disabled/>
-                <TextField id="outlined-basic" variant="standard" value={`공급자 : ${userInfo.provider}`} disabled/>
+                <TextField id="outlined-basic" variant="standard" value='' disabled InputProps={{
+                    startAdornment: <InputAdornment position="start">{`이메일 : ${userInfo.email}`}</InputAdornment>,
+                  }}/>
+                <TextField id="outlined-basic" variant="standard" value='' disabled InputProps={{
+                    startAdornment: <InputAdornment position="start">{`공급자 : ${userInfo.provider}`}</InputAdornment>,
+                  }}/>
             </Box>
             <div>
                 <Button className="withdrawl">회원 탈퇴</Button>
-                <Button className="logout">로그아웃</Button>
             </div>
 
             {/* <Button onClick={handleNicknameChange}>변경하기</Button>

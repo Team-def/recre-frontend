@@ -1,9 +1,9 @@
 import { atom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 
-type game = [string, number]
+type game = [string, number|null]
 
-export const gameAtoms = atomWithStorage<game>("game", ['',0]);
+export const gameAtoms = atomWithStorage<game>("game", ['',null]);
 
 export const setGameAtoms = atom(
     null,
