@@ -22,17 +22,17 @@ const socket = io("http://treepark.shop:8000",{
 
 
 export default function Player() {
+    const params = useSearchParams();
+    const room_id = params.get('id');
     const router = useRouter();
     //query string에서 hostId를 가져옴
-    const params = useSearchParams();
-    const hostId = params.get('hostId');
     const [playerNickname, setPlayerNickname] = useState<string>('');
     const [userInfo, ] = useAtom(userInfoAtoms);
     const [ready, setReady] = useState<boolean>(false);
     const [playerComponent, setPlayerComponent] = useState<JSX.Element | null>(null);
 
     useEffect(() => {
-        if (hostId === null) {
+        if (room_id === null) {
             alert('잘못된 접근입니다.');
             router.push("/");
         }
@@ -60,7 +60,7 @@ export default function Player() {
     const ReadyComponent = () => {
         const readyToPlay = () => {
             socket.emit("ready", { 
-                room_id: userInfo.id,
+                room_id: room_id,
                 nickname: userInfo.nickname
             });
         };

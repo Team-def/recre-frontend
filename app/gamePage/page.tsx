@@ -11,12 +11,13 @@ import Catch from '../catch/page';
 import { socket } from '../modules/socket';
 import { tokenAtoms } from '@/app/modules/tokenAtoms';
 import { answerAtom } from '../modules/answerAtom';
+import { userInfoAtoms } from '../modules/userInfoAtom';
 
 export default function QR () {
     const [nowPeople,setNowPeople] = useState(2);
     const [gameInfo,] = useAtom(gameAtoms);
-    //https://treepark.shop/player?hostId=1234 같은 형식이어야 함
-    const gamePageUrl = 'naver.com';
+    const [userInfo,] = useAtom(userInfoAtoms);
+    const gamePageUrl = `http://localhost:3000/catchAnswer?id=${userInfo}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     const [open, setOpen] = useState(true);
