@@ -2,8 +2,7 @@
 import { io } from "socket.io-client";
 import Button from '@mui/material/Button';
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 declare module "socket.io-client" {
     
@@ -53,7 +52,8 @@ export default function Player() {
     const readyToPlay = () => {
         socket.emit("host-data", { 
             "hostId": hostId,
-            "nickname": playerNickname});
+            "nickname": playerNickname
+        });
     };
 
     return (
