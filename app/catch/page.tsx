@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useRef, useState, useCallback, useEffect, use } from 'react';
-import { io } from "socket.io-client";
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
+import { socket } from '../modules/socket';
 import Button from '@mui/material/Button';
 
 interface CanvasProps {
@@ -18,16 +18,12 @@ interface Coordinate {
 
 export default function Catch() {
 
-  const socket = io("http://treepark.shop:8000",{
-    withCredentials: true,
-    transports: ["websocket"]});
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
   const [isPainting, setIsPainting] = useState(false);
   const [curColor, setCurColor] = useState("black");
   const [lineWidth, setLineWidth] = useState(5);
-  const [eraserWidth, setEraserWidth] = useState(50);
+  const [eraserWidth, setEraserWidth] = useState(45);
   const [isEraser, setIsEraser] = useState(false);
   const [windowSize, setWindowSize] = useState({width: 0, height: 0});
 
@@ -96,6 +92,7 @@ export default function Catch() {
       setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
     }
   }, []);
+  
 
   //게임 끝내는 함수 - 게임 끝내는 버튼에 할당해야 함
   const end_game = () => {
@@ -237,6 +234,8 @@ export default function Catch() {
           justify-content: center;
           align-items: center;
           flex-direction: column;
+          white-space: nowrap; 
+          text-overflow: ellipsis;
         }
         .canvasDiv{
           width: 60vw;

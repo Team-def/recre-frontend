@@ -16,9 +16,32 @@ export interface ModalProps {
     setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
+import { useState } from "react";
+import Button from '@mui/material/Button';
+import MyModal from "./MyModal";
+
+import { useAtom } from 'jotai';
+import { loginAtom } from "@/app/modules/loginAtoms";
+import CatchAnswer from "@/app/catchAnswer/catchAnswer";
+
+export interface ModalProps {
+    isOpen: boolean,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    modalHeader: string,
+    setModalHeader: React.Dispatch<React.SetStateAction<string>>,
+    isLogin: boolean,
+    setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
 export default function Footer() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
     const [isLogin, setIsLogin] = useAtom(loginAtom)
+
+    const handleClose = () => { setOpen(false); }
+    const catch_answer = () => { setOpen(true); }
+
+    const [open, setOpen] = useState<ModalProps['isOpen']>(false);
+    const [isLogin,setIsLogin] = useAtom(loginAtom)
 
     const handleClose = () => { setOpen(false); }
     const catch_answer = () => { setOpen(true); }

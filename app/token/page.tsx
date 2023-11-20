@@ -7,16 +7,21 @@ import { useSearchParams } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 
 const GetTokenParams = () => {
-    const params = useSearchParams();
-    const access_token = params.get('access_token');
-    const refresh_token = params.get('refresh_token');
+    // const params = useSearchParams();
+    // const access_token = params.get('access_token');
+    // const refresh_token = params.get('refresh_token');
+    const cookies = useCookies();
+    const access_token = cookies.get('access_token')
+    const refresh_token = cookies.get('refresh_token')
+
     const router = useRouter();
     const [, setToken] = useAtom(tokenAtoms);
-    const cookies = useCookies();
 
     useEffect(() => {
         if (access_token && refresh_token) {
             setToken(access_token);
+            cookies.remove('access_token')
+            cookies.remove('refresh_token')
             cookies.set('refresh_token', refresh_token, {secure:true, sameSite:'Lax'})
             router.push("/");
         }else{
