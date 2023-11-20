@@ -17,7 +17,7 @@ export default function QR() {
     const [nowPeople, setNowPeople] = useState(2);
     const [gameInfo,] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
-    const gamePageUrl = `http://localhost:3000/catchAnswer?id=${userInfo}`;
+    const gamePageUrl = `http://chltm.mooo.com:27017/player?id=${userInfo}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     const [open, setOpen] = useState(true);
@@ -51,16 +51,25 @@ export default function QR() {
         }
 
         socket.on("start_catch_game", (response) => {
-            if (response.result === "true")
+
+            console.log(response)
+            if(response.result === true)
                 setOpen(false);
             else
                 alert(response.message)
         });
 
         socket.on("make_room", (response) => {
-            if (response.result === "true")
+            if(response.result === true)
                 startGame()
         });
+
+        socket.emit('make_room', {
+            game_type: gameInfo[0],
+            user_num: gameInfo[1], 
+            answer: answer, 
+            access_token: token
+        })
     }, []);
 
 

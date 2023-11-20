@@ -5,7 +5,7 @@ import MyModal from "./MyModal";
 
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
-import CatchAnswer from "@/app/catchAnswer/catchAnswer";
+import CatchAnswer from "@/app/catchAnswer/page";
 
 export interface ModalProps {
     isOpen: boolean,
