@@ -4,6 +4,8 @@ import React, { useRef, useState, useCallback, useEffect, use } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
 import Button from '@mui/material/Button';
+import { socket } from '../modules/socket';
+import { useRouter } from 'next/navigation';
 
 interface CanvasProps {
   width: number;
@@ -25,8 +27,8 @@ export default function Catch() {
   const [eraserWidth, setEraserWidth] = useState(45);
   const [isEraser, setIsEraser] = useState(false);
   const [windowSize, setWindowSize] = useState({width: 0, height: 0});
-
   const [userInfo,] = useAtom(userInfoAtoms)
+  const router = useRouter();
 
   useEffect(() => {
     const canvas: HTMLCanvasElement | null = canvasRef.current;
@@ -141,6 +143,15 @@ export default function Catch() {
   const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
   const eraseWidth = [[20,'얇게'], [45,'중간'], [70,'굵게']]
 
+  const leaveGame = () => {
+    if(confirm("게임을 나가시겠습니까?")){
+      socket.emit('end_game',{
+        room_id : userInfo.id,
+      });
+      router.push('/gameSelect');
+    }
+  }
+
   return(<>
         <div className="canvasContainer">
           <div className="ButtonContainer">
@@ -161,6 +172,7 @@ export default function Catch() {
           <div className='canvasDiv'>
             <canvas ref={canvasRef} height={windowSize.height} width={windowSize.width} className="canvas"/>
           </div>
+          <Button onClick={()=>{leaveGame()}}>나가기</Button>
         </div>
         <style jsx>{`
         .canvasContainer {
