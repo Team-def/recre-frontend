@@ -1,21 +1,9 @@
 "use client";
-import { io } from "socket.io-client";
+
+import { socket } from "../modules/socket";
 import Button from '@mui/material/Button';
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-declare module "socket.io-client" {
-    
-    interface Socket {
-        sessionID?: string;
-        userID?: string;
-    }
-}
-
-const socket = io("http://treepark.shop:8000",{
-                withCredentials: true,
-                transports: ["websocket"]});
-
 
 export default function Player() {
     const router = useRouter();
@@ -40,13 +28,6 @@ export default function Player() {
             console.log(socket.connected);
         });
 
-        socket.on("session", ({sessionID, userID}) => {
-            console.log(sessionID);
-            console.log(userID);
-            socket.auth = { sessionID };
-            localStorage.setItem("sessionID", sessionID);
-            socket.userID = userID;
-        });
     });
 
     const readyToPlay = () => {
