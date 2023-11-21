@@ -94,8 +94,7 @@ export default function Player() {
                     value={playerNickname??''} 
                     onChange={(e)=>setPlayerNickname(e.target.value)}
                     disabled={ready}></input><br></br>
-                <Button className="nickname-change" onClick={readyToPlay} disabled={ready}>{ready?"잠시 기다려주세요!":"준비!"}</Button>
-                <Button className="nickname-change" onClick={cancleReady} >준비 취소</Button>
+                <Button className="nickname-change" onClick={ready?cancleReady:readyToPlay}>{ready?"준비 취소!":"준비!"}</Button>
             </div>
             </>}            </>
     )
