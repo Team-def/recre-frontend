@@ -31,7 +31,6 @@ export default function CatchAnswer() {
 
     return (
         <>
-
         {isLogin? <><label>정답입력</label>
                 <input
                     type="text"
