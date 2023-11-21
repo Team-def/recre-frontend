@@ -1,21 +1,12 @@
 "use client";
-import { io } from "socket.io-client";
 import Button from '@mui/material/Button';
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useState } from "react";
 import { userInfoAtoms } from "../modules/userInfoAtom";
 import { useAtom } from "jotai";
-import CatchPlayer from "../playerComponent/catchPlayer";
+import CatchPlayer from '../playerComponent/catchPlayer';
 import { socket } from "../modules/socket";
-
-declare module "socket.io-client" {
-    
-    interface Socket {
-        sessionID?: string;
-        userID?: string;
-    }
-}
 
 
 export default function Player() {
@@ -23,10 +14,10 @@ export default function Player() {
     const room_id = params.get('id');
     const router = useRouter();
     //query string에서 hostId를 가져옴
-    const [playerNickname, setPlayerNickname] = useState<string>('');
+    const [playerNickname, setPlayerNickname] = useState<string|null>(null);
     const [userInfo, ] = useAtom(userInfoAtoms);
     const [ready, setReady] = useState<boolean>(false);
-    const [playerComponent, setPlayerComponent] = useState<JSX.Element | null>(null);
+    const [isGame, setIsGame] = useState<boolean>(false);
 
     useEffect(() => {
         if (room_id === null) {
@@ -34,50 +25,50 @@ export default function Player() {
             router.push("/");
         }
 
-        socket.on("ready", (res)=>{
-            if(res.result === true){
-                setReady(true)
-            } else{
-                alert(res.message)
-            }
-        });
+        // socket.on("ready", (res)=>{
+        //     if(res.result === true){
+        //         setReady(true)
+        //     } else{
+        //         alert(res.message)
+        //     }
+        // });
 
         socket.on("start_catch_game", (res)=>{
             if(res.result === true){
-                setPlayerComponent(<CatchPlayer/>)
+                setIsGame(true)
             } else{
                 alert(res.message)
             }
         })
-
-        setPlayerComponent(<ReadyComponent/>)
     });
+    
+    const readyToPlay = () => {
+        if(playerNickname === null || playerNickname === ''){
+            alert('닉네임을 입력해주세요.')
+            return
+        }
+        setReady(true)
+        socket.emit("ready", { 
+            room_id: room_id,
+            nickname: playerNickname
+        });
+    };
 
 
-    const ReadyComponent = () => {
-        const readyToPlay = () => {
-            socket.emit("ready", { 
-                room_id: room_id,
-                nickname: userInfo.nickname
-            });
-        };
-        return (
+    return (
+        <>{isGame?
+            <CatchPlayer roomId={room_id as string}/>:
             <>
             <div className="nickname-container">
                 <label className="nickname-label">닉네임: </label>
                 <input 
                     type="text" 
                     className="nickname-input"
-                    value={playerNickname} 
+                    value={playerNickname??''} 
                     onChange={(e)=>setPlayerNickname(e.target.value)}
-                    autoFocus></input><br></br>
+                    disabled={ready}></input><br></br>
                 <Button className="nickname-change" onClick={readyToPlay} disabled={ready}>{ready?"Waiting":"Ready!"}</Button>
             </div>
-            </>
-        )
-    }
-
-    return (
-        <>{playerComponent}</>
+            </>}            </>
     )
 }

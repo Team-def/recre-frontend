@@ -50,6 +50,7 @@ export default function Home() {
       console.log(1)
       setUserInfo(response.data)
       setIsLogin(true)
+      checkIsHostPhone()
     })
       .catch((res) => {
         console.log(res)
@@ -104,6 +105,14 @@ export default function Home() {
         setGame(["",null])
         router.push("/")
       })
+  }
+
+  const checkIsHostPhone = () => {
+    let isHostPhone = localStorage.getItem('isHostPhone');
+    if(isHostPhone === 'true'){
+      localStorage.removeItem('isHostPhone');
+      router.push("/catchAnswer");
+    }
   }
 
 

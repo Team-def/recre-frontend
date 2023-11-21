@@ -7,6 +7,7 @@ import { userInfoAtoms } from '../modules/userInfoAtom';
 import InputAdornment from '@mui/material/InputAdornment';
 import axios from 'axios';
 import { myApi } from '../modules/backApi';
+import Image from 'next/image';
 
 export default function Profile() {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
