@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useRef, useState, useCallback, useEffect, use } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
