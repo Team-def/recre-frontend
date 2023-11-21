@@ -19,9 +19,7 @@ export default function CatchAnswer() {
     const [isLogin,] = useAtom(loginAtom);
 
     useEffect(()=>{
-        if(localStorage.getItem('isHostPhone') !== 'true'){
-            localStorage.setItem('isHostPhone','true')
-        }
+        localStorage.setItem('isHostPhone','true')
     },[])
 
 

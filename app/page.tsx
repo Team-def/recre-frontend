@@ -110,7 +110,6 @@ export default function Home() {
   const checkIsHostPhone = () => {
     let isHostPhone = localStorage.getItem('isHostPhone');
     if(isHostPhone === 'true'){
-      localStorage.removeItem('isHostPhone');
       router.push("/catchAnswer");
     }
   }
