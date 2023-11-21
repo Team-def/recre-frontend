@@ -31,7 +31,7 @@ export default function OauthButtons() {
         <Image src={"/oauth/naver_login.png"} alt={"네이버 로그인 이미지"} sizes="100vw" width={0} height={0} className={oauthButtonsStyle.img} onClick={(e)=>loginWithOauth('naver')}/>
         <div className={[oauthButtonsStyle.google_btn, oauthButtonsStyle.img].join(" ")} onClick={(e)=>loginWithOauth('google')}>
             <div className={oauthButtonsStyle.google_icon_wrapper}>
-                <img className={oauthButtonsStyle.google_icon_svg} src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+                <img className={oauthButtonsStyle.google_icon_svg} src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" />
             </div>
             <p className={oauthButtonsStyle.btn_text}><b>구글 로그인</b></p>
         </div>
