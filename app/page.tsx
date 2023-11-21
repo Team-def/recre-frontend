@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { myApi } from './modules/backApi';
 import { gameAtoms } from './modules/gameAtoms';
+import { loginTryNumAtom } from './modules/loginTryNumAtom';
 
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
   const [token, setToken] = useAtom(tokenAtoms);
   const [, setUserInfo] = useAtom(userInfoAtoms);
   const [, setGame] = useAtom(gameAtoms);
+  const [loginTryNum, setLoginTryNum] = useAtom(loginTryNumAtom);
   const router = useRouter();
   const cookies = useCookies();
 
@@ -27,7 +29,13 @@ export default function Home() {
     const acc_token : string = localStorage.getItem('token')??''
     console.log(0)
     console.log(acc_token)
-    checkLogin(acc_token)
+    if(loginTryNum > 10){
+      alert('로그인 할 수 없습니다. 관리자에게 문의하세요.')
+    }
+    else {
+      setLoginTryNum((loginTryNum) =>{return loginTryNum + 1});
+      checkLogin(acc_token)
+    }
   }, []);
 
   const selectGame = () => {
