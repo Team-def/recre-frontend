@@ -77,29 +77,33 @@ export default function QR() {
 
         socket.current.on('player_list_add', (res)=>{
             console.log(res)
-            let recieved_people = res.player_cnt
-            setNowPeople(recieved_people)
-            socket.current.emit('player_list_add_check', {
-                cur_num : recieved_people,
-        })
+            setNowPeople(res.player_cnt)
         });
 
         socket.current.on('player_list_remove', (res)=>{
             console.log(res)
-            let recieved_people = res.player_cnt
-            setNowPeople(recieved_people)
-            socket.current.emit('player_list_add_check', {
-                cur_num : recieved_people,
-        })
+            setNowPeople(res.player_cnt)
         });
 
+        // socket.current.on('player_list_add', (res)=>{
+        //     console.log(res)
+        //     let recieved_people = res.player_cnt
+        //     setNowPeople(recieved_people)
+        //     socket.current.emit('player_list_add_check', {
+        //         cur_num : recieved_people,
+        // })
+        // });
+
+        // socket.current.on('player_list_remove', (res)=>{
+        //     console.log(res)
+        //     let recieved_people = res.player_cnt
+        //     setNowPeople(recieved_people)
+        //     socket.current.emit('player_list_add_check', {
+        //         cur_num : recieved_people,
+        // })
+
         return () => {
-            socket.current.emit('end_game',{
-                room_id : userInfo.id,
-             });
-             socket.current.emit('leave_game',{
-            });
-            // handleBeforeUnload()
+            handleBeforeUnload()
           };
     }, []);
     

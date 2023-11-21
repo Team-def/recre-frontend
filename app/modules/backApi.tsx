@@ -1,1 +1,1 @@
-export const myApi = 'http://chltm.mooo.com:3004'
+export const myApi = 'http://chltm.mooo.com:3002'
