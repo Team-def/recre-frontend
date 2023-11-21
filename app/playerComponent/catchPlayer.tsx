@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
-import { socket } from "../modules/socket"
 import { useState } from "react";
+import { Socket } from "socket.io-client";
 
-export default function CatchPlayer({roomId} : {roomId : string}) {
+export default function CatchPlayer({roomId, socket} : {roomId : string, socket : Socket}) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
 
     const leave_game = () => {

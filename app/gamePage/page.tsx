@@ -2,16 +2,18 @@
 import Button from '@mui/material/Button';
 import Image from 'next/image';
 import { gameAtoms } from "@/app/modules/gameAtoms";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
 import MyModal from '@/component/MyModal';
 import Catch from '../catch/page';
-import { socket } from '../modules/socket';
 import { tokenAtoms } from '@/app/modules/tokenAtoms';
 import { answerAtom } from '../modules/answerAtom';
 import { userInfoAtoms } from '../modules/userInfoAtom';
+import { io } from "socket.io-client";
+import {v4 as uuidv4} from 'uuid';
+import { socketApi } from '../modules/socketApi';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -22,9 +24,14 @@ export default function QR() {
     const router = useRouter();
     const [open, setOpen] = useState(true);
     const [gameContent, setGameContent] = useState<JSX.Element>();
-    const [uuid, setUuid] = useState<string>('');
     const [token,] = useAtom(tokenAtoms);
     const [answer,setAnswer] = useAtom(answerAtom);
+    const [uuId,] = useState<string>(uuidv4());
+    const socket = useRef(io(`${socketApi}?uuId=${uuId}`,{
+        withCredentials: true,
+        transports: ["websocket"],
+        autoConnect: false,
+    }));
 
     useEffect(() => {
         if (!isLogin) {
@@ -33,25 +40,27 @@ export default function QR() {
             router.push("/")
         }
 
-        socket.volatile.on("connect", () => {
-            console.log("disconnect_check:", socket.connected);
+        socket.current.connect();
+
+        socket.current.volatile.on("connect", () => {
+            console.log("disconnect_check:", socket.current.connected);
             makeRoom();
         });
 
 
-        socket.volatile.on("disconnect", () => {
-            console.log("disconnect_check:", socket.connected);
+        socket.current.volatile.on("disconnect", () => {
+            console.log("disconnect_check:", socket.current.connected);
         });
 
         if (gameInfo[0] === '그림 맞추기') {
-            setGameContent(<Catch />)
+            setGameContent(<Catch socket={socket.current}/>)
         } else if (gameInfo[0] === '무궁화 꽃이 피었습니다') {
-            setGameContent(<Catch />)
+            setGameContent(<Catch socket={socket.current}/>)
         } else if (gameInfo[0] === '줄넘기') {
-            setGameContent(<Catch />)
+            setGameContent(<Catch socket={socket.current}/>)
         }
 
-        socket.on("start_catch_game", (response) => {
+        socket.current.on("start_catch_game", (response) => {
             console.log(response)
             if(response.result === true)
                 setOpen(false);
@@ -59,22 +68,35 @@ export default function QR() {
                 alert(response.message)
         });
 
-        socket.on('set_catch_answer', (res)=>{
+        socket.current.on('set_catch_answer', (res)=>{
             console.log(res)
             if(res.result === true){
                 setAnswer(res.answer)
         }
         });
 
-        socket.on('player_list_add', (res)=>{
+        socket.current.on('player_list_add', (res)=>{
             console.log(res)
             setNowPeople(res.player_cnt)
         });
 
+        socket.current.on('player_list_remove', (res)=>{
+            console.log(res)
+            setNowPeople(res.player_cnt)
+        });
+
+        return () => {
+            socket.current.emit('end_game',{
+                room_id : userInfo.id,
+             });
+             socket.current.emit('leave_game',{
+            });
+            // handleBeforeUnload()
+          };
     }, []);
     
     const makeRoom = () => {
-        socket.emit('make_room', {
+        socket.current.emit('make_room', {
             game_type: gameInfo[0],
             user_num: gameInfo[1],
             answer: answer,
@@ -87,10 +109,19 @@ export default function QR() {
             alert('먼저 정답을 입력해주세요.')
             return
         }
-        socket.emit('start_catch_game', {
+        socket.current.emit('start_catch_game', {
             access_token: token
         });
     }
+
+    const handleBeforeUnload = () => {
+        socket.current.emit('end_game',{
+            room_id : userInfo.id,
+         });
+         socket.current.emit('leave_game',{
+        });
+
+      };
 
 
     const QRpage = () => {

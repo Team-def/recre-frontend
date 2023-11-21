@@ -191,8 +191,8 @@ export default function GameSelect() {
                 z-index: 1;
             }
             .QR-code{
-                width: 20vw;
-                height: 20vw;
+                width: 15vw;
+                height: 15vw;
                 margin: 20px 0;
                 display: flex;
                 justify-content: center;

@@ -1,0 +1,1 @@
+export const socketApi = 'http://chltm.mooo.com:8080'

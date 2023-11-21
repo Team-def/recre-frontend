@@ -1,12 +1,13 @@
 "use client";
 import Button from '@mui/material/Button';
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useState } from "react";
-import { userInfoAtoms } from "../modules/userInfoAtom";
-import { useAtom } from "jotai";
 import CatchPlayer from '../playerComponent/catchPlayer';
-import { socket } from "../modules/socket";
+import { io } from "socket.io-client";
+import {v4 as uuidv4} from 'uuid';
+import { socketApi } from '../modules/socketApi';
+
 
 
 export default function Player() {
@@ -15,9 +16,14 @@ export default function Player() {
     const router = useRouter();
     //query string에서 hostId를 가져옴
     const [playerNickname, setPlayerNickname] = useState<string|null>(null);
-    const [userInfo, ] = useAtom(userInfoAtoms);
     const [ready, setReady] = useState<boolean>(false);
     const [isGame, setIsGame] = useState<boolean>(false);
+    const [uuId,] = useState<string>(uuidv4());
+    const socket = useRef(io(`${socketApi}?uuId=${uuId}`,{
+        withCredentials: true,
+        transports: ["websocket"],
+        autoConnect: false,
+    }));
 
     useEffect(() => {
         if (room_id === null) {
@@ -25,22 +31,36 @@ export default function Player() {
             router.push("/");
         }
 
-        // socket.on("ready", (res)=>{
-        //     if(res.result === true){
-        //         setReady(true)
-        //     } else{
-        //         alert(res.message)
-        //     }
-        // });
+        socket.current.connect();
 
-        socket.on("start_catch_game", (res)=>{
+        socket.current.on("start_catch_game", (res)=>{
             if(res.result === true){
                 setIsGame(true)
             } else{
                 alert(res.message)
             }
         })
-    });
+
+        socket.current.on("end", (res)=>{
+            if(res.result === true){
+                alert('게임이 종료되었습니다.')
+                //꺼지게
+            }
+        })
+
+        return () => {
+            handleBeforeUnload()
+        };
+    },[]);
+
+    useEffect(() => {
+        alert(12)
+    }, [socket]);
+
+    const handleBeforeUnload = () => {
+         socket.current.emit('leave_game',{
+        });
+      };
     
     const readyToPlay = () => {
         if(playerNickname === null || playerNickname === ''){
@@ -48,7 +68,7 @@ export default function Player() {
             return
         }
         setReady(true)
-        socket.emit("ready", { 
+        socket.current.emit("ready", { 
             room_id: room_id,
             nickname: playerNickname
         });
@@ -57,7 +77,7 @@ export default function Player() {
 
     return (
         <>{isGame?
-            <CatchPlayer roomId={room_id as string}/>:
+            <CatchPlayer roomId={room_id as string} socket={socket.current}/>:
             <>
             <div className="nickname-container">
                 <label className="nickname-label">닉네임: </label>

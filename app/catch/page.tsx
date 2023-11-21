@@ -3,11 +3,11 @@ import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
 import Button from '@mui/material/Button';
-import { socket } from '../modules/socket';
 import { useRouter } from 'next/navigation';
 import MyModal from '@/component/MyModal';
 import IntegrationNotistack from '@/component/snackBar';
 import { answerAtom } from '../modules/answerAtom';
+import { Socket } from 'socket.io-client';
 
 interface recievedAns {
   ans: string;
@@ -20,7 +20,7 @@ interface Coordinate {
   y: number;
 };
 
-export default function Catch() {
+export default function Catch({socket}: {socket : Socket}) {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
@@ -186,12 +186,16 @@ export default function Catch() {
         socket.emit('end_game',{
           room_id : userInfo.id,
         });
+        socket.emit('leave_game',{
+        });
         setAnsAtom(null)
         router.push('/gameSelect');
       }
     } else{
       socket.emit('end_game',{
         room_id : userInfo.id,
+      });
+      socket.emit('leave_game',{
       });
       setAnsAtom(null)
       router.push('/gameSelect');
