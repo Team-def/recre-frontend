@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
@@ -13,6 +13,8 @@ import { useRouter } from "next/navigation";
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -29,9 +31,10 @@ export default function GameSelect() {
     const router = useRouter();
     const [isHovering, setIsHovered] = useState(false);
     const [hoverElement, setHoverElement] = useState('');
+    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
     const gamePageUrl = `http://chltm.mooo.com:27017/catchAnswer`;
 
-    const onMouseEnter = (gameName:string) => {
+    const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
         setHoverElement(gameName);
     }
@@ -47,7 +50,7 @@ export default function GameSelect() {
 
     useEffect(() => {
         if (gameInfo[1] && gameInfo[1] > 0 && gameInfo[0]) {
-            if(gameInfo[1] > 1000){
+            if (gameInfo[1] > 1000) {
                 alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
                 setGameInfo([gameInfo[0], 0])
             }
@@ -60,11 +63,22 @@ export default function GameSelect() {
 
     const handleGameSelect = (game: string) => {
         if (gameInfo[0] === game) {
-            setGameInfo(["",gameInfo[1]]);
+            setGameInfo(["", gameInfo[1]]);
         } else {
-            setGameInfo([game,gameInfo[1]]);
+            setGameInfo([game, gameInfo[1]]);
         }
     };
+
+    const handlePopover = (event: React.MouseEvent<HTMLDivElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
 
     type Game = {
         name: string,
@@ -95,9 +109,9 @@ export default function GameSelect() {
                         {gameList.map((game) => {
                             return (
                                 <Grid className='gameGrid ${}' xs={4} onClick={() => handleGameSelect(game.name)}>
-                                    <div onMouseEnter={()=>onMouseEnter(game.name)}
+                                    <div onMouseEnter={() => onMouseEnter(game.name)}
                                         onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`}><Item>
-                                            <div className={`imageDiv ${isHovering&&hoverElement===game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
+                                            <div className={`imageDiv ${isHovering && hoverElement === game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
                                             <p className='gameTitle'>{game.name}</p>
                                         </Item></div>
                                 </Grid>
@@ -109,28 +123,37 @@ export default function GameSelect() {
             </div>
             <div className='gameInfoDiv'>
                 <div className='input_alert'>
-            <TextField
-                id="outlined-number"
-                label="인원 수"
-                placeholder='인원 수를 입력해주세요'
-                type="number"
-                value={gameInfo[1]}
-                onChange={(e) => setGameInfo([gameInfo[0],parseInt(e.target.value)])}
-                InputLabelProps={{
-                    shrink: true,
-                }}
-            />{gameInfo[0]==='그림 맞추기'?
-            <Alert severity="info">
-  <AlertTitle>정답을 입력해주세요</AlertTitle>
-  호스트는 QR을 찍고 문제의 정답을 입력해 주세요. <br></br><strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
-</Alert>:<></>}
-</div>
-            {gameInfo[0]==='그림 맞추기'?
-            <div className='QR-code'>
-                        <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
-                    </div>
-            :<></>}</div>
-            <Button onClick={()=>router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+                    <TextField
+                        id="outlined-number"
+                        label="인원 수"
+                        placeholder='인원 수를 입력해주세요'
+                        type="number"
+                        value={gameInfo[1]}
+                        onChange={(e) => setGameInfo([gameInfo[0], parseInt(e.target.value)])}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />{gameInfo[0] === '그림 맞추기' ?
+                        <><div className='alertSt'><Alert severity="info" onClick={handlePopover}>
+                            <AlertTitle>정답을 입력해주세요</AlertTitle>
+                            호스트는 QR을 찍고 문제의 정답을 입력해 주세요. <br></br><strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
+                        </Alert><Popover
+                            id={id}
+                            open={open}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                        >
+                                <div className='QR-code'>
+                                    <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
+                                </div>
+                            </Popover></div></> : <></>}
+                </div>
+            </div>
+            <Button onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
             .gameSelectContainer{
@@ -191,8 +214,8 @@ export default function GameSelect() {
                 z-index: 1;
             }
             .QR-code{
-                width: 15vw;
-                height: 15vw;
+                width: 17vw;
+                height: 17vw;
                 margin: 20px 0;
                 display: flex;
                 justify-content: center;
@@ -211,6 +234,14 @@ export default function GameSelect() {
                 flex-direction: column; 
                 align-items: center;
                 justify-content: space-evenly;
+                gap: 20px;
+            }
+            .alertSt{
+                cursor: pointer;
+                border: 1px solid transparent;
+            }
+            .alertSt:hover{
+                border: 1px solid blue;
             }
         `}</style>
     </>

@@ -19,7 +19,6 @@ export default function CatchAnswer() {
     const [token,] = useAtom(tokenAtoms);
     const [,setAnswer] = useAtom(answerAtom);
     const [isLogin,] = useAtom(loginAtom);
-    const [inpUnAvailable, setInpUnAvailable] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
     const socket = useRef(io(`${socketApi}?uuId=${uuId}`,{
         withCredentials: true,
@@ -32,26 +31,19 @@ export default function CatchAnswer() {
 
         socket.current.on("set_catch_answer", (res)=>{
             if(res.result === true){
+                socket.current.disconnect()
                 alert('정답이 설정되었습니다.')
-                setInpUnAvailable(true)
+                if (window.opener && window.opener !== window) {
+                    window.opener.location.reload(); // Reload the parent window
+                    window.close(); // Close the current window
+                } else {
+                    window.location.href = 'about:blank'; // Navigate to a blank page
+                }
             } else{
                 alert('아직 방이 안 만들어졌습니다.')
             }
         });
-
-        socket.current.on("disconnect", ()=>{
-                alert('게임이 종료되었습니다.')
-                setInpUnAvailable(false)
-        })
-
-        return () => {
-            handleBeforeUnload()
-        };
     },[])
-
-    const handleBeforeUnload = () => {
-        socket.current.disconnect()
-     };
 
 
     const handleAnswerSubmit = () => {
@@ -68,9 +60,8 @@ export default function CatchAnswer() {
                     type="text"
                     className="catchAnswer-input"
                     value={catchAnswer}
-                    onChange={(e) => setCatchAnswer(e.target.value)}
-                    disabled={inpUnAvailable}></input>
-                <Button onClick={handleAnswerSubmit} disabled={inpUnAvailable}>제출</Button></>:<OauthButtons/>}
+                    onChange={(e) => setCatchAnswer(e.target.value)}></input>
+                <Button onClick={handleAnswerSubmit}>제출</Button></>:<OauthButtons/>}
         </>
     )
 }

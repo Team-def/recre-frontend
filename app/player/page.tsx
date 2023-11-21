@@ -44,30 +44,32 @@ export default function Player() {
         socket.current.on("end", (res)=>{
             if(res.result === true){
                 alert('게임이 종료되었습니다.')
-                //꺼지게
+                if (window.opener && window.opener !== window) {
+                    window.opener.location.reload(); // Reload the parent window
+                    window.close(); // Close the current window
+                } else {
+                    window.location.href = 'about:blank'; // Navigate to a blank page
+                }
             }
         })
 
-        return () => {
-            handleBeforeUnload()
-        };
+        socket.current.on("ready", (res) => {
+            if(res.result === true){
+                alert('ready')
+                setReady(true)
+            }
+            else{
+                alert(res.message)
+            }
+        })
+
     },[]);
-
-    useEffect(() => {
-        alert(12)
-    }, [socket]);
-
-    const handleBeforeUnload = () => {
-         socket.current.emit('leave_game',{
-        });
-      };
     
     const readyToPlay = () => {
         if(playerNickname === null || playerNickname === ''){
             alert('닉네임을 입력해주세요.')
             return
         }
-        setReady(true)
         socket.current.emit("ready", { 
             room_id: room_id,
             nickname: playerNickname

@@ -70,6 +70,7 @@ export default function Header() {
         cookies.remove('refresh_token')
         setIsLogin(false);
         setGame(["",null])
+        localStorage.removeItem('isHostPhone')
         alert("로그아웃 되었습니다.");
         router.push("/");
     }
