@@ -14,17 +14,17 @@ import { answerAtom } from '../modules/answerAtom';
 import { userInfoAtoms } from '../modules/userInfoAtom';
 
 export default function QR() {
-    const [nowPeople, setNowPeople] = useState(2);
+    const [nowPeople, setNowPeople] = useState(0);
     const [gameInfo,] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
-    const gamePageUrl = `http://chltm.mooo.com:27017/player?id=${userInfo}`;
+    const gamePageUrl = `http://chltm.mooo.com:27017/player?id=${userInfo.id}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     const [open, setOpen] = useState(true);
     const [gameContent, setGameContent] = useState<JSX.Element>();
     const [uuid, setUuid] = useState<string>('');
     const [token,] = useAtom(tokenAtoms);
-    const [answer,] = useAtom(answerAtom);
+    const [answer,setAnswer] = useAtom(answerAtom);
 
     useEffect(() => {
         if (!isLogin) {
@@ -35,6 +35,7 @@ export default function QR() {
 
         socket.volatile.on("connect", () => {
             console.log("disconnect_check:", socket.connected);
+            makeRoom();
         });
 
 
@@ -51,7 +52,6 @@ export default function QR() {
         }
 
         socket.on("start_catch_game", (response) => {
-
             console.log(response)
             if(response.result === true)
                 setOpen(false);
@@ -59,25 +59,21 @@ export default function QR() {
                 alert(response.message)
         });
 
-        socket.on("make_room", (response) => {
-            if(response.result === true)
-                startGame()
+        socket.on('set_catch_answer', (res)=>{
+            console.log(res)
+            if(res.result === true){
+                setAnswer(res.answer)
+        }
         });
 
-        socket.emit('make_room', {
-            game_type: gameInfo[0],
-            user_num: gameInfo[1], 
-            answer: answer, 
-            access_token: token
-        })
+        socket.on('player_list_add', (res)=>{
+            console.log(res)
+            setNowPeople(res.player_cnt)
+        });
+
     }, []);
-
-
+    
     const makeRoom = () => {
-        if (!answer) {
-            alert('먼저 정답을 입력해주세요.')
-            return
-        }
         socket.emit('make_room', {
             game_type: gameInfo[0],
             user_num: gameInfo[1],
@@ -87,6 +83,10 @@ export default function QR() {
     }
 
     const startGame = () => {
+        if (!answer) {
+            alert('먼저 정답을 입력해주세요.')
+            return
+        }
         socket.emit('start_catch_game', {
             access_token: token
         });
@@ -110,7 +110,7 @@ export default function QR() {
 
 
                     <div className='gameInfo-start-button'>
-                        <Button disabled={nowPeople === 0} onClick={makeRoom}>게임 시작</Button>
+                        <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
                     </div>
                 </div>
                 <style jsx>{`
