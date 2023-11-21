@@ -10,6 +10,7 @@ import { myApi } from '../modules/backApi';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import { loginAtom } from '../modules/loginAtoms';
+import { ModalProps } from '@/component/MyModal';
 
 
 export default function Profile() {
@@ -44,36 +45,39 @@ export default function Profile() {
     // const [newNickname, setNewNickname] = useState<string | null>(null);
 
     // //DB에 PUT(PATCH?) 요청을 보내는 닉네임 변경 함수 (임시로 작성함)
-    // const handleNicknameChange =  async() => {
-    //     if (newNickname === null) {
-    //         alert("변경할 닉네임을 입력해주세요.");
-    //         return;
-    //     } else if (newNickname === currentNickname) {
-    //         alert("기존 닉네임과 동일합니다.");
-    //         return;
-    //     } else if (currentNickname) {
-    //         try {
-    //             const response = await axios.put("${myApi}/user/change", {
-    //                 nickname: newNickname,
-    //             }, {
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     "Accept": "application/json",
-    //                     withCredentials: true
-    //                 }
-    //             });
+    const changeNick =  async() => {
+        if (nick === null) {
+            alert("변경할 닉네임을 입력해주세요.");
+            return;
+        } else if (nick === userInfo.nickname) {
+            alert("기존 닉네임과 동일합니다.");
+            return;
+        } else if (nick) {
+            try {
+                const response = await axios.put(`${myApi}/user/`, {
+                    nickname: nick,
+                    email: userInfo.email
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Authorization": localStorage.getItem('access_token')?.replace(/\"/gi, ''),
+                        withCredentials: true
+                    }
+                });
 
-    //             if (response.status === 200) {
-    //                 alert("닉네임이 변경되었습니다.");
-    //                 setNickname(newNickname);
-    //             }
-    //         } catch (err) {
-    //             console.log(err);
-    //         }
+                if (response.status === 200) {
+                    alert("닉네임이 변경되었습니다.");
+                    setNick(nick);
+                    router.push('/');
+                }
+            } catch (err) {
+                console.log(err);
+            }
 
-    //     }
+        }
 
-    // }
+    }
     // //DB에 DELETE 요청을 보내는 회원탈퇴 함수 (임시로 작성함)
     // const handleWithdrawal = async () => {
     //     if (currentNickname) {
@@ -136,7 +140,7 @@ export default function Profile() {
                 InputProps={{
                     startAdornment: <InputAdornment position="start">닉네임</InputAdornment>,
                   }} onChange={(e)=>setNick(e.target.value)} placeholder={userInfo.nickname}/> 
-                {nickChange?<><Button className='editBtn'>변경</Button><Button onClick={cancleEditNick}>취소</Button></>:<Button onClick={()=>setNickChange(!nickChange)}>변경</Button>}</div>
+                {nickChange?<><Button className='editBtn' onClick={changeNick}>변경</Button><Button onClick={cancleEditNick}>취소</Button></>:<Button onClick={()=>setNickChange(!nickChange)}>변경</Button>}</div>
             </Box>
             <Box
                 component="form"
