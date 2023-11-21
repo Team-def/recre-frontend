@@ -77,12 +77,20 @@ export default function QR() {
 
         socket.current.on('player_list_add', (res)=>{
             console.log(res)
-            setNowPeople(res.player_cnt)
+            let recieved_people = res.player_cnt
+            setNowPeople(recieved_people)
+            socket.current.emit('player_list_add_check', {
+                cur_num : recieved_people,
+        })
         });
 
         socket.current.on('player_list_remove', (res)=>{
             console.log(res)
-            setNowPeople(res.player_cnt)
+            let recieved_people = res.player_cnt
+            setNowPeople(recieved_people)
+            socket.current.emit('player_list_add_check', {
+                cur_num : recieved_people,
+        })
         });
 
         return () => {
