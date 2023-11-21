@@ -10,7 +10,6 @@ import { myApi } from '../modules/backApi';
 import { useRouter } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 import { loginAtom } from '../modules/loginAtoms';
-import { ModalProps } from '@/component/MyModal';
 
 
 export default function Profile() {

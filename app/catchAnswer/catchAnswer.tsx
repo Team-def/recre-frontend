@@ -1,25 +1,22 @@
+"use client"
 import Button from '@mui/material/Button';
-import io from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from "@/app/modules/userInfoAtom";
+import { socket } from '../modules/socket';
+import OauthButtons from '@/component/OauthButtons';
+import { loginAtom } from '../modules/loginAtoms';
 
-//server와 front가 같은 domain인 경우
-//다른 경우 수정해야 함!
-
-const socket = io();
 
 export default function CatchAnswer() {
     const [userInfo,] = useAtom(userInfoAtoms);
     const [catchAnswer, setCatchAnswer] = useState<string>('');
+    const [isLogin,] = useAtom(loginAtom);
 
-    useEffect(() => {
-        socket.on("connect", () => {
-            console.log(socket.id);
-            console.log(socket.connected);
-        });
-    }
-    , []);
+    useEffect(()=>{
+        localStorage.setItem('isHostPhone','true')
+    },[])
+
 
     const handleAnswerSubmit = () => {
         socket.emit("hostId-submit", { nickname: userInfo.nickname });
@@ -28,13 +25,14 @@ export default function CatchAnswer() {
 
     return (
         <>
-        <label>정답입력</label>
-        <input 
-            type="text"
-            className="catchAnswer-input"
-            value={catchAnswer}
-            onChange={(e)=>setCatchAnswer(e.target.value)}></input>
-        <Button onClick={ handleAnswerSubmit }>제출</Button>
+
+        {isLogin? <><label>정답입력</label>
+                <input
+                    type="text"
+                    className="catchAnswer-input"
+                    value={catchAnswer}
+                    onChange={(e) => setCatchAnswer(e.target.value)}></input>
+                <Button onClick={handleAnswerSubmit}>제출</Button></>:<OauthButtons/>}
         </>
     )
 }

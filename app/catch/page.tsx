@@ -43,8 +43,6 @@ export default function Catch() {
   });
   const [, setAnsAtom] = useAtom(answerAtom);
 
-  const [userInfo,] = useAtom(userInfoAtoms)
-
   useEffect(() => {
     
     socket.timeout(5000).on("connect", () => {
