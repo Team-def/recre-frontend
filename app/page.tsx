@@ -26,7 +26,7 @@ export default function Home() {
   useEffect(() => {
     if(!cookies.get('refresh_token'))
       return
-    const acc_token : string = localStorage.getItem('token')??''
+    const acc_token : string = localStorage.getItem('access_token')??''
     console.log(0)
     console.log(acc_token)
     if(loginTryNum > 10){
