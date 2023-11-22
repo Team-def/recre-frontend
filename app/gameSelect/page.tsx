@@ -11,10 +11,6 @@ import { loginAtom } from "@/app/modules/loginAtoms";
 import { gameAtoms } from '../modules/gameAtoms';
 import { useRouter } from "next/navigation";
 import TextField from '@mui/material/TextField';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -31,8 +27,6 @@ export default function GameSelect() {
     const router = useRouter();
     const [isHovering, setIsHovered] = useState(false);
     const [hoverElement, setHoverElement] = useState('');
-    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-    const gamePageUrl = `http://chltm.mooo.com:27017/catchAnswer`;
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -68,17 +62,6 @@ export default function GameSelect() {
             setGameInfo([game, gameInfo[1]]);
         }
     };
-
-    const handlePopover = (event: React.MouseEvent<HTMLDivElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
 
     type Game = {
         name: string,
@@ -133,24 +116,7 @@ export default function GameSelect() {
                         InputLabelProps={{
                             shrink: true,
                         }}
-                    />{gameInfo[0] === '그림 맞추기' ?
-                        <><div className='alertSt'><Alert severity="info" onClick={handlePopover}>
-                            <AlertTitle>정답을 입력해주세요</AlertTitle>
-                            호스트는 QR을 찍고 문제의 정답을 입력해 주세요. <br></br><strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
-                        </Alert><Popover
-                            id={id}
-                            open={open}
-                            anchorEl={anchorEl}
-                            onClose={handleClose}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                        >
-                                <div className='QR-code'>
-                                    <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
-                                </div>
-                            </Popover></div></> : <></>}
+                    />
                 </div>
             </div>
             <Button onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
@@ -213,15 +179,6 @@ export default function GameSelect() {
                 top: 0;
                 z-index: 1;
             }
-            .QR-code{
-                width: 17vw;
-                height: 17vw;
-                margin: 20px 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-            }
             .gameInfoDiv{
                 width: 70%;
                 display: flex;  
@@ -235,13 +192,6 @@ export default function GameSelect() {
                 align-items: center;
                 justify-content: space-evenly;
                 gap: 20px;
-            }
-            .alertSt{
-                cursor: pointer;
-                border: 1px solid transparent;
-            }
-            .alertSt:hover{
-                border: 1px solid blue;
             }
         `}</style>
     </>

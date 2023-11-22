@@ -14,6 +14,11 @@ import { userInfoAtoms } from '../modules/userInfoAtom';
 import { io } from "socket.io-client";
 import {v4 as uuidv4} from 'uuid';
 import { socketApi } from '../modules/socketApi';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import { access } from 'fs';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -32,6 +37,8 @@ export default function QR() {
         transports: ["websocket"],
         autoConnect: false,
     }));
+    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+    const gamePageUrlAns = `http://chltm.mooo.com:27017/catchAnswer`;
 
     useEffect(() => {
         if (!isLogin) {
@@ -44,7 +51,7 @@ export default function QR() {
 
         socket.current.volatile.on("connect", () => {
             console.log("disconnect_check:", socket.current.connected);
-            makeRoom();
+            makeRoom(localStorage.getItem('access_token')??'' as string);
         });
 
 
@@ -107,12 +114,12 @@ export default function QR() {
           };
     }, []);
     
-    const makeRoom = () => {
+    const makeRoom = (acc_token :string) => {
         socket.current.emit('make_room', {
             game_type: gameInfo[0],
             user_num: gameInfo[1],
             answer: answer,
-            access_token: token
+            access_token: acc_token
         })
     }
 
@@ -135,20 +142,50 @@ export default function QR() {
 
       };
 
+    
+      const handlePopover = (event: React.MouseEvent<HTMLDivElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const openPopover = Boolean(anchorEl);
+    const id = openPopover ? 'simple-popover' : undefined;
+
 
     const QRpage = () => {
         return (
             <>
                 <div className='qrPageCon'>
                     <h2>{gameInfo[0]}</h2>
+                    {gameInfo[0] === '그림 맞추기' ?
+                        <div className='alertSt'><Alert severity="info" onClick={handlePopover}>
+                            <AlertTitle>정답을 입력해주세요</AlertTitle>
+                            호스트는 이 창을 클릭하여 QR을 찍고 문제의 정답을 입력해 주세요. <strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
+                        </Alert><Popover
+                            id={id}
+                            open={openPopover}
+                            anchorEl={anchorEl}
+                            onClose={handleClose}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                        >
+                                <div className='QR-code-ans'>
+                                    <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrlAns}`} alt="QR" layout='fill' unoptimized={true} />
+                                </div>
+                            </Popover></div> : <></>}
                     <div className='QR-code'>
                         <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
                     </div>
                     <div className='online-number'>
-                        <label>
-                            <Image className="icon" src="/pngegg.png" alt="people" width={20} height={20} />
+                        <label className="icon">
+                            <Image src="/pngegg.png" alt="people" width={20} height={20} />
                         </label>
-                        <p>{nowPeople} / {gameInfo[1]} 명</p>
+                        <h3>{nowPeople} / {gameInfo[1]} 명</h3>
                     </div>
 
 
@@ -158,7 +195,6 @@ export default function QR() {
                 </div>
                 <style jsx>{`
             .qrPageCon{
-                height: 70vh;
                 display: flex;
                 justify-content: space-evenly;
                 align-items: center;
@@ -172,6 +208,7 @@ export default function QR() {
                 justify-content: center;
                 align-items: center;
                 position: relative;
+                margin-bottom: 10px;
             }
             .headers{
                 display: flex;
@@ -180,10 +217,30 @@ export default function QR() {
                 flex-direction: column;
             }
             .online-number{
-                width: 250px;
                 display: flex;
                 align-items: center;
                 justify-content: space-evenly;
+                gap: 10px;
+            }
+            .alertSt{
+                cursor: pointer;
+                border: 1px solid transparent;
+                margin-bottom: 15px;
+            }
+            .alertSt:hover{
+                border: 1px solid blue;
+            }
+            .QR-code-ans{
+                width: 10vw;
+                height: 10vw;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+            .icon{
+                position: relative; 
+                top: 3px;
             }
         `}</style>
             </>
