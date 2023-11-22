@@ -105,8 +105,6 @@ export default function Catch({socket}: {socket : Socket}) {
       context.closePath();
 
       context.stroke();
-
-      console.log(context)
     }
   };
 
