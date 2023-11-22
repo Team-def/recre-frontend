@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 
 export default function CatchPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
-
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
     const leave_game = () => {
         if (confirm('게임을 나가시겠습니까?')) {
             socket.emit("leave_game", {
@@ -24,6 +24,9 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             room_id: roomId,
             ans: playerAnswer,
         })
+        setPlayerAnswer("");
+        setButtonDisabled(true);
+        setTimeout(()=>setButtonDisabled(false), 3000);
     }
 
     const canvasRef = useRef<HTMLCanvasElement>(null);

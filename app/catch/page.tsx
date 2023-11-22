@@ -71,18 +71,6 @@ export default function Catch({socket}: {socket : Socket}) {
       }
     }); 
   }, []);
-
-
-  useEffect(() => {
-    console.log(size)
-    if (canvasRef.current) {
-      canvasRef.current.style.width = '100%';
-      canvasRef.current.style.height = '100%';
-      canvasRef.current.width = canvasRef.current.offsetWidth;
-      canvasRef.current.height = canvasRef.current.offsetHeight;
-      setWindowSize({width: canvasRef.current.offsetWidth, height: canvasRef.current.offsetHeight});
-    }
-  }, [size]);
   
 
   // 좌표 얻는 함수
@@ -117,6 +105,8 @@ export default function Catch({socket}: {socket : Socket}) {
       context.closePath();
 
       context.stroke();
+
+      console.log(context)
     }
   };
 
@@ -338,9 +328,12 @@ export default function Catch({socket}: {socket : Socket}) {
           justify-content: center;
           align-items: center;
         }
+        .snack-bar{
+          width: 200%;
+          height: 200%;
+        }
         `}</style>
         </>
       );
 };
 
-// QR 페이지의 하위 컴포넌트로 게임들을 가각 불러오게.
