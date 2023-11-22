@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 
 export default function CatchPlayer({roomId, socket} : {roomId : string, socket : Socket}) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
-
+    const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
     const leave_game = () => {
         if(confirm('게임을 나가시겠습니까?')){
             socket.emit("leave_game", {
@@ -24,6 +24,7 @@ export default function CatchPlayer({roomId, socket} : {roomId : string, socket 
             ans: playerAnswer,
         })
         setPlayerAnswer("");
+        setTimeout(()=>setButtonDisabled(true), 3000);
     }
 
     return (<>
@@ -33,6 +34,6 @@ export default function CatchPlayer({roomId, socket} : {roomId : string, socket 
                     className="catch-answer-input"
                     value={playerAnswer} 
                     onChange={(e)=>setPlayerAnswer(e.target.value)}></input>
-                <Button className="throw-answer" onClick={throwCatchAnswer} >제출</Button>
+                <Button className="throw-answer" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '제출중' : '제출'} </Button>
         <Button onClick={leave_game}>leave game</Button></>)
 }
