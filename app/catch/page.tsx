@@ -372,4 +372,3 @@ export default function Catch({socket}: {socket : Socket}) {
       );
 };
 
-// QR 페이지의 하위 컴포넌트로 게임들을 가각 불러오게.
