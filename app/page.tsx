@@ -29,13 +29,7 @@ export default function Home() {
     const acc_token : string = localStorage.getItem('access_token')??''
     console.log(0)
     console.log(acc_token)
-    if(loginTryNum > 10){
-      alert('로그인 할 수 없습니다. 관리자에게 문의하세요.')
-    }
-    else {
-      setLoginTryNum((loginTryNum) =>{return loginTryNum + 1});
       checkLogin(acc_token)
-    }
   }, []);
 
   const selectGame = () => {
@@ -64,7 +58,13 @@ export default function Home() {
         console.log(res)
         console.log(2)
         if (res.response['status'] == 410 || res.response['status'] == 401) {
-          sendRefresh()
+          if(loginTryNum > 10){
+            alert('로그인 할 수 없습니다. 관리자에게 문의하세요.')
+          }
+          else {
+            setLoginTryNum((loginTryNum) =>{return loginTryNum + 1});
+            sendRefresh()
+          }
         }
         else {
           alert(res)
