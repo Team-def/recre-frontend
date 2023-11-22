@@ -133,19 +133,19 @@ export default function Catch({socket}: {socket : Socket}) {
   );
 
   const exitPaint = useCallback(() => {
-    const canvas: HTMLCanvasElement | null = canvasRef.current;
-    if(canvas){
-      const context = canvas.getContext('2d');
+    // const canvas: HTMLCanvasElement | null = canvasRef.current;
+    // if(canvas){
+    //   const context = canvas.getContext('2d');
       setIsPainting(false);
-      context?.beginPath();
-      // 서버에 그림 데이터 및 캔버스 정보 전송
-      const canvasData = {
-        data: context?.getImageData(0, 0, canvas.width, canvas.height).data,
-        width: canvas.width,
-        height: canvas.height,
-      };
-      socket.emit('draw', {canvasData,access_token: localStorage.getItem('access_token')});
-    }
+    //   context?.beginPath();
+    //   // 서버에 그림 데이터 및 캔버스 정보 전송
+    //   const canvasData = {
+    //     data: context?.getImageData(0, 0, canvas.width, canvas.height).data,
+    //     width: canvas.width,
+    //     height: canvas.height,
+    //   };
+    //   socket.emit('draw', canvasData);
+    // }
   }, []);
 
   const clearCanvas = () => {
@@ -180,6 +180,25 @@ export default function Catch({socket}: {socket : Socket}) {
       canvas.removeEventListener('mouseleave', exitPaint);
     };
   }, [startPaint, paint, exitPaint]);
+
+
+  useEffect(() => {
+    console.log(234234)
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+    if (canvas) {
+        const context = canvas.getContext('2d');
+        if (context) {
+          context.beginPath();
+          // 서버에 그림 데이터 및 캔버스 정보 전송
+          const canvasData = {
+            data: context.getImageData(0, 0, canvas.width, canvas.height).data,
+            width: canvas.width,
+            height: canvas.height,
+          };
+          socket.emit('draw', canvasData);
+        }
+    }
+  }, [isPainting]);
 
   const drawColor = ["black", "red", "blue", "green", "#dec549"]
   const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
@@ -237,7 +256,7 @@ export default function Catch({socket}: {socket : Socket}) {
             <div className='eraseBtn'><button onClick={clearCanvas}>전체 지우기</button></div>
           </div>
           <div className='canvasDiv'>
-            <canvas ref={canvasRef} height={windowSize.height} width={windowSize.width} className="canvas"/>
+            <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas"/>
           </div>
           <Button onClick={()=>{leaveGame()}}>나가기</Button>
         </div>
