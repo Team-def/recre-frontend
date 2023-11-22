@@ -87,6 +87,9 @@ export default function Catch({socket}: {socket : Socket}) {
       canvas.style.margin = 'auto'; // 가운데 정렬
     }
 
+    // return () => {
+    // }
+
 
   }, []);
 
@@ -151,6 +154,7 @@ export default function Catch({socket}: {socket : Socket}) {
           drawLine(mousePosition, newMousePosition);
           setMousePosition(newMousePosition);
           socket.emit('draw', {
+            room_id : userInfo.id,
             x : newMousePosition.x,
             y : newMousePosition.y,
             color : isEraser?'white':curColor,
@@ -167,8 +171,6 @@ export default function Catch({socket}: {socket : Socket}) {
   );
 
   const exitPaint = useCallback(() => {
-    socket.emit('drawOut', {
-    });
       setIsPainting(false);
   }, []);
 
@@ -182,6 +184,7 @@ export default function Catch({socket}: {socket : Socket}) {
     if (context) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       socket.emit('clear_draw', {
+        room_id : userInfo.id,
       });
     }
   }
@@ -206,25 +209,6 @@ export default function Catch({socket}: {socket : Socket}) {
       canvas.removeEventListener('mouseleave', exitPaint);
     };
   }, [startPaint, paint, exitPaint]);
-
-
-  useEffect(() => {
-    console.log(234234)
-    const canvas: HTMLCanvasElement | null = canvasRef.current;
-    if (canvas) {
-        const context = canvas.getContext('2d');
-        if (context) {
-          context.beginPath();
-          // 서버에 그림 데이터 및 캔버스 정보 전송
-          const canvasData = {
-            data: context.getImageData(0, 0, canvas.width, canvas.height).data,
-            width: canvas.width,
-            height: canvas.height,
-          };
-          socket.emit('draw', canvasData);
-        }
-    }
-  }, [isPainting]);
 
   const drawColor = ["black", "red", "blue", "green", "#dec549"]
   const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
