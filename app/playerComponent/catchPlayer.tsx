@@ -78,7 +78,8 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
 
         return () => {
             // 컴포넌트가 언마운트될 때 Socket.io 연결 해제
-            socket.disconnect();
+            socket.emit("leave_game", {
+            });
         };
     }, []);
     
@@ -90,7 +91,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             className="catch-answer-input"
             value={playerAnswer}
             onChange={(e) => setPlayerAnswer(e.target.value)}></input>
-        <Button className="throw-answer" onClick={throwCatchAnswer} >제출</Button>
+        <Button className="throw-answer" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '제출중':'제출'}</Button>
         <Button onClick={leave_game}>leave game</Button>
 
         <div>

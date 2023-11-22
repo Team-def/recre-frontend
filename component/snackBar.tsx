@@ -25,9 +25,10 @@ function MySnackBar({isAns, ans, nick} : {isAns : boolean, ans : string, nick : 
 }
 
 export default function IntegrationNotistack(props : {isAns : boolean, ans : string, nick : string}) {
-  return (
+  return (<>
     <SnackbarProvider maxSnack={10} className="snack-bar" >
       <MySnackBar isAns={props.isAns} ans={props.ans} nick={props.nick}/>
     </SnackbarProvider>
+    </>
   );
 }
