@@ -27,7 +27,7 @@ export default function Home() {
     if(!cookies.get('refresh_token'))
       return
     const acc_token : string = localStorage.getItem('access_token')??''
-    console.log(0)
+    console.log("acc_token: ")
     console.log(acc_token)
     if(loginTryNum > 10){
       alert('로그인 할 수 없습니다. 관리자에게 문의하세요.')
@@ -55,14 +55,14 @@ export default function Home() {
         withCredentials: true
       }
     }).then((response) => {
-      console.log(1)
+      console.log("checkLogin")
       setUserInfo(response.data)
       setIsLogin(true)
       checkIsHostPhone()
     })
       .catch((res) => {
         console.log(res)
-        console.log(2)
+        console.log("checkLogin error")
         if (res.response['status'] == 410 || res.response['status'] == 401) {
           sendRefresh()
         }
@@ -93,12 +93,14 @@ export default function Home() {
         withCredentials: true
       }
     }).then((response) => {
-      console.log(3)
+      console.log("sendRefresh")
+      console.log("response.data.access_token: ")
+      console.log(response.data.access_token)
       setToken(response.data.access_token)
       checkLogin(response.data.access_token)
     })
       .catch((res) => {
-        console.log(4)
+        console.log("sendRefresh error")
         alert('인증 시간이 만료되었습니다. 다시 로그인해주세요.')
         setToken('');
         setUserInfo({
