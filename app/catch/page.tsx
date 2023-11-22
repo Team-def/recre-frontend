@@ -383,6 +383,10 @@ export default function Catch({socket}: {socket : Socket}) {
           justify-content: center;
           align-items: center;
         }
+        .snack-bar{
+          width: 200%;
+          height: 200%;
+        }
         `}</style>
         </>
       );
