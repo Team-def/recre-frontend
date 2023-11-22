@@ -23,6 +23,7 @@ export default function CatchPlayer({roomId, socket} : {roomId : string, socket 
             room_id: roomId,
             ans: playerAnswer,
         })
+        setPlayerAnswer("");
     }
 
     return (<>
