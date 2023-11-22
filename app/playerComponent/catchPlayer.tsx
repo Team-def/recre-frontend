@@ -5,7 +5,6 @@ import { useEffect, useRef } from 'react';
 
 export default function CatchPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
-    const [origin,setOrigin] = useState<[number,number]>([0,0]);
 
     const leave_game = () => {
         if (confirm('게임을 나가시겠습니까?')) {
@@ -34,6 +33,20 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         if(canvas){
             const context = canvas.getContext('2d');
             if(context){
+                  // 캔버스 크기 및 스케일 조정
+            const originalWidth = 300;
+            const originalHeight = 300;
+        
+            // 낮추고 싶은 해상도 설정
+            const targetWidth = 300;
+            const targetHeight = 300;
+            
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            canvas.style.width = `${originalWidth}px`;
+            canvas.style.height = `${originalHeight}px`;
+            canvas.style.display = 'block'; // 블록 수준 엘리먼트로 설정
+            canvas.style.margin = 'auto'; // 가운데 정렬
             // Socket.io로부터 그림 데이터 및 캔버스 정보 수신
             socket.on('draw', (canvasData) => {
                 
@@ -50,8 +63,15 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
                       context.stroke();
                   };
             });
-        }
-        }
+
+        socket.on('clear_draw', (res) => {
+            console.log(res)
+
+            if (res.result && context) {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        })
+        }}
 
         return () => {
             // 컴포넌트가 언마운트될 때 Socket.io 연결 해제
@@ -73,7 +93,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         <div>
             <canvas
                 ref={canvasRef}
-                style={{ maxWidth: '100%', height: 'auto', border: '1px solid black' }}
+                style={{ maxWidth: '100%', maxHeight: '100%', border: '1px solid black' }}
             ></canvas>
         </div>
         ;</>)
