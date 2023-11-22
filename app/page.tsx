@@ -11,7 +11,6 @@ import { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { myApi } from './modules/backApi';
 import { gameAtoms } from './modules/gameAtoms';
-import { loginTryNumAtom } from './modules/loginTryNumAtom';
 
 
 export default function Home() {
@@ -19,7 +18,6 @@ export default function Home() {
   const [token, setToken] = useAtom(tokenAtoms);
   const [, setUserInfo] = useAtom(userInfoAtoms);
   const [, setGame] = useAtom(gameAtoms);
-  const [loginTryNum, setLoginTryNum] = useAtom(loginTryNumAtom);
   const router = useRouter();
   const cookies = useCookies();
 
@@ -29,13 +27,7 @@ export default function Home() {
     const acc_token : string = localStorage.getItem('access_token')??''
     console.log(0)
     console.log(acc_token)
-    if(loginTryNum > 10){
-      alert('로그인 할 수 없습니다. 관리자에게 문의하세요.')
-    }
-    else {
-      setLoginTryNum((loginTryNum) =>{return loginTryNum + 1});
       checkLogin(acc_token)
-    }
   }, []);
 
   const selectGame = () => {
@@ -46,9 +38,31 @@ export default function Home() {
     }
   }
 
+  const checkLogin2 = (acc_token : string) => {
+    axios.get(`${myApi}/user`, {
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'authorization': acc_token,
+        withCredentials: true
+      }
+    }).then((response) => {
+      setUserInfo(response.data)
+      setIsLogin(true)
+      checkIsHostPhone()
+    })
+      .catch((res) => {
+        console.log(2222222)
+        alert('로그인에 실패했습니다. 다시 로그인해주세요.\n 문제가 있을 시 캐시를 삭제해보세요.')
+      })
+  }
+
+
   const checkLogin = (acc_token : string) => {
     axios.get(`${myApi}/user`, {
       headers: {
+        'Cache-Control': 'no-cache',
         'Content-type': 'application/json',
         'Accept': 'application/json',
         'authorization': acc_token,
@@ -63,8 +77,8 @@ export default function Home() {
       .catch((res) => {
         console.log(res)
         console.log(2)
-        if (res.response['status'] == 410 || res.response['status'] == 401) {
-          sendRefresh()
+        if (res.response['status'] === 410 || res.response['status'] === 401) {
+            sendRefresh()
         }
         else {
           alert(res)
@@ -88,6 +102,7 @@ export default function Home() {
       refresh_token: cookies.get('refresh_token')
     }, {
       headers: {
+        'Cache-Control': 'no-cache',
         'Content-type': 'application/json',
         'Accept': 'application/json',
         withCredentials: true
@@ -95,7 +110,7 @@ export default function Home() {
     }).then((response) => {
       console.log(3)
       setToken(response.data.access_token)
-      checkLogin(response.data.access_token)
+      checkLogin2(response.data.access_token)
     })
       .catch((res) => {
         console.log(4)
@@ -114,6 +129,8 @@ export default function Home() {
         router.push("/")
       })
   }
+
+
 
   const checkIsHostPhone = () => {
     let isHostPhone = localStorage.getItem('isHostPhone');
