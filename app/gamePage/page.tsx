@@ -22,7 +22,7 @@ import { access } from 'fs';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
-    const [gameInfo,] = useAtom(gameAtoms);
+    const [gameInfo,setGameInfo] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
     const gamePageUrl = `http://chltm.mooo.com:27017/player?id=${userInfo.id}`;
     const [isLogin,] = useAtom(loginAtom);
@@ -154,6 +154,17 @@ export default function QR() {
     const openPopover = Boolean(anchorEl);
     const id = openPopover ? 'simple-popover' : undefined;
 
+    const testGame = () => {
+        setGameInfo(['그림 맞추기', 1])
+        socket.current.emit("throw_catch_answer", {
+            room_id: userInfo.id,
+            ans: 'test',
+        })
+        socket.current.emit('start_catch_game', {
+            access_token: token
+        });
+    }
+
 
     const QRpage = () => {
         return (
@@ -191,6 +202,7 @@ export default function QR() {
 
                     <div className='gameInfo-start-button'>
                         <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
+                        <Button onClick={testGame}>Test</Button>
                     </div>
                 </div>
                 <style jsx>{`
