@@ -93,6 +93,20 @@ export default function Catch({socket}: {socket : Socket}) {
 
 
   }, []);
+
+
+  useEffect(() => {
+
+    if (canvasRef.current) {
+      canvasRef.current.getContext("2d")?.save();
+      canvasRef.current.style.width = '100%';
+      canvasRef.current.style.height = '100%';
+      canvasRef.current.width = canvasRef.current.offsetWidth;
+      canvasRef.current.height = canvasRef.current.offsetHeight;
+      setWindowSize({width: canvasRef.current.offsetWidth, height: canvasRef.current.offsetHeight});
+      canvasRef.current.getContext("2d")?.restore();
+    }
+  }, [size]);
   
 
   // 좌표 얻는 함수
@@ -127,6 +141,8 @@ export default function Catch({socket}: {socket : Socket}) {
       context.closePath();
 
       context.stroke();
+
+      console.log(context)
     }
   };
 
