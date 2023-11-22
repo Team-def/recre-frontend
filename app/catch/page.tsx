@@ -70,19 +70,29 @@ export default function Catch({socket}: {socket : Socket}) {
         })
       }
     }); 
-  }, []);
 
+    const canvas = canvasRef.current;
+    const context = canvas?.getContext('2d');
+    // 원본 해상도 설정
+    const originalWidth = 800;
+    const originalHeight = 800;
 
-  useEffect(() => {
-    console.log(size)
-    if (canvasRef.current) {
-      canvasRef.current.style.width = '100%';
-      canvasRef.current.style.height = '100%';
-      canvasRef.current.width = canvasRef.current.offsetWidth;
-      canvasRef.current.height = canvasRef.current.offsetHeight;
-      setWindowSize({width: canvasRef.current.offsetWidth, height: canvasRef.current.offsetHeight});
+    // 낮추고 싶은 해상도 설정
+    const targetWidth = 200;
+    const targetHeight = 200;
+
+    if(canvas){
+      // 캔버스 크기 및 스케일 조정
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      canvas.style.width = `${originalWidth}px`;
+      canvas.style.height = `${originalHeight}px`;
+      canvas.style.display = 'block'; // 블록 수준 엘리먼트로 설정
+      canvas.style.margin = 'auto'; // 가운데 정렬
     }
-  }, [size]);
+
+
+  }, []);
   
 
   // 좌표 얻는 함수
@@ -145,19 +155,19 @@ export default function Catch({socket}: {socket : Socket}) {
   );
 
   const exitPaint = useCallback(() => {
-    const canvas: HTMLCanvasElement | null = canvasRef.current;
-    if(canvas){
-      const context = canvas.getContext('2d');
+    // const canvas: HTMLCanvasElement | null = canvasRef.current;
+    // if(canvas){
+    //   const context = canvas.getContext('2d');
       setIsPainting(false);
-      context?.beginPath();
-      // 서버에 그림 데이터 및 캔버스 정보 전송
-      const canvasData = {
-        data: context?.getImageData(0, 0, canvas.width, canvas.height).data,
-        width: canvas.width,
-        height: canvas.height,
-      };
-      socket.emit('draw', {canvasData,access_token: localStorage.getItem('access_token')});
-    }
+    //   context?.beginPath();
+    //   // 서버에 그림 데이터 및 캔버스 정보 전송
+    //   const canvasData = {
+    //     data: context?.getImageData(0, 0, canvas.width, canvas.height).data,
+    //     width: canvas.width,
+    //     height: canvas.height,
+    //   };
+    //   socket.emit('draw', canvasData);
+    // }
   }, []);
 
   const clearCanvas = () => {
@@ -192,6 +202,25 @@ export default function Catch({socket}: {socket : Socket}) {
       canvas.removeEventListener('mouseleave', exitPaint);
     };
   }, [startPaint, paint, exitPaint]);
+
+
+  useEffect(() => {
+    console.log(234234)
+    const canvas: HTMLCanvasElement | null = canvasRef.current;
+    if (canvas) {
+        const context = canvas.getContext('2d');
+        if (context) {
+          context.beginPath();
+          // 서버에 그림 데이터 및 캔버스 정보 전송
+          const canvasData = {
+            data: context.getImageData(0, 0, canvas.width, canvas.height).data,
+            width: canvas.width,
+            height: canvas.height,
+          };
+          socket.emit('draw', canvasData);
+        }
+    }
+  }, [isPainting]);
 
   const drawColor = ["black", "red", "blue", "green", "#dec549"]
   const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
@@ -249,7 +278,7 @@ export default function Catch({socket}: {socket : Socket}) {
             <div className='eraseBtn'><button onClick={clearCanvas}>전체 지우기</button></div>
           </div>
           <div className='canvasDiv'>
-            <canvas ref={canvasRef} height={windowSize.height} width={windowSize.width} className="canvas"/>
+            <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas"/>
           </div>
           <Button onClick={()=>{leaveGame()}}>나가기</Button>
         </div>

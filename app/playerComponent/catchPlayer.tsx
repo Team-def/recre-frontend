@@ -34,10 +34,6 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
 
             const context = canvas.getContext('2d');
 
-            // Socket.io 연결
-
-            // 마우스 이벤트 처리
-            let isDrawing = false;
 
             if(context){
             // Socket.io로부터 그림 데이터 및 캔버스 정보 수신
