@@ -25,7 +25,8 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             ans: playerAnswer,
         })
         setPlayerAnswer("");
-        setTimeout(()=>setButtonDisabled(true), 3000);
+        setButtonDisabled(true);
+        setTimeout(()=>setButtonDisabled(false), 3000);
     }
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
