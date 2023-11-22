@@ -8,7 +8,6 @@ import MyModal from '@/component/MyModal';
 import IntegrationNotistack from '@/component/snackBar';
 import { answerAtom } from '../modules/answerAtom';
 import { Socket } from 'socket.io-client';
-import { useWindowSize } from "@uidotdev/usehooks";
 
 interface recievedAns {
   ans: string;
@@ -30,7 +29,6 @@ export default function Catch({socket}: {socket : Socket}) {
   const [lineWidth, setLineWidth] = useState(5);
   const [eraserWidth, setEraserWidth] = useState(45);
   const [isEraser, setIsEraser] = useState(false);
-  const [windowSize, setWindowSize] = useState({width: 0, height: 0});
   const [userInfo,] = useAtom(userInfoAtoms)
   const router = useRouter();
   const [answer, setAnswer] = useState('');
@@ -42,7 +40,6 @@ export default function Catch({socket}: {socket : Socket}) {
     isAns : false,
   });
   const [, setAnsAtom] = useAtom(answerAtom);
-  const size = useWindowSize();
 
   useEffect(() => {
 
@@ -70,6 +67,27 @@ export default function Catch({socket}: {socket : Socket}) {
         })
       }
     }); 
+
+    const canvas = canvasRef.current;
+    // 원본 해상도 설정
+    const originalWidth = 600;
+    const originalHeight = 600;
+
+    // 낮추고 싶은 해상도 설정
+    const targetWidth = 300;
+    const targetHeight = 300;
+
+    if(canvas){
+      // 캔버스 크기 및 스케일 조정
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      canvas.style.width = `${originalWidth}px`;
+      canvas.style.height = `${originalHeight}px`;
+      canvas.style.display = 'block'; // 블록 수준 엘리먼트로 설정
+      canvas.style.margin = 'auto'; // 가운데 정렬
+    }
+
+
   }, []);
   
 
@@ -78,11 +96,14 @@ export default function Catch({socket}: {socket : Socket}) {
     if (!canvasRef.current) {
       return;
     }
-
     const canvas: HTMLCanvasElement = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
     return {
-      x: event.pageX - canvas.offsetLeft,
-      y: event.pageY - canvas.offsetTop
+      x: (event.pageX - canvas.offsetLeft) * scaleX,
+      y: (event.pageY - canvas.offsetTop) * scaleY,
     };
   };
 
@@ -145,19 +166,7 @@ export default function Catch({socket}: {socket : Socket}) {
   const exitPaint = useCallback(() => {
     socket.emit('drawOut', {
     });
-    // const canvas: HTMLCanvasElement | null = canvasRef.current;
-    // if(canvas){
-    //   const context = canvas.getContext('2d');
       setIsPainting(false);
-    //   context?.beginPath();
-    //   // 서버에 그림 데이터 및 캔버스 정보 전송
-    //   const canvasData = {
-    //     data: context?.getImageData(0, 0, canvas.width, canvas.height).data,
-    //     width: canvas.width,
-    //     height: canvas.height,
-    //   };
-    //   socket.emit('draw', canvasData);
-    // }
   }, []);
 
   const clearCanvas = () => {
@@ -169,6 +178,8 @@ export default function Catch({socket}: {socket : Socket}) {
 
     if (context) {
       context.clearRect(0, 0, canvas.width, canvas.height);
+      socket.emit('clear_draw', {
+      });
     }
   }
   
@@ -285,8 +296,8 @@ export default function Catch({socket}: {socket : Socket}) {
           text-overflow: ellipsis;
         }
         .canvasDiv{
-          width: 60vw;
-          height: 65vh;
+          width: 500px;
+          height: 500px;
           border: 1px solid gray;
           border-radius: 20px;
           overflow: hidden;
