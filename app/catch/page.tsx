@@ -143,18 +143,30 @@ export default function Catch({socket}: {socket : Socket}) {
       event.preventDefault();   // drag 방지
       event.stopPropagation();  // drag 방지
 
+      const newMousePosition = getCoordinates(event);
       if (isPainting) {
-        const newMousePosition = getCoordinates(event);
         if (mousePosition && newMousePosition) {
           drawLine(mousePosition, newMousePosition);
           setMousePosition(newMousePosition);
+          socket.emit('draw', {
+            x : newMousePosition.x,
+            y : newMousePosition.y,
+            color : isEraser?'white':curColor,
+            lineWidth : isEraser ? eraserWidth : lineWidth,
+            first_x : mousePosition.x,
+            first_y : mousePosition.y,
+          });
         }
+      } else {
+
       }
     },
     [isPainting, mousePosition]
   );
 
   const exitPaint = useCallback(() => {
+    socket.emit('drawOut', {
+    });
     // const canvas: HTMLCanvasElement | null = canvasRef.current;
     // if(canvas){
     //   const context = canvas.getContext('2d');

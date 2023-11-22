@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 
 export default function CatchPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
+    const [origin,setOrigin] = useState<[number,number]>([0,0]);
 
     const leave_game = () => {
         if (confirm('게임을 나가시겠습니까?')) {
@@ -31,17 +32,23 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
     useEffect(() => {
         const canvas: HTMLCanvasElement | null = canvasRef.current;
         if(canvas){
-
             const context = canvas.getContext('2d');
-
-
             if(context){
             // Socket.io로부터 그림 데이터 및 캔버스 정보 수신
             socket.on('draw', (canvasData) => {
-                const img = new ImageData(new Uint8ClampedArray(canvasData.data), canvasData.width, canvasData.height);
-                context.canvas.width = canvasData.width;
-                context.canvas.height = canvasData.height;
-                context.putImageData(img, 0, 0);
+                
+                    if (context) {
+                      context.strokeStyle = canvasData.color  // 선 색깔
+                      context.lineJoin = 'round';	// 선 끄트머리(?)
+                      context.lineWidth = canvasData.lineWidth		// 선 굵기
+                
+                      context.beginPath();
+                      context.moveTo(canvasData.first_x, canvasData.first_y);
+                      context.lineTo(canvasData.x, canvasData.y);
+                      context.closePath();
+                
+                      context.stroke();
+                  };
             });
         }
         }
@@ -51,6 +58,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             socket.disconnect();
         };
     }, []);
+    
 
     return (<>
         <label className="answer-label">정답: </label>
