@@ -8,6 +8,7 @@ import MyModal from '@/component/MyModal';
 import IntegrationNotistack from '@/component/snackBar';
 import { answerAtom } from '../modules/answerAtom';
 import { Socket } from 'socket.io-client';
+import { useWindowSize } from "@uidotdev/usehooks";
 
 interface recievedAns {
   ans: string;
@@ -41,17 +42,10 @@ export default function Catch({socket}: {socket : Socket}) {
     isAns : false,
   });
   const [, setAnsAtom] = useAtom(answerAtom);
+  const size = useWindowSize();
 
   useEffect(() => {
     const canvas: HTMLCanvasElement | null = canvasRef.current;
-
-    if (canvas) {
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
-    }
 
     socket.on('correct',(res)=>{
       console.log(res)
@@ -78,6 +72,20 @@ export default function Catch({socket}: {socket : Socket}) {
       }
     }); 
   }, []);
+
+
+  useEffect(() => {
+
+    if (canvasRef.current) {
+      canvasRef.current.getContext("2d")?.save();
+      canvasRef.current.style.width = '100%';
+      canvasRef.current.style.height = '100%';
+      canvasRef.current.width = canvasRef.current.offsetWidth;
+      canvasRef.current.height = canvasRef.current.offsetHeight;
+      setWindowSize({width: canvasRef.current.offsetWidth, height: canvasRef.current.offsetHeight});
+      canvasRef.current.getContext("2d")?.restore();
+    }
+  }, [size]);
   
 
   // 좌표 얻는 함수
@@ -112,6 +120,8 @@ export default function Catch({socket}: {socket : Socket}) {
       context.closePath();
 
       context.stroke();
+
+      console.log(context)
     }
   };
 
