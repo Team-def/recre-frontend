@@ -12,6 +12,7 @@ import { userInfoAtoms } from "@/app/modules/userInfoAtom";
 import Image from 'next/image';
 import { useCookies } from 'next-client-cookies';
 import { gameAtoms } from "@/app/modules/gameAtoms";
+import { usePathname } from 'next/navigation';
 
 export interface ModalProps {
     isOpen: boolean,
@@ -33,6 +34,8 @@ export default function Header() {
     const [,setGame] = useAtom(gameAtoms)
     const router = useRouter();
     const cookies = useCookies();
+    const currentPath = usePathname()
+    const hideHeader = currentPath === '/player' ? true : false
 
     useEffect(() => {
         if (isLogin) {
@@ -81,7 +84,7 @@ export default function Header() {
         setIsLogin(true);
     }
 
-    return (<><div className="headerContainer">
+    return (<>{hideHeader?'':<><div className="headerContainer">
         <div className="logo">
             <h1 onClick={()=>router.push("/")}>RecRe</h1>
         </div>
@@ -100,7 +103,7 @@ export default function Header() {
             </div>
         </div>
     </div>
-        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} />
+        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} /></>}
         <style jsx global>{`
             .logo{
                 cursor: pointer;

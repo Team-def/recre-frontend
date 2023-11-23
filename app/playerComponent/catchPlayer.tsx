@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Button, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { Socket } from "socket.io-client";
 import { useEffect, useRef } from 'react';
@@ -84,15 +84,20 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
     }, []);
     
 
-    return (<>
-        <label className="answer-label">정답: </label>
-        <input
-            type="text"
-            className="catch-answer-input"
-            value={playerAnswer}
-            onChange={(e) => setPlayerAnswer(e.target.value)}></input>
-        <Button className="throw-answer" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '제출중':'제출'}</Button>
-        <Button onClick={leave_game}>leave game</Button>
+    return (<><div className="p_catch_div">
+        <div className="submitDiv">
+            <TextField
+          id="filled-start-adornment"
+          sx={{ m: 1, width: '25ch' }}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">정답 : </InputAdornment>,
+          }}
+          variant="standard"
+          value={playerAnswer}
+          onChange={(e) => setPlayerAnswer(e.target.value)}
+        />
+        <Button className="throw-answer" variant="contained" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '대기':'제출'}</Button>
+        </div>
 
         <div>
             <canvas
@@ -100,5 +105,30 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
                 style={{ maxWidth: '100%', maxHeight: '100%', border: '1px solid black' }}
             ></canvas>
         </div>
-        ;</>)
+        <Button variant="outlined" onClick={leave_game}>게임 나가기</Button>
+        </div>
+        <style jsx>{`
+                canvas{
+                    background-color: white;
+                    border: 0.1px solid gray;
+                    border-radius: 10px;
+                    box-shadow: 0.1px 0.1px 5px gray;
+                }
+                .submitDiv{
+                    margin-top: 20px;
+                    width: 85%;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .p_catch_div{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 20px;
+                }
+        `}</style>
+        </>)
 }

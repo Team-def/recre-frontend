@@ -6,6 +6,7 @@ import MyModal from "./MyModal";
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import CatchAnswer from "@/app/catchAnswer/page";
+import { usePathname } from 'next/navigation';
 
 export interface ModalProps {
     isOpen: boolean,
@@ -19,11 +20,13 @@ export interface ModalProps {
 export default function Footer() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
     const [isLogin, setIsLogin] = useAtom(loginAtom)
+    const currentPath = usePathname()
+    const hideHeader = currentPath === '/player' ? true : false
 
     const handleClose = () => { setOpen(false); }
     const catch_answer = () => { setOpen(true); }
 
-    return (<>
+    return (<>{hideHeader?'':<>
         <div className="footerContainer">
             <div>
                 <h4>SWJUNGLE Team.def()</h4>
@@ -37,7 +40,7 @@ export default function Footer() {
             
 
         </div>
-        <MyModal open={open} modalHeader={'캐치마인드 정답 입력'} modalContent={<CatchAnswer />} closeFunc={handleClose} />
+        <MyModal open={open} modalHeader={'캐치마인드 정답 입력'} modalContent={<CatchAnswer />} closeFunc={handleClose} /></>}
         <style jsx>{`
                 .footerContainer{
                     display: flex;
