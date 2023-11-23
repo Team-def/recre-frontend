@@ -202,7 +202,7 @@ export default function QR() {
 
                         <div className='gameInfo-start-button'>
                             <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                            <Button onClick={testGame}>Test</Button>
+                            {/* <Button onClick={testGame}>Test</Button> */}
                         </div>
                     </div>
                     <style jsx>{`
