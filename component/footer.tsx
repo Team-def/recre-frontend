@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Button from '@mui/material/Button';
 import MyModal from "./MyModal";
-
 import { useAtom } from 'jotai';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import CatchAnswer from "@/app/catchAnswer/page";
@@ -31,6 +30,7 @@ export default function Footer() {
             <div>
                 <h4>SWJUNGLE Team.def()</h4>
             </div>
+        {/* 더 이상 사용하지 않는 기능 */}
             {isLogin?
             <div>
                 {/* 캐치마인드 정답 제출용 모달 호출 버튼 */}
