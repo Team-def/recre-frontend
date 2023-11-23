@@ -56,7 +56,7 @@ export default function Player() {
 
         socket.current.on("ready", (res) => {
             if (res.result === true) {
-                alert('ready')
+                // alert('ready')
                 setReady(true)
             }
             else {
