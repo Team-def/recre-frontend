@@ -24,8 +24,7 @@ export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
-    //.env로 수정해야 함
-    const gamePageUrl = `http://chltm.mooo.com:27017/player?id=${userInfo.id}`;
+    const gamePageUrl = `${process.env.RECRE_URL}/player?id=${userInfo.id}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     const [open, setOpen] = useState(true);
@@ -39,8 +38,8 @@ export default function QR() {
         autoConnect: false,
     }));
     const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-    //.env로 수정해야 함
-    const gamePageUrlAns = `http://chltm.mooo.com:27017/catchAnswer`;
+    const gamePageUrlAns = `${process.env.RECRE_URL}/catchAnswer`;
+
 
     useEffect(() => {
         if (!isLogin) {
@@ -205,7 +204,7 @@ export default function QR() {
 
                         <div className='gameInfo-start-button'>
                             <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                            <Button onClick={testGame}>Test</Button>
+                            {/* <Button onClick={testGame}>Test</Button> */}
                         </div>
                     </div>
                     <style jsx>{`
