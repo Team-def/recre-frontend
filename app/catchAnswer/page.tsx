@@ -31,7 +31,7 @@ export default function CatchAnswer() {
 
         socket.current.on("set_catch_answer", (res)=>{
 
-            if(res.result === true){
+            if (res.result === true) {
 
                 socket.current.disconnect()
                 alert('정답이 설정되었습니다.')
@@ -43,7 +43,7 @@ export default function CatchAnswer() {
                     window.location.href = 'about:blank'; // Navigate to a blank page
                 }
 
-            } else{
+            } else {
                 alert('아직 방이 안 만들어졌습니다.')
             }
         });

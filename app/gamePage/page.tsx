@@ -76,7 +76,7 @@ export default function QR() {
             else
                 alert(response.message)
         });
-
+        //이 소켓은 필요없는 것 같음(catchAnswer와 중복된 소켓)
         socket.current.on('set_catch_answer', (res)=>{
             // console.log(res)
             if(res.result === true){

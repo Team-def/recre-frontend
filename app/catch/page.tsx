@@ -21,7 +21,6 @@ interface Coordinate {
 };
 
 export default function Catch({socket}: {socket : Socket}) {
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
   const [isPainting, setIsPainting] = useState(false);
@@ -42,7 +41,6 @@ export default function Catch({socket}: {socket : Socket}) {
   const [, setAnsAtom] = useAtom(answerAtom);
 
   useEffect(() => {
-
     socket.on('correct',(res)=>{
       // console.log(res)
       if(res.result === true){
@@ -89,8 +87,6 @@ export default function Catch({socket}: {socket : Socket}) {
 
     // return () => {
     // }
-
-
   }, []);
 
 
@@ -229,7 +225,7 @@ export default function Catch({socket}: {socket : Socket}) {
         router.push('/gameSelect');
       }
 
-    } else{
+    } else {
 
       socket.emit('end_game',{
         room_id : userInfo.id,
