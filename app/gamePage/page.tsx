@@ -24,7 +24,7 @@ export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
-    const gamePageUrl = `${process.env.RECRE_URL}/player?id=${userInfo.id}`;
+    const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?id=${userInfo.id}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     const [open, setOpen] = useState(true);
@@ -38,7 +38,7 @@ export default function QR() {
         autoConnect: false,
     }));
     const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-    const gamePageUrlAns = `${process.env.RECRE_URL}/catchAnswer`;
+    const gamePageUrlAns = `${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`;
 
     useEffect(() => {
         if (!isLogin) {
@@ -74,7 +74,7 @@ export default function QR() {
             else
                 alert(response.message)
         });
-        //이 소켓은 필요없는 것 같음(catchAnswer와 중복된 소켓)
+
         socket.current.on('set_catch_answer', (res)=>{
             // console.log(res)
             if(res.result === true){
