@@ -3,13 +3,9 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { tokenAtoms } from "@/app/modules/tokenAtoms";
 import { useAtom } from "jotai";
-import { useSearchParams } from 'next/navigation';
 import { useCookies } from 'next-client-cookies';
 
 const GetTokenParams = () => {
-    // const params = useSearchParams();
-    // const access_token = params.get('access_token');
-    // const refresh_token = params.get('refresh_token');
     const cookies = useCookies();
     const access_token = cookies.get('access_token')
     const refresh_token = cookies.get('refresh_token')

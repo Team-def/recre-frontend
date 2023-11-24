@@ -1,6 +1,5 @@
 import Image from "next/image"
 import oauthButtonsStyle from "./oauthButtonsStyle.module.css"
-import axios from "axios"
 import { useRouter } from 'next/navigation'
 import { myApi } from "@/app/modules/backApi"
 
