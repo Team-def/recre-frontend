@@ -136,8 +136,9 @@ export default function QR() {
         }
 
         const handleBeforeUnload = () => {
+            const user_t = JSON.parse(localStorage.getItem('userInfo')|| 'null');
             socket.current.emit('end_game', {
-                room_id: userInfo.id,
+                room_id: user_t.id
             });
 
         };
