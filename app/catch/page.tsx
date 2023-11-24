@@ -44,7 +44,7 @@ export default function Catch({socket}: {socket : Socket}) {
   useEffect(() => {
 
     socket.on('correct',(res)=>{
-      console.log(res)
+      // console.log(res)
       if(res.result === true){
         setAnswer(res.answer)
         setCorrectNick(res.nickname)
@@ -58,7 +58,7 @@ export default function Catch({socket}: {socket : Socket}) {
     }); 
 
     socket.on('incorrect',(res)=>{
-      console.log(res)
+      // console.log(res)
       if(res.result === true){
         setRecievedAns({
           ans : res.incorrectAnswer,
@@ -111,7 +111,7 @@ export default function Catch({socket}: {socket : Socket}) {
     };
   };
 
-     // canvas에 선을 긋는 함수
+  // canvas에 선을 긋는 함수
   const drawLine = (originalMousePosition: Coordinate, newMousePosition: Coordinate) => {
     if (!canvasRef.current) {
       return;
@@ -216,21 +216,28 @@ export default function Catch({socket}: {socket : Socket}) {
 
   const leaveGame = () => {
     if(!isFinished){
+
       if(confirm("게임을 나가시겠습니까?")){
         socket.emit('end_game',{
           room_id : userInfo.id,
         });
+
         socket.emit('leave_game',{
         });
+
         setAnsAtom(null)
         router.push('/gameSelect');
       }
+
     } else{
+
       socket.emit('end_game',{
         room_id : userInfo.id,
       });
+
       socket.emit('leave_game',{
       });
+      
       setAnsAtom(null)
       router.push('/gameSelect');
     }

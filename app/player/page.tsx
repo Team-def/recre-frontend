@@ -86,8 +86,10 @@ export default function Player() {
 
 
     return (
-        <>{isGame ?
-            <CatchPlayer roomId={room_id as string} socket={socket.current} /> :
+        <>{isGame?
+            //캐치마인드 게임이 시작되면 catch로 이동
+            <CatchPlayer roomId={room_id as string} socket={socket.current}/>:
+            //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
                     <div className="headerContainer">

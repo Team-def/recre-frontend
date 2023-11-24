@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from 'axios'
 import { myApi } from "../modules/backApi";
 
+//불필요한 컴포넌트 (삭제 예정)
 export default function SignUp() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

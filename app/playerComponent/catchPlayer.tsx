@@ -18,7 +18,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             }
         }
     }
-
+    //throw catch mind answer (blocks the button for 3 seconds)
     const throwCatchAnswer = () => {
         socket.emit("throw_catch_answer", {
             room_id: roomId,

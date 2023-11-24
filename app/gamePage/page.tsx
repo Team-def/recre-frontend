@@ -24,6 +24,7 @@ export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
+    //.env로 수정해야 함
     const gamePageUrl = `http://chltm.mooo.com:27017/player?id=${userInfo.id}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
@@ -38,11 +39,12 @@ export default function QR() {
         autoConnect: false,
     }));
     const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+    //.env로 수정해야 함
     const gamePageUrlAns = `http://chltm.mooo.com:27017/catchAnswer`;
 
     useEffect(() => {
         if (!isLogin) {
-            console.log(isLogin)
+            // console.log(isLogin)
             alert('로그인이 필요합니다.')
             router.push("/")
         }
@@ -50,13 +52,13 @@ export default function QR() {
         socket.current.connect();
 
         socket.current.volatile.on("connect", () => {
-            console.log("disconnect_check:", socket.current.connected);
-            makeRoom(localStorage.getItem('access_token') ?? '' as string);
+            // console.log("disconnect_check:", socket.current.connected);
+            makeRoom(localStorage.getItem('access_token')??'' as string);
         });
 
 
         socket.current.volatile.on("disconnect", () => {
-            console.log("disconnect_check:", socket.current.connected);
+            // console.log("disconnect_check:", socket.current.connected);
         });
 
         if (JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기') {
@@ -68,27 +70,27 @@ export default function QR() {
         }
 
         socket.current.on("start_catch_game", (response) => {
-            console.log(response)
-            if (response.result === true)
+            // console.log(response)
+            if(response.result === true)
                 setOpen(false);
             else
                 alert(response.message)
         });
 
-        socket.current.on('set_catch_answer', (res) => {
-            console.log(res)
-            if (res.result === true) {
+        socket.current.on('set_catch_answer', (res)=>{
+            // console.log(res)
+            if(res.result === true){
                 setAnswer(res.answer)
             }
         });
 
-        socket.current.on('player_list_add', (res) => {
-            console.log(res)
+        socket.current.on('player_list_add', (res)=>{
+            // console.log(res)
             setNowPeople(res.player_cnt)
         });
 
-        socket.current.on('player_list_remove', (res) => {
-            console.log(res)
+        socket.current.on('player_list_remove', (res)=>{
+            // console.log(res)
             setNowPeople(res.player_cnt)
         });
 
@@ -171,6 +173,7 @@ export default function QR() {
                 <>
                     <div className='qrPageCon'>
                         <h2>{JSON.parse(localStorage.getItem('game') || 'null')[0]}</h2>
+                        {/* 게임 종류가 catch mind인 경우 */}
                         {JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기' ?
                             <div className='alertSt'><Alert severity="info" onClick={handlePopover}>
                                 <AlertTitle>정답을 입력해주세요</AlertTitle>

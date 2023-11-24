@@ -1,5 +1,5 @@
 "use client";
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
@@ -36,7 +36,7 @@ export default function GameSelect() {
 
     useEffect(() => {
         if (!isLogin) {
-            console.log(isLogin)
+            // console.log(isLogin)
             alert('로그인이 필요합니다.')
             router.push("/")
         }
