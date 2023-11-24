@@ -16,14 +16,15 @@ function MySnackBar({isAns, ans, nick} : {isAns : boolean, ans : string, nick : 
         return; 
     let message = `${nick} : ${ans}`;
     enqueueSnackbar(message, { 
-      variant: 'success',
+      variant: 'default',
       anchorOrigin: {
         vertical: 'bottom',
-        horizontal: 'center',
+        horizontal: 'right',
       },
       style: {
-        minWidth: '300px',
-        minHeight: '50px',
+        minWidth: '400px',
+        minHeight: '90px',
+        fontSize: '30px',
       }
     });
   };
