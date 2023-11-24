@@ -1,1 +1,1 @@
-export const myApi = 'http://chltm.mooo.com:5001'
+export const myApi = process.env.BACK_API

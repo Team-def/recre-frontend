@@ -1,1 +1,1 @@
-export const socketApi = 'http://chltm.mooo.com:5003'
+export const socketApi = process.env.SOCKET_API
