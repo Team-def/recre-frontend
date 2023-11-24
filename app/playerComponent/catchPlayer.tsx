@@ -36,45 +36,43 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         if(canvas){
             const context = canvas.getContext('2d');
             if(context){
-                  // 캔버스 크기 및 스케일 조정
-            const originalWidth = 300;
-            const originalHeight = 300;
+                // 캔버스 크기 및 스케일 조정
+                const originalWidth = 300;
+                const originalHeight = 300;
         
-            // 낮추고 싶은 해상도 설정
-            const targetWidth = 300;
-            const targetHeight = 300;
+                // 낮추고 싶은 해상도 설정
+                const targetWidth = 300;
+                const targetHeight = 300;
             
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
-            canvas.style.width = `${originalWidth}px`;
-            canvas.style.height = `${originalHeight}px`;
-            canvas.style.display = 'block'; // 블록 수준 엘리먼트로 설정
-            canvas.style.margin = 'auto'; // 가운데 정렬
-            // Socket.io로부터 그림 데이터 및 캔버스 정보 수신
-            socket.on('draw', (canvasData) => {
-                
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                canvas.style.width = `${originalWidth}px`;
+                canvas.style.height = `${originalHeight}px`;
+                canvas.style.display = 'block'; // 블록 수준 엘리먼트로 설정
+                canvas.style.margin = 'auto'; // 가운데 정렬
+                // Socket.io로부터 그림 데이터 및 캔버스 정보 수신
+                socket.on('draw', (canvasData) => {
                     if (context) {
-                      context.strokeStyle = canvasData.color  // 선 색깔
-                      context.lineJoin = 'round';	// 선 끄트머리(?)
-                      context.lineWidth = canvasData.lineWidth		// 선 굵기
-                
-                      context.beginPath();
-                      context.moveTo(canvasData.first_x, canvasData.first_y);
-                      context.lineTo(canvasData.x, canvasData.y);
-                      context.closePath();
-                
-                      context.stroke();
-                  };
-            });
+                        context.strokeStyle = canvasData.color  // 선 색깔
+                        context.lineJoin = 'round';	// 선 끄트머리(?)
+                        context.lineWidth = canvasData.lineWidth		// 선 굵기
+                        context.beginPath();
+                        context.moveTo(canvasData.first_x, canvasData.first_y);
+                        context.lineTo(canvasData.x, canvasData.y);
+                        context.closePath();
+                        context.stroke();
+                    };
+                });
 
-        socket.on('clear_draw', (res) => {
-            console.log(res)
+                socket.on('clear_draw', (res) => {
+                    console.log(res)
 
-            if (res.result && context) {
-                context.clearRect(0, 0, canvas.width, canvas.height);
+                    if (res.result && context) {
+                        context.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                })
             }
-        })
-        }}
+        }
 
         socket.on('correct', (res) => {
             alert(`우승자 : ${res.nickname}\n정답 : ${res.answer}`)
@@ -91,23 +89,23 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
     return (<><div className="p_catch_div">
         <div className="submitDiv">
             <TextField
-          id="filled-start-adornment"
-          sx={{ m: 1, width: '25ch' }}
-          InputProps={{
-            startAdornment: <InputAdornment position="start">정답 : </InputAdornment>,
-          }}
-          variant="standard"
-          value={playerAnswer}
-          onChange={(e) => setPlayerAnswer(e.target.value)}
-        />
-        <Button className="throw-answer" variant="contained" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '대기':'제출'}</Button>
+            id="filled-start-adornment"
+            sx={{ m: 1, width: '25ch' }}
+            InputProps={{
+                startAdornment: <InputAdornment position="start">정답 : </InputAdornment>,
+            }}
+            variant="standard"
+            value={playerAnswer}
+            onChange={(e) => setPlayerAnswer(e.target.value)}/>
+
+            <Button className="throw-answer" variant="contained" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '대기':'제출'}</Button>
         </div>
 
         <div>
             <canvas
                 ref={canvasRef}
-                style={{ maxWidth: '100%', maxHeight: '100%', border: '1px solid black' }}
-            ></canvas>
+                style={{ maxWidth: '100%', maxHeight: '100%', border: '1px solid black' }}>
+            </canvas>
         </div>
         <Button variant="outlined" onClick={leave_game}>게임 나가기</Button>
         </div>
