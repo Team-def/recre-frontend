@@ -88,8 +88,8 @@ export default function Profile() {
             setIsLogin(false);
             localStorage.removeItem('access_token');
             cookies.remove('refresh_token');
-            router.push('/');
-            router.refresh();
+            router.replace('/');
+            // router.refresh();
         }
     }
 
