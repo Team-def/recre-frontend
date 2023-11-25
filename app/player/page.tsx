@@ -71,6 +71,8 @@ export default function Player() {
             alert("삼성 브라우저에서는 다크모드를 사용하실 경우 캐치마인드 게임이 어렵습니다.\n다크모드를 사용중이실 경우 해제하고 게임을 즐겨주세요!");
         }
 
+        // window.addEventListener('resize', useVH);
+
         return () => {
             socket.current.emit("leave_game", {
             });
@@ -193,6 +195,11 @@ export default function Player() {
                     font-size: 22px;
                     font-weight: 500;
                     color: gray;
+                }
+            `}</style>
+            <style jsx global>{`
+                body {
+                    overflow: hidden !important;
                 }
             `}</style>
         </>
