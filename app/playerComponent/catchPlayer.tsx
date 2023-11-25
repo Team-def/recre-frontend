@@ -78,13 +78,6 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             alert(`우승자 : ${res.nickname}\n정답 : ${res.answer}`)
         })
 
-        socket.on('correct', (res) => {
-            alert(`우승자 : ${res.nickname}\n정답 : ${res.answer}`)
-        })
-
-        socket.on('correct', (res) => {
-            alert(`우승자 : ${res.nickname}\n정답 : ${res.answer}`)
-        })
 
         return () => {
             // 컴포넌트가 언마운트될 때 Socket.io 연결 해제
