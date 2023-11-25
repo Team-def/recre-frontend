@@ -112,7 +112,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         </div>
         <style jsx>{`
                 canvas{
-                    background-color: white;
+                    background-color: white !important;
                     border: 0.1px solid gray;
                     border-radius: 10px;
                     box-shadow: 0.1px 0.1px 5px gray;
