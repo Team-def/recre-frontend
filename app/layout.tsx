@@ -14,7 +14,8 @@ import '@fontsource/roboto/700.css';
 import './globals.css';
 import { cookies } from 'next/headers';
 import { ClientCookiesProvider } from './provider';
-import { Viewport } from 'next'
+import { Viewport } from 'next';
+import { ColorSchemeEnum } from 'next/dist/lib/metadata/types/metadata-types';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,6 +31,8 @@ export const viewport: Viewport = {
   minimumScale: 1,
   userScalable: false,
 }
+
+export const colorScheme: ColorSchemeEnum = 'only light'
 
 export default function RootLayout({
   children,

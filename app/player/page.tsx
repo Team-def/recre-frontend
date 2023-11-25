@@ -9,6 +9,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
 import { Alert } from '@mui/material';
+import {isMobile, browserName} from 'react-device-detect';
+import { useThemeDetector } from '@/customHook/useThemeDetector';
+
+
 
 
 
@@ -63,6 +67,10 @@ export default function Player() {
                 alert(res.message)
             }
         })
+
+        if (isMobile && (browserName === 'Samsung Internet')) {
+            alert("삼성 브라우저에서는 다크모드를 사용하실 경우 캐치마인드 게임이 어렵습니다.\n다크모드를 사용중이실 경우 해제하고 게임을 즐겨주세요!");
+        }
 
     }, []);
 
