@@ -36,12 +36,7 @@ export default function CatchAnswer() {
                 socket.current.disconnect()
                 alert('정답이 설정되었습니다.')
 
-                if (window.opener && window.opener !== window) {
-                    window.opener.location.reload(); // Reload the parent window
-                    window.close(); // Close the current window
-                } else {
-                    window.location.href = 'about:blank'; // Navigate to a blank page
-                }
+                window.close();
 
             } else {
                 alert('아직 방이 안 만들어졌습니다.')

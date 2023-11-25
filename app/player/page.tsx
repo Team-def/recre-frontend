@@ -10,7 +10,6 @@ import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
 import { Alert } from '@mui/material';
 import {isMobile, browserName} from 'react-device-detect';
-import { useThemeDetector } from '@/customHook/useThemeDetector';
 
 
 
@@ -49,12 +48,7 @@ export default function Player() {
         socket.current.on("end", (res) => {
             if (res.result === true) {
                 alert('게임이 종료되었습니다.')
-                if (window.opener && window.opener !== window) {
-                    window.opener.location.reload(); // Reload the parent window
-                    window.close(); // Close the current window
-                } else {
-                    window.location.href = 'about:blank'; // Navigate to a blank page
-                }
+                window.close();
             }
         })
 
