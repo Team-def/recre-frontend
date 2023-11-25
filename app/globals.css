@@ -9,4 +9,5 @@ body {
   /* off-white background */
   background-color: #f8f8f8 !important;
   box-sizing: border-box;
+  overflow: hidden;
 };
