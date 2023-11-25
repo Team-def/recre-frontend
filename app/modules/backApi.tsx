@@ -1,1 +1,1 @@
-export const myApi = 'https://choiwheatley.store'
+export const myApi = process.env.NEXT_PUBLIC_BACK_API

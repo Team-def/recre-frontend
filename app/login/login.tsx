@@ -10,7 +10,7 @@ interface LoginProps {
     password: string,
     setPassword: React.Dispatch<React.SetStateAction<string>>,
 }
-
+//사용하지 않는 컴포넌트 (삭제 예정)
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

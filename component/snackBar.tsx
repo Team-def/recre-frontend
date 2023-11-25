@@ -1,23 +1,32 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
 import { SnackbarProvider, VariantType, useSnackbar } from 'notistack';
 
 function MySnackBar({isAns, ans, nick} : {isAns : boolean, ans : string, nick : string}) {
   const { enqueueSnackbar } = useSnackbar();
 
+  React.useEffect(() => {
+    if(isAns)
+        handleClick('success')
+    else
+        handleClick('error')
+  }, [ans]);
+
   const handleClick = (variant: VariantType) => {
     if(ans === '')
         return; 
     let message = `${nick} : ${ans}`;
-    if(isAns)
-        enqueueSnackbar(message, { variant });
-    else
-        enqueueSnackbar(message);
-  };
-
-  const handleClickVariant = (variant: VariantType) => () => {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar('This is a success message!', { variant });
+    enqueueSnackbar(message, { 
+      variant: 'default',
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'right',
+      },
+      style: {
+        minWidth: '500px',
+        minHeight: '100px',
+        fontSize: '40px',
+      }
+    });
   };
 
   return (

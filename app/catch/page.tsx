@@ -1,13 +1,13 @@
 "use client";
-
-import React, { useRef, useState, useCallback, useEffect, use } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useAtom } from 'jotai';
 import { userInfoAtoms } from '../modules/userInfoAtom';
 import Button from '@mui/material/Button';
-import { socket } from '../modules/socket';
 import { useRouter } from 'next/navigation';
 import MyModal from '@/component/MyModal';
 import IntegrationNotistack from '@/component/snackBar';
+import { answerAtom } from '../modules/answerAtom';
+import { Socket } from 'socket.io-client';
 
 interface recievedAns {
   ans: string;
@@ -20,8 +20,7 @@ interface Coordinate {
   y: number;
 };
 
-export default function Catch() {
-
+export default function Catch({socket}: {socket : Socket}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
   const [isPainting, setIsPainting] = useState(false);
@@ -29,7 +28,6 @@ export default function Catch() {
   const [lineWidth, setLineWidth] = useState(5);
   const [eraserWidth, setEraserWidth] = useState(45);
   const [isEraser, setIsEraser] = useState(false);
-  const [windowSize, setWindowSize] = useState({width: 0, height: 0});
   const [userInfo,] = useAtom(userInfoAtoms)
   const router = useRouter();
   const [answer, setAnswer] = useState('');
@@ -40,52 +38,11 @@ export default function Catch() {
     nick : '', 
     isAns : false,
   });
+  const [, setAnsAtom] = useAtom(answerAtom);
 
   useEffect(() => {
-    
-    socket.timeout(5000).on("connect", () => {
-      console.log("connect_check:", socket.connected);
-      console.log("socket_id:", socket.id);
-    });
-
-    const listener = (data: any) => {
-      console.log(data);
-    }
-
-    socket.on("test", listener);
-
-    socket.on("session", ({sessionID, userID}) => {
-      socket.auth = { sessionID };
-      localStorage.setItem("sessionID", sessionID);
-      socket.userID = userID;
-    });
-
-    socket.emit('make_room', ({
-      "sessionID": localStorage.getItem("sessionID"),
-      "userID": socket.userID,
-      "accessToken": localStorage.getItem("accessToken"),
-      "gamename": "그림 맞추기",
-    }));
-
-    socket.on("disconnect", () => {
-      console.log("disconnect_check:", socket.connected);
-    });
-
-    socket.on("answer", (data: string) => {
-      localStorage.setItem("answer", data);
-    });
-
-    const canvas: HTMLCanvasElement | null = canvasRef.current;
-
-    if (canvas) {
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      setWindowSize({width: canvas.offsetWidth, height: canvas.offsetHeight});
-    }
-
     socket.on('correct',(res)=>{
+      // console.log(res)
       if(res.result === true){
         setAnswer(res.answer)
         setCorrectNick(res.nickname)
@@ -99,6 +56,7 @@ export default function Catch() {
     }); 
 
     socket.on('incorrect',(res)=>{
+      // console.log(res)
       if(res.result === true){
         setRecievedAns({
           ans : res.incorrectAnswer,
@@ -107,22 +65,49 @@ export default function Catch() {
         })
       }
     }); 
+
+    const canvas = canvasRef.current;
+    // 원본 해상도 설정
+    const originalWidth = 600;
+    const originalHeight = 600;
+
+    // 낮추고 싶은 해상도 설정
+    const targetWidth = 300;
+    const targetHeight = 300;
+
+    if(canvas){
+      // 캔버스 크기 및 스케일 조정
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      canvas.style.width = `${originalWidth}px`;
+      canvas.style.height = `${originalHeight}px`;
+      canvas.style.display = 'block'; // 블록 수준 엘리먼트로 설정
+      canvas.style.margin = 'auto'; // 가운데 정렬
+    }
+
+    // return () => {
+    // }
   }, []);
+
+
 
   // 좌표 얻는 함수
   const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
     if (!canvasRef.current) {
       return;
     }
-
     const canvas: HTMLCanvasElement = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
     return {
-      x: event.pageX - canvas.offsetLeft,
-      y: event.pageY - canvas.offsetTop
+      x: (event.pageX - canvas.offsetLeft) * scaleX,
+      y: (event.pageY - canvas.offsetTop) * scaleY,
     };
   };
 
-     // canvas에 선을 긋는 함수
+  // canvas에 선을 긋는 함수
   const drawLine = (originalMousePosition: Coordinate, newMousePosition: Coordinate) => {
     if (!canvasRef.current) {
       return;
@@ -141,6 +126,8 @@ export default function Catch() {
       context.closePath();
 
       context.stroke();
+
+      console.log(context)
     }
   };
 
@@ -157,19 +144,30 @@ export default function Catch() {
       event.preventDefault();   // drag 방지
       event.stopPropagation();  // drag 방지
 
+      const newMousePosition = getCoordinates(event);
       if (isPainting) {
-        const newMousePosition = getCoordinates(event);
         if (mousePosition && newMousePosition) {
           drawLine(mousePosition, newMousePosition);
           setMousePosition(newMousePosition);
+          socket.emit('draw', {
+            room_id : userInfo.id,
+            x : newMousePosition.x,
+            y : newMousePosition.y,
+            color : isEraser?'white':curColor,
+            lineWidth : isEraser ? eraserWidth : lineWidth,
+            first_x : mousePosition.x,
+            first_y : mousePosition.y,
+          });
         }
+      } else {
+
       }
     },
     [isPainting, mousePosition]
   );
 
   const exitPaint = useCallback(() => {
-    setIsPainting(false);
+      setIsPainting(false);
   }, []);
 
   const clearCanvas = () => {
@@ -181,6 +179,9 @@ export default function Catch() {
 
     if (context) {
       context.clearRect(0, 0, canvas.width, canvas.height);
+      socket.emit('clear_draw', {
+        room_id : userInfo.id,
+      });
     }
   }
   
@@ -211,16 +212,29 @@ export default function Catch() {
 
   const leaveGame = () => {
     if(!isFinished){
+
       if(confirm("게임을 나가시겠습니까?")){
         socket.emit('end_game',{
           room_id : userInfo.id,
         });
+
+        socket.emit('leave_game',{
+        });
+
+        setAnsAtom(null)
         router.push('/gameSelect');
       }
-    } else{
+
+    } else {
+
       socket.emit('end_game',{
         room_id : userInfo.id,
       });
+
+      socket.emit('leave_game',{
+      });
+      
+      setAnsAtom(null)
       router.push('/gameSelect');
     }
   }
@@ -255,7 +269,7 @@ export default function Catch() {
             <div className='eraseBtn'><button onClick={clearCanvas}>전체 지우기</button></div>
           </div>
           <div className='canvasDiv'>
-            <canvas ref={canvasRef} height={windowSize.height} width={windowSize.width} className="canvas"/>
+            <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas"/>
           </div>
           <Button onClick={()=>{leaveGame()}}>나가기</Button>
         </div>
@@ -272,8 +286,8 @@ export default function Catch() {
           text-overflow: ellipsis;
         }
         .canvasDiv{
-          width: 60vw;
-          height: 65vh;
+          width: 500px;
+          height: 500px;
           border: 1px solid gray;
           border-radius: 20px;
           overflow: hidden;
@@ -344,9 +358,12 @@ export default function Catch() {
           justify-content: center;
           align-items: center;
         }
+        .snack-bar{
+          width: 200%;
+          height: 200%;
+        }
         `}</style>
         </>
       );
 };
 
-// QR 페이지의 하위 컴포넌트로 게임들을 가각 불러오게.

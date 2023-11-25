@@ -28,7 +28,7 @@ export default function GameSelect() {
     const [isHovering, setIsHovered] = useState(false);
     const [hoverElement, setHoverElement] = useState('');
 
-    const onMouseEnter = (gameName:string) => {
+    const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
         setHoverElement(gameName);
     }
@@ -36,7 +36,7 @@ export default function GameSelect() {
 
     useEffect(() => {
         if (!isLogin) {
-            console.log(isLogin)
+            // console.log(isLogin)
             alert('로그인이 필요합니다.')
             router.push("/")
         }
@@ -44,7 +44,7 @@ export default function GameSelect() {
 
     useEffect(() => {
         if (gameInfo[1] && gameInfo[1] > 0 && gameInfo[0]) {
-            if(gameInfo[1] > 1000){
+            if (gameInfo[1] > 1000) {
                 alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
                 setGameInfo([gameInfo[0], 0])
             }
@@ -57,9 +57,9 @@ export default function GameSelect() {
 
     const handleGameSelect = (game: string) => {
         if (gameInfo[0] === game) {
-            setGameInfo(["",gameInfo[1]]);
+            setGameInfo(["", gameInfo[1]]);
         } else {
-            setGameInfo([game,gameInfo[1]]);
+            setGameInfo([game, gameInfo[1]]);
         }
     };
 
@@ -92,9 +92,9 @@ export default function GameSelect() {
                         {gameList.map((game) => {
                             return (
                                 <Grid className='gameGrid ${}' xs={4} onClick={() => handleGameSelect(game.name)}>
-                                    <div onMouseEnter={()=>onMouseEnter(game.name)}
+                                    <div onMouseEnter={() => onMouseEnter(game.name)}
                                         onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`}><Item>
-                                            <div className={`imageDiv ${isHovering&&hoverElement===game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
+                                            <div className={`imageDiv ${isHovering && hoverElement === game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
                                             <p className='gameTitle'>{game.name}</p>
                                         </Item></div>
                                 </Grid>
@@ -104,18 +104,22 @@ export default function GameSelect() {
                     </Grid>
                 </Box>
             </div>
-            <TextField
-                id="outlined-number"
-                label="인원 수"
-                placeholder='인원 수를 입력해주세요'
-                type="number"
-                value={gameInfo[1]}
-                onChange={(e) => setGameInfo([gameInfo[0],parseInt(e.target.value)])}
-                InputLabelProps={{
-                    shrink: true,
-                }}
-            />
-            <Button onClick={()=>router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+            <div className='gameInfoDiv'>
+                <div className='input_alert'>
+                    <TextField
+                        id="outlined-number"
+                        label="인원 수"
+                        placeholder='인원 수를 입력해주세요'
+                        type="number"
+                        value={gameInfo[1]}
+                        onChange={(e) => setGameInfo([gameInfo[0], parseInt(e.target.value)])}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </div>
+            </div>
+            <Button onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
             .gameSelectContainer{
@@ -174,6 +178,20 @@ export default function GameSelect() {
                 left: 0;
                 top: 0;
                 z-index: 1;
+            }
+            .gameInfoDiv{
+                width: 70%;
+                display: flex;  
+                align-items: center;
+                justify-content: space-evenly;
+            }
+            .input_alert{
+                height: 100%;
+                display: flex;
+                flex-direction: column; 
+                align-items: center;
+                justify-content: space-evenly;
+                gap: 20px;
             }
         `}</style>
     </>

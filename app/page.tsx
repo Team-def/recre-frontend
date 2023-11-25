@@ -24,10 +24,10 @@ export default function Home() {
   useEffect(() => {
     if(!cookies.get('refresh_token'))
       return
-    const acc_token : string = localStorage.getItem('token')??''
-    console.log(0)
-    console.log(acc_token)
-    checkLogin(acc_token)
+    const acc_token : string = localStorage.getItem('access_token')??''
+    // console.log("acc_token: ")
+    // console.log(acc_token)
+      checkLogin(acc_token)
   }, []);
 
   const selectGame = () => {
@@ -38,24 +38,47 @@ export default function Home() {
     }
   }
 
-  const checkLogin = (acc_token : string) => {
+  const checkLogin2 = (acc_token : string) => {
     axios.get(`${myApi}/user`, {
       headers: {
+        'Cache-Control': 'no-cache',
         'Content-type': 'application/json',
         'Accept': 'application/json',
         'authorization': acc_token,
         withCredentials: true
       }
     }).then((response) => {
-      console.log(1)
       setUserInfo(response.data)
       setIsLogin(true)
+      checkIsHostPhone()
     })
       .catch((res) => {
-        console.log(res)
-        console.log(2)
-        if (res.response['status'] == 410 || res.response['status'] == 401) {
-          sendRefresh()
+        // console.log("checkLogin2 error")
+        alert('로그인에 실패했습니다. 다시 로그인해주세요.\n 문제가 있을 시 캐시를 삭제해보세요.')
+      })
+  }
+
+
+  const checkLogin = (acc_token : string) => {
+    axios.get(`${myApi}/user`, {
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+        'authorization': acc_token,
+        withCredentials: true
+      }
+    }).then((response) => {
+      console.log("checkLogin")
+      setUserInfo(response.data)
+      setIsLogin(true)
+      checkIsHostPhone()
+    })
+      .catch((res) => {
+        // console.log(res)
+        // console.log("checkLogin error")
+        if (res.response['status'] === 410 || res.response['status'] === 401) {
+            sendRefresh()
         }
         else {
           alert(res)
@@ -79,17 +102,20 @@ export default function Home() {
       refresh_token: cookies.get('refresh_token')
     }, {
       headers: {
+        'Cache-Control': 'no-cache',
         'Content-type': 'application/json',
         'Accept': 'application/json',
         withCredentials: true
       }
     }).then((response) => {
-      console.log(3)
+      // console.log("sendRefresh")
+      // console.log("response.data.access_token: ")
+      // console.log(response.data.access_token)
       setToken(response.data.access_token)
-      checkLogin(response.data.access_token)
+      checkLogin2(response.data.access_token)
     })
       .catch((res) => {
-        console.log(4)
+        // console.log("sendRefresh error")
         alert('인증 시간이 만료되었습니다. 다시 로그인해주세요.')
         setToken('');
         setUserInfo({
@@ -104,6 +130,15 @@ export default function Home() {
         setGame(["",null])
         router.push("/")
       })
+  }
+
+
+
+  const checkIsHostPhone = () => {
+    let isHostPhone = localStorage.getItem('isHostPhone');
+    if(isHostPhone === 'true'){
+      router.push("/catchAnswer");
+    }
   }
 
 
