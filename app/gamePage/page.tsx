@@ -40,7 +40,6 @@ export default function QR() {
     const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
     const gamePageUrlAns = `${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`;
 
-
     useEffect(() => {
         if (!isLogin) {
             // console.log(isLogin)
