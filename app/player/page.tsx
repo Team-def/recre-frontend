@@ -65,7 +65,11 @@ export default function Player() {
         if (isMobile && (browserName === 'Samsung Internet')) {
             alert("삼성 브라우저에서는 다크모드를 사용하실 경우 캐치마인드 게임이 어렵습니다.\n다크모드를 사용중이실 경우 해제하고 게임을 즐겨주세요!");
         }
-
+        return () => {
+            socket.current.emit("leave_game", {
+            });
+            window.close();
+        }
     }, []);
 
     const readyToPlay = () => {

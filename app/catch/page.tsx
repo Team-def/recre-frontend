@@ -85,9 +85,18 @@ export default function Catch({socket}: {socket : Socket}) {
       canvas.style.margin = 'auto'; // 가운데 정렬
     }
 
-    // return () => {
-    // }
+    return () => { 
+      handleBeforeUnload();
+  };
   }, []);
+
+  const handleBeforeUnload = () => {
+    const user_t = JSON.parse(localStorage.getItem('userInfo')|| 'null');
+    socket.emit('end_game', {
+        room_id: user_t.id
+    });
+
+};
 
 
 
