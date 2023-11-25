@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import CatchPlayer from '../playerComponent/catchPlayer';
-import { io } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
