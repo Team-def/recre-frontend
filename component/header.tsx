@@ -28,29 +28,30 @@ export default function Header() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
     const [modalHeader, setModalHeader] = useState<string | ReactNode>('');
     const [modalContent, setModalContent] = useState<JSX.Element>();
-    const [isLogin,setIsLogin] = useAtom(loginAtom)
-    const [,setToken] = useAtom(tokenAtoms)
-    const [userInfo,setUserInfo] = useAtom(userInfoAtoms)
-    const [,setGame] = useAtom(gameAtoms)
+    const [isLogin, setIsLogin] = useAtom(loginAtom)
+    const [, setToken] = useAtom(tokenAtoms)
+    const [userInfo, setUserInfo] = useAtom(userInfoAtoms)
+    const [, setGame] = useAtom(gameAtoms)
     const router = useRouter();
     const cookies = useCookies();
     const currentPath = usePathname()
     const hideHeader = currentPath === '/player' ? true : false
+    const isAnswer = currentPath === '/catchAnswer' ? true : false
 
     useEffect(() => {
         if (isLogin) {
             setModalHeader('로그인 / 회원가입');
             setOpen(false);
         }
-    },[isLogin]);
+    }, [isLogin]);
 
     useEffect(() => {
         if (modalHeader === '로그인 / 회원가입') {
-            setModalContent(<OauthButtons/>);
-        } else{
+            setModalContent(<OauthButtons />);
+        } else {
             setModalContent(<Profile />);
         }
-    },[modalHeader])
+    }, [modalHeader])
 
     const handleOpenLogin = () => {
         setModalHeader('로그인 / 회원가입');
@@ -58,7 +59,7 @@ export default function Header() {
     }
 
     const handleOpenProfile = () => {
-        setModalHeader(<div className="headerTitle"><div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/></div><h3>{userInfo.nickname}님의 프로필</h3></div>);
+        setModalHeader(<div className="headerTitle"><div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true} /></div><h3>{userInfo.nickname}님의 프로필</h3></div>);
         setOpen(true);
     }
     const handleLogout = () => {
@@ -72,7 +73,7 @@ export default function Header() {
         });
         cookies.remove('refresh_token')
         setIsLogin(false);
-        setGame(["",null])
+        setGame(["", null])
         localStorage.removeItem('isHostPhone')
         alert("로그아웃 되었습니다.");
         router.push("/");
@@ -84,22 +85,23 @@ export default function Header() {
         setIsLogin(true);
     }
 
-    return (<>{hideHeader?'':<><div className="headerContainer">
-        <div className="logo">
-            <h1 onClick={()=>router.push("/")}>RecRe</h1>
-        </div>
+    return (<>{hideHeader ? '' : <>
+    <div className="headerContainer">
+        {isAnswer ? null : <div className="logo">
+            <h1 onClick={() => router.push("/")}>RecRe</h1>
+        </div>}
         <div className="userInfoBtn">
             {/* 로그인시에만 보이는 문구 */}
-            {isLogin?
-            <div className="login" onClick={handleOpenProfile}>
-                <div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/></div>
-                <div>{userInfo.nickname}님
+            {isLogin ?
+                <div className="login" onClick={handleOpenProfile}>
+                    <div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true} /></div>
+                    <div>{userInfo.nickname}님
+                    </div>
                 </div>
-            </div>
-            :null}
+                : null}
             {/* 로그인 버튼 */}
             <div className='no-login'>
-                <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin?"로그아웃":"로그인 / 회원가입"}</Button>
+                <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin ? "로그아웃" : "로그인 / 회원가입"}</Button>
             </div>
         </div>
     </div>
@@ -119,8 +121,10 @@ export default function Header() {
             }
             .userInfoBtn{
                 display: flex;
+                ${isAnswer? 'width: 100%;':''}
                 align-items: center;
                 flex-direction: row;
+                ${isAnswer ? 'justify-content: space-between;' : ''}
             }
             .login{
                 display: flex;
