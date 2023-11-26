@@ -12,8 +12,12 @@ import { useCookies } from 'next-client-cookies';
 import { loginAtom } from '../modules/loginAtoms';
 import { ModalProps } from '@/component/MyModal';
 
+interface ProfileProps extends ModalProps {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
 
-export default function Profile() {
+
+export default function Profile({setOpen}: ProfileProps) {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nicknameChange, setNicknameChange] = useState<boolean>(false);
     const [nickname, setNickname] = useState<string>('');

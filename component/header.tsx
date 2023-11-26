@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, SetStateAction, useEffect, useState } from "react";
 import Button from '@mui/material/Button';
 import OauthButtons from "./OauthButtons";
 import Profile from "../app/profile/profile";
@@ -21,7 +21,6 @@ export interface ModalProps {
     setModalHeader: React.Dispatch<React.SetStateAction<string>>,
     isLogin: boolean,
     setIsLogin: React.Dispatch<React.SetStateAction<boolean>>,
-
 }
 
 export default function Header() {
@@ -48,7 +47,9 @@ export default function Header() {
         if (modalHeader === '로그인 / 회원가입') {
             setModalContent(<OauthButtons/>);
         } else{
-            setModalContent(<Profile />);
+            setModalContent(<Profile setOpen={function (value: SetStateAction<boolean>): void {
+                throw new Error("Function not implemented.");
+            } }/>);
         }
     },[modalHeader])
 
@@ -58,9 +59,10 @@ export default function Header() {
     }
 
     const handleOpenProfile = () => {
-        setModalHeader(<div className="headerTitle"><div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true}/></div><h3>{userInfo.nickname}님의 프로필</h3></div>);
+        setModalHeader(<div className="headerTitle"><div className="profileName"><Image src={userInfo.profileImage} width={30} height={30} alt="profileImage" unoptimized={true} /></div><h3>{userInfo.nickname}님의 프로필</h3></div>);
         setOpen(true);
     }
+
     const handleLogout = () => {
         setToken('');
         setUserInfo({
