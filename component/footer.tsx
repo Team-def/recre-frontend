@@ -20,7 +20,7 @@ export default function Footer() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
     const [isLogin, setIsLogin] = useAtom(loginAtom)
     const currentPath = usePathname()
-    const hideHeader = currentPath === '/player' ? true : false
+    const hideHeader = currentPath === '/player'||'catchAnswer' ? true : false
 
     const handleClose = () => { setOpen(false); }
     const catch_answer = () => { setOpen(true); }

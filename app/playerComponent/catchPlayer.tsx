@@ -10,12 +10,13 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         if (confirm('게임을 나가시겠습니까?')) {
             socket.emit("leave_game", {
             });
-            if (window.opener && window.opener !== window) {
-                window.opener.location.reload(); // Reload the parent window
-                window.close(); // Close the current window
-            } else {
-                window.location.href = 'about:blank'; // Navigate to a blank page
-            }
+            // if (window.opener && window.opener !== window) {
+            //     window.opener.location.reload(); // Reload the parent window
+            //     window.close(); // Close the current window
+            // } else {
+            //     window.location.href = 'about:blank'; // Navigate to a blank page
+            // }
+            window.close();
         }
     }
     //throw catch mind answer (blocks the button for 3 seconds)
@@ -78,10 +79,12 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             alert(`우승자 : ${res.nickname}\n정답 : ${res.answer}`)
         })
 
+
         return () => {
             // 컴포넌트가 언마운트될 때 Socket.io 연결 해제
             socket.emit("leave_game", {
             });
+            window.close();
         };
     }, []);
     
@@ -111,7 +114,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         </div>
         <style jsx>{`
                 canvas{
-                    background-color: white;
+                    background-color: white !important;
                     border: 0.1px solid gray;
                     border-radius: 10px;
                     box-shadow: 0.1px 0.1px 5px gray;

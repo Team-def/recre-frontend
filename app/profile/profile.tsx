@@ -16,7 +16,6 @@ interface ProfileProps extends ModalProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-
 export default function Profile({setOpen}: ProfileProps) {
     const [userInfo, setUserInfo] = useAtom(userInfoAtoms);
     const [nicknameChange, setNicknameChange] = useState<boolean>(false);
@@ -92,8 +91,8 @@ export default function Profile({setOpen}: ProfileProps) {
             setIsLogin(false);
             localStorage.removeItem('access_token');
             cookies.remove('refresh_token');
-            router.replace('/');
-            // router.refresh();
+            router.push('/');
+            router.refresh();
         }
     }
 

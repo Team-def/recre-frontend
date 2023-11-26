@@ -5,10 +5,14 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import CatchPlayer from '../playerComponent/catchPlayer';
+import { io } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
 import { Alert } from '@mui/material';
+import { isMobile, browserName } from 'react-device-detect';
+
+
 
 
 
@@ -45,13 +49,13 @@ export default function Player() {
         socket.current.on("end", (res) => {
             if (res.result === true) {
                 alert('게임이 종료되었습니다.')
-                if (window.opener && window.opener !== window) {
-                    window.opener.location.reload(); // Reload the parent window
-                    window.close(); // Close the current window
-                } else {
-                    window.location.href = 'about:blank'; // Navigate to a blank page
-                }
+                window.close();
             }
+        })
+
+        socket.current.on("forceDisconnect", (res) => {
+            alert('게임이 15분동안 시작되지 않아 종료되었습니다.')
+            setReady(false)
         })
 
         socket.current.on("ready", (res) => {
@@ -64,6 +68,17 @@ export default function Player() {
             }
         })
 
+        if (isMobile && (browserName === 'Samsung Internet')) {
+            alert("삼성 브라우저에서는 다크모드를 사용하실 경우 캐치마인드 게임이 어렵습니다.\n다크모드를 사용중이실 경우 해제하고 게임을 즐겨주세요!");
+        }
+
+        // window.addEventListener('resize', useVH);
+
+        return () => {
+            socket.current.emit("leave_game", {
+            });
+            window.close();
+        }
     }, []);
 
     const readyToPlay = () => {
@@ -86,9 +101,9 @@ export default function Player() {
 
 
     return (
-        <>{isGame?
+        <>{isGame ?
             //캐치마인드 게임이 시작되면 catch로 이동
-            <CatchPlayer roomId={room_id as string} socket={socket.current}/>:
+            <CatchPlayer roomId={room_id as string} socket={socket.current} /> :
             //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
@@ -98,20 +113,20 @@ export default function Player() {
                             <span className='teamdef'>Team.def():</span>
                         </div>
                     </div>
-                    <div className='alertDiv'><Alert severity={ready?"success":"info"}>{ready?"잠시 기다려 주시면 게임이 곧 시작됩니다!\n 닉네임을 변경하시려면 '준비 취소'를 누르신 후 변경해주세요!":"닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
+                    <div className='alertDiv'><Alert severity={ready ? "success" : "info"}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!\n 닉네임을 변경하시려면 '준비 취소'를 누르신 후 변경해주세요!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
                     <div className='nickDiv'>
-                    <label className="nickname-label">닉네임: </label>
-                    <input
-                        type="text"
-                        className="nickname-input"
-                        value={playerNickname ?? ''}
-                        onChange={(e) => setPlayerNickname(e.target.value)}
-                        disabled={ready}
-                        placeholder='닉네임을 입력해주세요.'
-                    />
-                    <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay}>
-                        {ready ? "준비 취소!" : "준비 완료!"}
-                    </Button></div>
+                        <label className="nickname-label">닉네임: </label>
+                        <input
+                            type="text"
+                            className="nickname-input"
+                            value={playerNickname ?? ''}
+                            onChange={(e) => setPlayerNickname(e.target.value)}
+                            disabled={ready}
+                            placeholder='닉네임을 입력해주세요.'
+                        />
+                        <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay}>
+                            {ready ? "준비 취소!" : "준비 완료!"}
+                        </Button></div>
                 </div></>}
             <style jsx>{`
                 .nickname-container {
@@ -181,6 +196,11 @@ export default function Player() {
                     font-size: 22px;
                     font-weight: 500;
                     color: gray;
+                }
+            `}</style>
+            <style jsx global>{`
+                body {
+                    overflow: hidden !important;
                 }
             `}</style>
         </>
