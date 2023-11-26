@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useCookies } from 'next-client-cookies';
 import { myApi } from './modules/backApi';
 import { gameAtoms } from './modules/gameAtoms';
+import {isMobile, isTablet} from 'react-device-detect';
 
 
 export default function Home() {
@@ -22,8 +23,10 @@ export default function Home() {
   const cookies = useCookies();
 
   useEffect(() => {
-    if(!cookies.get('refresh_token'))
+    if(!cookies.get('refresh_token')){
+      checkIsHostPhone()
       return
+    }
     const acc_token : string = localStorage.getItem('access_token')??''
     // console.log("acc_token: ")
     // console.log(acc_token)
@@ -55,6 +58,7 @@ export default function Home() {
       .catch((res) => {
         // console.log("checkLogin2 error")
         alert('로그인에 실패했습니다. 다시 로그인해주세요.\n 문제가 있을 시 캐시를 삭제해보세요.')
+        checkIsHostPhone()
       })
   }
 
@@ -81,7 +85,6 @@ export default function Home() {
             sendRefresh()
         }
         else {
-          alert(res)
           setToken('');
         setUserInfo({
             id: '',
@@ -93,6 +96,7 @@ export default function Home() {
         cookies.remove('refresh_token')
         setIsLogin(false);
         setGame(["",null])
+        checkIsHostPhone()
         }
       })
   }
@@ -128,15 +132,17 @@ export default function Home() {
         cookies.remove('refresh_token')
         setIsLogin(false);
         setGame(["",null])
-        router.push("/")
+        if(isMobile){
+          router.push("/catchAnswer");
+        }
+        else router.push("/")
       })
   }
 
 
 
   const checkIsHostPhone = () => {
-    let isHostPhone = localStorage.getItem('isHostPhone');
-    if(isHostPhone === 'true'){
+    if(isMobile){
       router.push("/catchAnswer");
     }
   }

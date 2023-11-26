@@ -18,25 +18,16 @@ export interface ModalProps {
 
 export default function Footer() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
-    const [isLogin, setIsLogin] = useAtom(loginAtom)
     const currentPath = usePathname()
-    const hideHeader = currentPath === '/player'||'catchAnswer' ? true : false
+    const hideHeader = (currentPath === '/player'|| currentPath === '/catchAnswer') ? true : false
 
     const handleClose = () => { setOpen(false); }
-    const catch_answer = () => { setOpen(true); }
 
     return (<>{hideHeader?'':<>
         <div className="footerContainer">
             <div>
                 <h4>SWJUNGLE Team.def()</h4>
             </div>
-        {/* 더 이상 사용하지 않는 기능 */}
-            {isLogin?
-            <div>
-                {/* 캐치마인드 정답 제출용 모달 호출 버튼 */}
-                <Button onClick={catch_answer}> </Button>
-            </div>
-            :null}
             
 
         </div>
