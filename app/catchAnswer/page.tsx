@@ -12,6 +12,8 @@ import {v4 as uuidv4} from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import { Alert } from '@mui/material';
 import useVH from 'react-viewport-height';
+import {isMobile} from 'react-device-detect';
+import MyModal from '@/component/MyModal';
 
 //Answer setting page (for host)
 export default function CatchAnswer() {
@@ -22,6 +24,7 @@ export default function CatchAnswer() {
     const [isLogin,] = useAtom(loginAtom);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
+    const [open, setOpen] = useState<boolean>(!isLogin);
 
     const socket = useRef(io(`${socketApi}?uuId=${uuId}`,{
         withCredentials: true,
@@ -30,7 +33,13 @@ export default function CatchAnswer() {
     }));
 
     useEffect(()=>{
-        localStorage.setItem('isHostPhone','true')
+        if(!isMobile){
+            alert('모바일 환경에서만 정답 입력이 가능합니다.')
+            window.open("about:blank", "_self");
+            window.close();
+        }
+        
+        setOpen(!isLogin);
 
         socket.current.on("set_catch_answer", (res)=>{
 
@@ -38,10 +47,13 @@ export default function CatchAnswer() {
 
                 socket.current.disconnect()
                 alert('정답이 설정되었습니다.')
-
+                window.open("about:blank", "_self");
                 window.close();
 
-            } else {
+            } else if(res.type === 'already_started'){
+                alert('이미 게임이 시작되었습니다.')
+            }
+            else {
                 alert('아직 방이 안 만들어졌습니다.')
             }
         });
@@ -61,7 +73,6 @@ export default function CatchAnswer() {
 
     return (
         <>
-        {isLogin? <>
             <div className="nickname-container">
                     <div className="headerContainer">
                         <div className="logo">
@@ -77,11 +88,12 @@ export default function CatchAnswer() {
                 className="catchAnswer-input nickname-input"
                 value={catchAnswer}
                 onChange={(e) => setCatchAnswer(e.target.value)}
-                placeholder='문제의 정답을 입력해주세요!'
+                placeholder={isLogin?'문제의 정답을 입력해주세요!':'로그인이 필요합니다.'}
+                disabled={!isLogin}
                 ></input>
-                        <Button variant="contained" className="nickname-change" onClick={handleAnswerSubmit}>제출</Button></div>
+                        <Button variant="contained" className="nickname-change" onClick={handleAnswerSubmit} disabled={!isLogin}>제출</Button></div>
                 </div>
-            </>:<OauthButtons/>}
+                <MyModal open={open} modalHeader={'먼저 로그인을 해주세요'} modalContent={<OauthButtons/>} closeFunc={()=>{}} />
             <style jsx>{`
                 .nickname-container {
                     height: ${100 * vh - 60}px;

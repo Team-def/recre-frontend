@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { useCookies } from 'next-client-cookies';
 import { gameAtoms } from "@/app/modules/gameAtoms";
 import { usePathname } from 'next/navigation';
+import {isMobile} from 'react-device-detect';
 
 export interface ModalProps {
     isOpen: boolean,
@@ -76,6 +77,10 @@ export default function Header() {
         setGame(["", null])
         localStorage.removeItem('isHostPhone')
         alert("로그아웃 되었습니다.");
+        if(isMobile){
+            window.open("about:blank", "_self");
+            window.close();
+        }
         router.push("/");
     }
 
@@ -98,7 +103,7 @@ export default function Header() {
                     <div>{userInfo.nickname}님
                     </div>
                 </div>
-                : null}
+                : <div></div>}
             {/* 로그인 버튼 */}
             <div className='no-login'>
                 <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin ? "로그아웃" : "로그인 / 회원가입"}</Button>
