@@ -183,27 +183,6 @@ export default function QR() {
             }    
         }
 
-        function timeoutEvent(){
-            setEmotions(prevEmotions => prevEmotions.slice(1));
-        }
-
-        const Move = keyframes`
-        0% { transform: translate(0, 0); }
-        25% { transform: translate(-10px, -20px); }
-        50% { transform: translate(10px, -40px); }
-        75% { transform: translate(-10px, -60px); }
-        100% { transform: translate(10px, -80px); }
-        `;
-
-        const FadeOut = keyframes`
-        0% { opacity: 1; }
-        100% { opacity: 0; }
-        `;
-
-        const EmotionCss= css`
-            animation: ${Move} 1.5s linear forwards, ${FadeOut} 1.5s linear forwards;
-        `;
-
 
         const QRpage = () => {
             return (
@@ -319,12 +298,13 @@ export default function QR() {
                     //     },
                     //     emotion.emotion
                     // );
-                    return <div css={EmotionCss} className='emotion' key={index} style={{
+                    return <div className='emotion' key={index} style={{
                         position: 'absolute',
                         left: emotion.x,
                         top: emotion.y,
                         fontSize: '30px',
                         zIndex: 10000,
+                        animation: 'Move 1.5s linear forwards, fadeOut 1.5s linear forwards',
                     }}>{emotion.emotion}</div>
                 })
             }</div>
