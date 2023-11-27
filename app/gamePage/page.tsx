@@ -166,8 +166,8 @@ export default function QR() {
             if (modalRef.current) {
                 const { left, top, right, bottom } = modalRef.current.getBoundingClientRect() as DOMRect;
                 console.log(left, top, right, bottom);
-                let randomX = right-left
-                let randomY = bottom-top
+                let randomX = window.innerWidth/2
+                let randomY = window.innerHeight/2
                 while (randomX > left && randomX < right && randomY > top && randomY < bottom) {
                     randomX = Math.floor(Math.random() * window.innerWidth);
                     randomY = Math.floor(Math.random() * window.innerHeight);
@@ -309,6 +309,7 @@ export default function QR() {
                 })
             }</div>
             <style jsx>{`
+
         @keyframes move {
             0% {
               transform: translate(0, 0);
