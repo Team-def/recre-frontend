@@ -31,7 +31,7 @@ export default function Footer() {
             
 
         </div>
-        <MyModal open={open} modalHeader={'캐치마인드 정답 입력'} modalContent={<CatchAnswer />} closeFunc={handleClose} /></>}
+        <MyModal open={open} modalHeader={'캐치마인드 정답 입력'} modalContent={<CatchAnswer />} closeFunc={handleClose} myref={null}/></>}
         <style jsx>{`
                 .footerContainer{
                     display: flex;

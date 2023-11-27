@@ -110,7 +110,7 @@ export default function Header() {
             </div>
         </div>
     </div>
-        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} /></>}
+        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} myref={null}/></>}
         <style jsx global>{`
             .logo{
                 cursor: pointer;

@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ReactNode } from 'react';
+import { useRef } from 'react';
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -23,7 +24,7 @@ export interface ModalProps {
   isOpen? : boolean,
 }
 
-export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {open: boolean, modalHeader:string | ReactNode, modalContent:JSX.Element | undefined, closeFunc: () => void}) {
+export default function MyModal({open, modalHeader, modalContent ,closeFunc, myref}: {open: boolean, modalHeader:string | ReactNode, modalContent:JSX.Element | undefined, closeFunc: () => void, myref: any}) {
     return (<>
         <Modal
             open={open}
@@ -32,7 +33,7 @@ export default function MyModal({open, modalHeader, modalContent ,closeFunc}: {o
             aria-describedby="modal-modal-description"
             disableEscapeKeyDown = {modalHeader==="QR코드를 찍고 입장해주세요!" ? true : false}
         >
-            <Box sx={modalStyle}>
+            <Box sx={modalStyle} ref={myref}>
             <Typography id="modal-modal-title" variant="h5" component="h2">
                 {modalHeader}
             </Typography>
