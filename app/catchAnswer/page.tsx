@@ -43,7 +43,7 @@ export default function CatchAnswer() {
 
         socket.current.on("set_catch_answer", (res)=>{
 
-            if (res.result === true) {
+            if (res.type === 'answer_success') {
 
                 socket.current.disconnect()
                 alert('정답이 설정되었습니다.')
