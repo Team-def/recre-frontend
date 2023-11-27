@@ -77,7 +77,7 @@ export default function QR() {
 
         socket.current.on('set_catch_answer', (res)=>{
             // console.log(res)
-            if(res.result === true){
+            if(res.type === 'answer_success'){
                 setAnswer(res.answer)
             }
         });
