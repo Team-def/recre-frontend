@@ -304,10 +304,35 @@ export default function QR() {
                         top: emotion.y,
                         fontSize: '30px',
                         zIndex: 10000,
-                        animation: 'Move 1.5s linear forwards, fadeOut 1.5s linear forwards',
+                        animation: 'move 1.5s linear forwards',
                     }}>{emotion.emotion}</div>
                 })
             }</div>
+            <style jsx>{`
+        @keyframes move {
+            0% {
+              transform: translate(0, 0);
+              opacity: 1;
+            }
+          
+            25% {
+              transform: translate(-10px, -20px);
+            }
+          
+            50% {
+              transform: translate(10px, -40px);
+            }
+          
+            75% {
+              transform: translate(-10px, -60px);
+            }
+          
+            100% {
+              transform: translate(10px, -80px);
+              opacity: 0;
+            }
+          };
+        `}</style>
         </>
         )
     }   
