@@ -19,6 +19,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import Popover from '@mui/material/Popover';
 import { css, keyframes } from "@emotion/react";
 import React from 'react';
+import Flower from '../redGreen/page';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -70,7 +71,7 @@ export default function QR() {
         if (JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기') {
             setGameContent(<Catch socket={socket.current} />)
         } else if (JSON.parse(localStorage.getItem('game') || 'null')[0] === '무궁화 꽃이 피었습니다') {
-            setGameContent(<Catch socket={socket.current} />)
+            setGameContent(<Flower socket={socket.current} />)
         } else if (JSON.parse(localStorage.getItem('game') || 'null')[0] === '줄넘기') {
             setGameContent(<Catch socket={socket.current} />)
         }
@@ -101,7 +102,7 @@ export default function QR() {
         });
 
         socket.current.on('express_emotion', (res)=>{
-            console.log(emotions);
+            // console.log(emotions);
             makeEmotion(res.emotion);
         })
 
@@ -153,11 +154,8 @@ export default function QR() {
         const id = openPopover ? 'simple-popover' : undefined;
 
         const testGame = () => {
-            setGameInfo(['그림 맞추기', 1])
-            socket.current.emit("throw_catch_answer", {
-                room_id: userInfo.id,
-                ans: 'test',
-            })
+            setGameInfo(['무궁화 꽃이 피었습니다', 1])
+
             socket.current.emit('start_catch_game', {
                 access_token: token
             });
@@ -166,14 +164,14 @@ export default function QR() {
         const makeEmotion = async(emotion : string) => {
             if (modalRef.current) {
                 const { left, top, right, bottom } = modalRef.current.getBoundingClientRect() as DOMRect;
-                console.log(left, top, right, bottom);
+                // console.log(left, top, right, bottom);
                 let randomX = window.innerWidth/2
                 let randomY = window.innerHeight/2
                 while (randomX > left && randomX < right && randomY > top && randomY < bottom) {
                     randomX = Math.floor(Math.random() * window.innerWidth);
                     randomY = Math.floor(Math.random() * window.innerHeight);
                 }
-                console.log(randomX, randomY);
+                // console.log(randomX, randomY);
 
                 if(emotions.length > 20){
                     setEmotions((prevEmotions) => [...prevEmotions.slice(1),{ x: randomX, y: randomY, emotion: emotion }]);
@@ -285,27 +283,13 @@ export default function QR() {
             {gameContent}
             <div id='emotionPlace'>{
                 emotions.map((emotion, index) => {
-                    // const emotionDiv = React.createElement(
-                    //     'div',
-                    //     {
-                    //         style: {
-                    //             position: 'absolute',
-                    //             left: emotion.x,
-                    //             top: emotion.y,
-                    //             fontSize: '24px',
-                    //             color: 'red',
-                    //             zIndex: 10000,
-                    //         },
-                    //     },
-                    //     emotion.emotion
-                    // );
                     return <div className='emotion' key={index} style={{
                         position: 'absolute',
                         left: emotion.x,
                         top: emotion.y,
                         fontSize: '30px',
                         zIndex: 10000,
-                        animation: 'move 1.5s linear forwards',
+                        animation: 'move 2s linear forwards',
                     }}>{emotion.emotion}</div>
                 })
             }</div>

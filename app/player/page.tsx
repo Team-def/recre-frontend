@@ -106,7 +106,7 @@ export default function Player() {
         });
     }
 
-    const emotions = ['❤️', '👍', '🦋', '🌈']
+    const emotions = ['❤️', '👍', '🦋', '💩']
 
 
     return (
