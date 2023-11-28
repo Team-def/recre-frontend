@@ -17,8 +17,8 @@ import { socketApi } from '../modules/socketApi';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import { access } from 'fs';
+import { css, keyframes } from "@emotion/react";
+import React from 'react';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -39,6 +39,14 @@ export default function QR() {
     }));
     const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
     const gamePageUrlAns = `${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`;
+    const modalRef = useRef<HTMLDivElement | null>(null);
+    const [emotions, setEmotions] = useState<emotion[]>([]);
+
+    interface emotion {
+        x: number;
+        y: number;
+        emotion: string;
+    }
 
     useEffect(() => {
         if (!isLogin) {
@@ -92,11 +100,16 @@ export default function QR() {
             setNowPeople(res.player_cnt)
         });
 
+        socket.current.on('express_emotion', (res)=>{
+            console.log(emotions);
+            makeEmotion(res.emotion);
+        })
 
         return () => { 
             handleBeforeUnload();
         };
     }, []);
+
 
         const makeRoom = (acc_token: string) => {
             const game_t = JSON.parse(localStorage.getItem('game') || 'null');
@@ -149,6 +162,27 @@ export default function QR() {
             });
         }
 
+        const makeEmotion = async(emotion : string) => {
+            if (modalRef.current) {
+                const { left, top, right, bottom } = modalRef.current.getBoundingClientRect() as DOMRect;
+                console.log(left, top, right, bottom);
+                let randomX = window.innerWidth/2
+                let randomY = window.innerHeight/2
+                while (randomX > left && randomX < right && randomY > top && randomY < bottom) {
+                    randomX = Math.floor(Math.random() * window.innerWidth);
+                    randomY = Math.floor(Math.random() * window.innerHeight);
+                }
+                console.log(randomX, randomY);
+
+                if(emotions.length > 20){
+                    setEmotions((prevEmotions) => [...prevEmotions.slice(1),{ x: randomX, y: randomY, emotion: emotion }]);
+                }
+                else 
+                    setEmotions((prevEmotions) => [...prevEmotions, { x: randomX, y: randomY, emotion: emotion }]);
+                ;
+            }    
+        }
+
 
         const QRpage = () => {
             return (
@@ -187,7 +221,8 @@ export default function QR() {
 
                         <div className='gameInfo-start-button'>
                             <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                            <Button onClick={testGame}>Test</Button>
+                            <Button onClick={testGame}>TestPlay</Button>
+                            <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button>
                         </div>
                     </div>
                     <style jsx>{`
@@ -245,7 +280,60 @@ export default function QR() {
         }
 
         return (<>
-            <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage />} closeFunc={() => { }} />
+            <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage />} closeFunc={() => { }} myref={modalRef}/>
             {gameContent}
-        </>)
-    }
+            <div id='emotionPlace'>{
+                emotions.map((emotion, index) => {
+                    // const emotionDiv = React.createElement(
+                    //     'div',
+                    //     {
+                    //         style: {
+                    //             position: 'absolute',
+                    //             left: emotion.x,
+                    //             top: emotion.y,
+                    //             fontSize: '24px',
+                    //             color: 'red',
+                    //             zIndex: 10000,
+                    //         },
+                    //     },
+                    //     emotion.emotion
+                    // );
+                    return <div className='emotion' key={index} style={{
+                        position: 'absolute',
+                        left: emotion.x,
+                        top: emotion.y,
+                        fontSize: '30px',
+                        zIndex: 10000,
+                        animation: 'move 1.5s linear forwards',
+                    }}>{emotion.emotion}</div>
+                })
+            }</div>
+            <style jsx>{`
+
+        @keyframes move {
+            0% {
+              transform: translate(0, 0);
+              opacity: 1;
+            }
+          
+            25% {
+              transform: translate(-10px, -20px);
+            }
+          
+            50% {
+              transform: translate(10px, -40px);
+            }
+          
+            75% {
+              transform: translate(-10px, -60px);
+            }
+          
+            100% {
+              transform: translate(10px, -80px);
+              opacity: 0;
+            }
+          };
+        `}</style>
+        </>
+        )
+    }   

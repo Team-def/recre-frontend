@@ -93,7 +93,7 @@ export default function CatchAnswer() {
                 ></input>
                         <Button variant="contained" className="nickname-change" onClick={handleAnswerSubmit} disabled={!isLogin}>제출</Button></div>
                 </div>
-                <MyModal open={open} modalHeader={'먼저 로그인을 해주세요'} modalContent={<OauthButtons/>} closeFunc={()=>{}} />
+                <MyModal open={open} modalHeader={'먼저 로그인을 해주세요'} modalContent={<OauthButtons/>} closeFunc={()=>{}} myref={null}/>
             <style jsx>{`
                 .nickname-container {
                     height: ${100 * vh - 60}px;

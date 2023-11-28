@@ -283,7 +283,7 @@ export default function Catch({socket}: {socket : Socket}) {
           <Button onClick={()=>{leaveGame()}}>나가기</Button>
         </div>
         <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick}/>
-        <MyModal open={isFinished} modalHeader={`우승자 : ${correctNick}`} modalContent={<FinishedModal/>} closeFunc={()=>{}}/>
+        <MyModal open={isFinished} modalHeader={`우승자 : ${correctNick}`} modalContent={<FinishedModal/>} closeFunc={()=>{}} myref={null}/>
         <style jsx>{`
         .canvasContainer {
           height: 100vh;

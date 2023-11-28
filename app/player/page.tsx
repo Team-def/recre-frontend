@@ -8,8 +8,9 @@ import CatchPlayer from '../playerComponent/catchPlayer';
 import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
-import { Alert } from '@mui/material';
+import { Alert, Box, ButtonGroup } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
+import { type } from 'os';
 
 
 
@@ -74,9 +75,9 @@ export default function Player() {
         // window.addEventListener('resize', useVH);
 
         return () => {
-            socket.current.emit("leave_game", {
-            });
-            window.close();
+            // socket.current.emit("leave_game", {
+            // });
+            // // window.close();
         }
     }, []);
 
@@ -98,6 +99,15 @@ export default function Player() {
         setReady(false)
     }
 
+    const expressEmotion = (emotion: string) => {
+        socket.current.emit("express_emotion", {
+            room_id: room_id,
+            emotion: emotion
+        });
+    }
+
+    const emotions = ['❤️', '👍', '🦋', '🌈']
+
 
     return (
         <>{isGame ?
@@ -113,6 +123,21 @@ export default function Player() {
                         </div>
                     </div>
                     <div className='alertDiv'><Alert severity={ready ? "success" : "info"}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!\n 닉네임을 변경하시려면 '준비 취소'를 누르신 후 변경해주세요!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
+                    <div className='emotionDiv'>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                '& > *': {
+                                    m: 2,
+                                },
+                            }}
+                        >
+                            <ButtonGroup aria-label="medium button group">{emotions.map((emotion, index) => {
+                                return <Button className="nickname-change" size='large' variant='outlined' key={index} disabled={!ready} onClick={() => expressEmotion(emotion)}>{'' + emotion + ''}</Button>
+                            })}</ButtonGroup></Box>
+                    </div>
                     <div className='nickDiv'>
                         <label className="nickname-label">닉네임: </label>
                         <input
@@ -133,7 +158,7 @@ export default function Player() {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: space-around;
+                    justify-content: space-evenly;
                     background-color: #F5F5F5;
                     border-radius: 10px;
                 }
@@ -177,9 +202,16 @@ export default function Player() {
                     justify-content: center;
                     gap: 10px;
                 }
+                .headerContainer{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
                 .alertDiv{
                     width: 70%;
                     display: flex;
+                    margin-top: 50px;
                     justify-content: center;
                     align-items: center;
                     text-align: center;
@@ -195,6 +227,13 @@ export default function Player() {
                     font-size: 22px;
                     font-weight: 500;
                     color: gray;
+                }
+                .emotionDiv{
+                    width: 70%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    text-align: center;
                 }
             `}</style>
             <style jsx global>{`
