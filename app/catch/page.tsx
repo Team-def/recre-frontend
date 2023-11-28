@@ -8,6 +8,7 @@ import MyModal from '@/component/MyModal';
 import IntegrationNotistack from '@/component/snackBar';
 import { answerAtom } from '../modules/answerAtom';
 import { Socket } from 'socket.io-client';
+import { tokenAtoms } from '../modules/tokenAtoms';
 
 interface recievedAns {
   ans: string;
@@ -29,6 +30,7 @@ export default function Catch({socket}: {socket : Socket}) {
   const [eraserWidth, setEraserWidth] = useState(45);
   const [isEraser, setIsEraser] = useState(false);
   const [userInfo,] = useAtom(userInfoAtoms)
+  const [acc_token,] = useAtom(tokenAtoms)
   const router = useRouter();
   const [answer, setAnswer] = useState('');
   const [correctNick, setCorrectNick] = useState('');
@@ -93,6 +95,7 @@ export default function Catch({socket}: {socket : Socket}) {
   const handleBeforeUnload = () => {
     const user_t = JSON.parse(localStorage.getItem('userInfo')|| 'null');
     socket.emit('end_game', {
+        access_token: acc_token,
         room_id: user_t.id
     });
 
@@ -224,6 +227,7 @@ export default function Catch({socket}: {socket : Socket}) {
 
       if(confirm("게임을 나가시겠습니까?")){
         socket.emit('end_game',{
+          access_token: acc_token,
           room_id : userInfo.id,
         });
 
@@ -237,6 +241,7 @@ export default function Catch({socket}: {socket : Socket}) {
     } else {
 
       socket.emit('end_game',{
+        access_token: acc_token,
         room_id : userInfo.id,
       });
 
