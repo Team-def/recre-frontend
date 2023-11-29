@@ -42,6 +42,7 @@ export default function QR() {
     const gamePageUrlAns = `${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`;
     const modalRef = useRef<HTMLDivElement | null>(null);
     const [emotions, setEmotions] = useState<emotion[]>([]);
+    const popoverRef = useRef<HTMLDivElement | null>(null);
 
     interface emotion {
         x: number;
@@ -206,7 +207,9 @@ export default function QR() {
                                 id={id}
                                 open={openPopover}
                                 anchorEl={anchorEl}
+                                ref={popoverRef}
                                 onClose={handleClose}
+                                autoFocus={true}
                                 anchorOrigin={{
                                     vertical: 'top',
                                     horizontal: 'right',
