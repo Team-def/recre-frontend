@@ -21,9 +21,11 @@ function MySnackBar({isAns, ans, nick} : {isAns : boolean, ans : string, nick : 
         vertical: 'bottom',
         horizontal: 'right',
       },
-      style: {
-        minWidth: '10vw',
-        minHeight: '4vw',
+        minWidth: '30vw',
+        minHeight: '10vh',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         fontSize: '2vw',
       }
     });
