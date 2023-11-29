@@ -268,14 +268,23 @@ export default function Catch({ socket }: { socket: Socket }) {
   }
 
   const FinishedModal = () => {
-    return (
+    return (<>
       <div>
         <div className="winnerInfo">
           <div className="modalText">우승자 : {correctNick}</div>
           <div className="modalText">정답 : {answer}</div>
         </div>
-        <Button onClick={leaveGame}>게임 끝내기</Button>
+        <Button variant='contained' size='large' onClick={leaveGame}>게임 끝내기</Button>
       </div>
+      <style jsx>{`
+        .winnerInfo{
+        }
+        .modalText{
+          font-size: 35px;
+          margin-bottom: 30px;
+        }
+      `}</style>
+      </>
     )
   }
 
@@ -335,7 +344,7 @@ export default function Catch({ socket }: { socket: Socket }) {
         <Button onClick={() => { leaveGame() }}>나가기</Button>
       </div>
       <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick} />
-      <MyModal open={isFinished} modalHeader={`우승자 : ${correctNick}`} modalContent={<FinishedModal />} closeFunc={() => { }} myref={null} />
+      <MyModal open={isFinished} modalHeader={`게임 종료`} modalContent={<FinishedModal />} closeFunc={() => { }} myref={null} />
       <style jsx>{`
         .canvasContainer {
           height: 100vh;
