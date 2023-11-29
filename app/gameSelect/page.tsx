@@ -85,13 +85,13 @@ export default function GameSelect() {
 
     return (<>
         <div className='gameSelectContainer'>
-            <h1>게임 선택</h1>
+            <h1 className='gameSelectLogo'>게임 선택</h1>
             <div>
                 <Box sx={{ width: '100%' }}>
                     <Grid container spacing={12}>{/* xs는 12가 최대 */}
                         {gameList.map((game) => {
                             return (
-                                <Grid className='gameGrid ${}' xs={4} onClick={() => handleGameSelect(game.name)}>
+                                <Grid className='gameGrid' xs={4} onClick={() => handleGameSelect(game.name)}>
                                     <div onMouseEnter={() => onMouseEnter(game.name)}
                                         onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`}><Item>
                                             <div className={`imageDiv ${isHovering && hoverElement === game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
@@ -119,7 +119,7 @@ export default function GameSelect() {
                     />
                 </div>
             </div>
-            <Button onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+            <Button variant='outlined' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
             .gameSelectContainer{
@@ -128,6 +128,10 @@ export default function GameSelect() {
                 flex-direction: column;
                 justify-content: space-evenly;
                 align-items: center;
+            }
+            .gameSelectLogo{
+                font-size: 50px;
+                font-weight: bold;
             }
             .gameGrid{
                 width:20vw;
@@ -157,7 +161,7 @@ export default function GameSelect() {
             .gameTitle{
                 z-index: 3;
                 position: relative;
-                font-size: 2vw;
+                font-size: 3vw;
                 font-weight: bold;
                 filter: opacity(0);
                 transition: filter 0.2s ease-in-out;

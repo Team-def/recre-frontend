@@ -10,6 +10,7 @@ import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
 import { Alert, Box, ButtonGroup } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
+import Image from 'next/image';
 import { type } from 'os';
 
 
@@ -106,7 +107,7 @@ export default function Player() {
         });
     }
 
-    const emotions = ['❤️', '👍', '🦋', '🌈']
+    const emotions = ['❤️', '👍', '🦋', '💩']
 
 
     return (
@@ -118,8 +119,8 @@ export default function Player() {
                 <div className="nickname-container">
                     <div className="headerContainer">
                         <div className="logo">
-                            <h1>RecRe</h1>
-                            <span className='teamdef'>Team.def():</span>
+                            <h1 className='logoH1'>RecRe</h1>
+                            <Image src="/teamDEF_logo.png" alt='logo' width={100} height={100} />
                         </div>
                     </div>
                     <div className='alertDiv'><Alert severity={ready ? "success" : "info"}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!\n 닉네임을 변경하시려면 '준비 취소'를 누르신 후 변경해주세요!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
@@ -159,14 +160,15 @@ export default function Player() {
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-evenly;
-                    background-color: #F5F5F5;
                     border-radius: 10px;
+                    background-color: rgb(245,243,231);
                 }
 
                 .nickname-label {
                     font-size: 20px;
                     font-weight: bold;
                     margin-bottom: 10px;
+                    
                 }
 
                 .nickname-input {
@@ -193,7 +195,7 @@ export default function Player() {
                 }
                 .logo{
                     font-size: 32px;
-                    bakcground-color: #F5F5F5;
+                    bakcground-color: rgb(245,243,231);
                 }
                 .nickDiv{
                     display: flex;

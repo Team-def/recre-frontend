@@ -9,11 +9,13 @@ import IntegrationNotistack from '@/component/snackBar';
 import { answerAtom } from '../modules/answerAtom';
 import { Socket } from 'socket.io-client';
 import { tokenAtoms } from '../modules/tokenAtoms';
+import Popover from '@mui/material/Popover';
+import { createTheme } from '@mui/material/styles';
 
 interface recievedAns {
   ans: string;
   nick: string;
-  isAns : boolean;
+  isAns: boolean;
 }
 
 interface Coordinate {
@@ -21,7 +23,7 @@ interface Coordinate {
   y: number;
 };
 
-export default function Catch({socket}: {socket : Socket}) {
+export default function Catch({ socket }: { socket: Socket }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
   const [isPainting, setIsPainting] = useState(false);
@@ -36,37 +38,38 @@ export default function Catch({socket}: {socket : Socket}) {
   const [correctNick, setCorrectNick] = useState('');
   const [isFinished, setIsFinished] = useState(false);
   const [recievedAns, setRecievedAns] = useState<recievedAns>({
-    ans : '', 
-    nick : '', 
-    isAns : false,
+    ans: '',
+    nick: '',
+    isAns: false,
   });
   const [, setAnsAtom] = useAtom(answerAtom);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    socket.on('correct',(res)=>{
+    socket.on('correct', (res) => {
       // console.log(res)
-      if(res.result === true){
+      if (res.result === true) {
         setAnswer(res.answer)
         setCorrectNick(res.nickname)
         setRecievedAns({
-          ans : res.answer,
-          nick : res.nickname,
-          isAns : true,
+          ans: res.answer,
+          nick: res.nickname,
+          isAns: true,
         })
         setIsFinished(true)
       }
-    }); 
+    });
 
-    socket.on('incorrect',(res)=>{
+    socket.on('incorrect', (res) => {
       // console.log(res)
-      if(res.result === true){
+      if (res.result === true) {
         setRecievedAns({
-          ans : res.incorrectAnswer,
-          nick : res.nickname,
-          isAns : false,
+          ans: res.incorrectAnswer,
+          nick: res.nickname,
+          isAns: false,
         })
       }
-    }); 
+    });
 
     const canvas = canvasRef.current;
     // 원본 해상도 설정
@@ -77,7 +80,7 @@ export default function Catch({socket}: {socket : Socket}) {
     const targetWidth = 300;
     const targetHeight = 300;
 
-    if(canvas){
+    if (canvas) {
       // 캔버스 크기 및 스케일 조정
       canvas.width = targetWidth;
       canvas.height = targetHeight;
@@ -87,19 +90,19 @@ export default function Catch({socket}: {socket : Socket}) {
       canvas.style.margin = 'auto'; // 가운데 정렬
     }
 
-    return () => { 
+    return () => {
       handleBeforeUnload();
-  };
+    };
   }, []);
 
   const handleBeforeUnload = () => {
-    const user_t = JSON.parse(localStorage.getItem('userInfo')|| 'null');
+    const user_t = JSON.parse(localStorage.getItem('userInfo') || 'null');
     socket.emit('end_game', {
-        access_token: acc_token,
-        room_id: user_t.id
+      access_token: acc_token,
+      room_id: user_t.id
     });
 
-};
+  };
 
 
 
@@ -110,8 +113,8 @@ export default function Catch({socket}: {socket : Socket}) {
     }
     const canvas: HTMLCanvasElement = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
 
     return {
       x: (event.pageX - canvas.offsetLeft) * scaleX,
@@ -128,7 +131,7 @@ export default function Catch({socket}: {socket : Socket}) {
     const context = canvas.getContext('2d');
 
     if (context) {
-      context.strokeStyle = isEraser?'white':curColor;  // 선 색깔
+      context.strokeStyle = isEraser ? 'white' : curColor;  // 선 색깔
       context.lineJoin = 'round';	// 선 끄트머리(?)
       context.lineWidth = isEraser ? eraserWidth : lineWidth;		// 선 굵기
 
@@ -162,13 +165,13 @@ export default function Catch({socket}: {socket : Socket}) {
           drawLine(mousePosition, newMousePosition);
           setMousePosition(newMousePosition);
           socket.emit('draw', {
-            room_id : userInfo.id,
-            x : newMousePosition.x,
-            y : newMousePosition.y,
-            color : isEraser?'white':curColor,
-            lineWidth : isEraser ? eraserWidth : lineWidth,
-            first_x : mousePosition.x,
-            first_y : mousePosition.y,
+            room_id: userInfo.id,
+            x: newMousePosition.x,
+            y: newMousePosition.y,
+            color: isEraser ? 'white' : curColor,
+            lineWidth: isEraser ? eraserWidth : lineWidth,
+            first_x: mousePosition.x,
+            first_y: mousePosition.y,
           });
         }
       } else {
@@ -179,7 +182,7 @@ export default function Catch({socket}: {socket : Socket}) {
   );
 
   const exitPaint = useCallback(() => {
-      setIsPainting(false);
+    setIsPainting(false);
   }, []);
 
   const clearCanvas = () => {
@@ -192,11 +195,11 @@ export default function Catch({socket}: {socket : Socket}) {
     if (context) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       socket.emit('clear_draw', {
-        room_id : userInfo.id,
+        room_id: userInfo.id,
       });
     }
   }
-  
+
   useEffect(() => {
 
     if (!canvasRef.current) {
@@ -219,19 +222,30 @@ export default function Catch({socket}: {socket : Socket}) {
   }, [startPaint, paint, exitPaint]);
 
   const drawColor = ["black", "red", "blue", "green", "#dec549"]
-  const drawWidth = [[1,'얇게'], [5,'중간'], [10,'굵게']]
-  const eraseWidth = [[20,'얇게'], [45,'중간'], [70,'굵게']]
+  const drawWidth = [[1, '얇게'], [5, '중간'], [10, '굵게']]
+  const eraseWidth = [[20, '얇게'], [45, '중간'], [70, '굵게']]
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   const leaveGame = () => {
-    if(!isFinished){
+    if (!isFinished) {
 
-      if(confirm("게임을 나가시겠습니까?")){
-        socket.emit('end_game',{
+      if (confirm("게임을 나가시겠습니까?")) {
+        socket.emit('end_game', {
           access_token: acc_token,
-          room_id : userInfo.id,
+          room_id: userInfo.id,
         });
 
-        socket.emit('leave_game',{
+        socket.emit('leave_game', {
         });
 
         setAnsAtom(null)
@@ -240,104 +254,157 @@ export default function Catch({socket}: {socket : Socket}) {
 
     } else {
 
-      socket.emit('end_game',{
+      socket.emit('end_game', {
         access_token: acc_token,
-        room_id : userInfo.id,
+        room_id: userInfo.id,
       });
 
-      socket.emit('leave_game',{
+      socket.emit('leave_game', {
       });
-      
+
       setAnsAtom(null)
       router.push('/gameSelect');
     }
   }
 
   const FinishedModal = () => {
-    return (
+    return (<>
       <div>
         <div className="winnerInfo">
           <div className="modalText">우승자 : {correctNick}</div>
           <div className="modalText">정답 : {answer}</div>
         </div>
-        <Button onClick={leaveGame}>게임 끝내기</Button>
+        <Button variant='contained' size='large' onClick={leaveGame}>게임 끝내기</Button>
       </div>
+      <style jsx>{`
+        .winnerInfo{
+        }
+        .modalText{
+          font-size: 35px;
+          margin-bottom: 30px;
+        }
+      `}</style>
+      </>
     )
   }
 
-  return(<>
-        <div className="canvasContainer">
-          <div className="ButtonContainer">
-            <div className='eraseBtn'><button onClick={()=>setIsEraser(!isEraser)}>{isEraser?"붓":'지우개'}</button></div>
-            <div className="colorContainer">
-            붓 색 : 
-              {drawColor.map((color) => <button className={`colorButton ${curColor === color?'selectedColor':''}`} style={{backgroundColor: color}} onClick={()=>setCurColor(color)}></button>)}
-            </div>
-            <div className="lineWidthContainer">
-              {isEraser?"지우개":'붓'} 굵기 : 
-              {isEraser?
-              eraseWidth.map((info) => <button className={`lineWidthButton ${eraserWidth === info[0]?'selectedTool':''}` } onClick={()=>setEraserWidth(info[0] as number)}>{info[1] as string}</button>)
-              :
-              drawWidth.map((info) => <button className={`lineWidthButton  ${lineWidth === info[0]?'selectedTool':''}`} onClick={()=>setLineWidth(info[0] as number)}>{info[1] as string}</button>)}
-            </div>
-            <div className='eraseBtn'><button onClick={clearCanvas}>전체 지우기</button></div>
-          </div>
-          <div className='canvasDiv'>
-            <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas"/>
-          </div>
-          <Button onClick={()=>{leaveGame()}}>나가기</Button>
+  return (
+    <>
+      <div className="canvasContainer">
+        <div className="ButtonContainer">
+            <Button size='small' variant="contained" onClick={() => setIsEraser(!isEraser)}>
+              {isEraser ? "붓" : '지우개'}
+            </Button>
+            <Button size='small' variant="contained" onClick={clearCanvas}>전체 지우기</Button>
+            <Button aria-describedby={id} size='small' variant="contained" onClick={handleClick}>
+              붓 색상
+            </Button>
+            <Popover
+              id={id}
+              open={open}
+              anchorEl={anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+            >
+              {drawColor.map((color) => (
+                <button
+                  className={`colorButton ${curColor === color ? 'selectedColor' : ''}`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => setCurColor(color)}
+                ></button>
+              ))}
+            </Popover>
+            {isEraser ? "지우개" : '붓'} 굵기:
+            {isEraser ? (
+              eraseWidth.map((info) => (
+                <button
+                  className={`lineWidthButton ${eraserWidth === info[0] ? 'selectedTool' : ''}`}
+                  onClick={() => setEraserWidth(info[0] as number)}
+                >
+                  {info[1] as string}
+                </button>
+              ))
+            ) : (
+              drawWidth.map((info) => (
+                <button
+                  className={`lineWidthButton ${lineWidth === info[0] ? 'selectedTool' : ''}`}
+                  onClick={() => setLineWidth(info[0] as number)}
+                >
+                  {info[1] as string}
+                </button>
+              ))
+            )}
         </div>
-        <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick}/>
-        <MyModal open={isFinished} modalHeader={`우승자 : ${correctNick}`} modalContent={<FinishedModal/>} closeFunc={()=>{}} myref={null}/>
-        <style jsx>{`
+        <div className='canvasDiv'>
+          <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas" />
+        </div>
+        <Button onClick={() => { leaveGame() }}>나가기</Button>
+      </div>
+      <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick} />
+      <MyModal open={isFinished} modalHeader={`게임 종료`} modalContent={<FinishedModal />} closeFunc={() => { }} myref={null} />
+      <style jsx>{`
         .canvasContainer {
           height: 100vh;
           display: flex;
           justify-content: center;
           align-items: center;
           flex-direction: column;
-          white-space: nowrap; 
+          white-space: nowrap;
           text-overflow: ellipsis;
         }
-        .canvasDiv{
+        .canvasDiv {
           width: 500px;
           height: 500px;
           border: 1px solid gray;
           border-radius: 20px;
           overflow: hidden;
-          box-shadow: 0 0 10px rgba(0,0,0,0.5);
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        .colorContainer{
+
+        @media (max-width: 1000px) {
+          .canvasDiv {
+            width: 500px;
+            height: 500px;
+          }
+        }
+
+        .colorContainer {
           display: flex;
           flex-direction: row;
           align-items: center;
           justify-content: center;
           width: 30%;
+          margin-bottom: 10px;
         }
-        .colorButton{
+        .colorButton {
           width: 20px;
           height: 20px;
           border-radius: 50%;
           border: 0px solid gray;
-          margin: 5px;
-          box-shadow: 0 0 5px rgba(0,0,0,0.5);
+          margin: 10px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
-        .selectedColor{
-          border:2.7px solid rgba(255,255,255,0.7);
+        .selectedColor {
+          border: 0px solid gray;
+          box-shadow: 0 0 0 3.5px rgba(255, 255, 255, 0.7) inset;
         }
-        .lineWidthContainer{
+        .lineWidthContainer {
           display: flex;
           flex-direction: row;
           align-items: center;
           justify-content: center;
           gap: 5px;
           width: 30%;
+          margin-bottom: 10px;
         }
-        canvas{
+        canvas {
           background-color: white;
         }
-        .ButtonContainer{
-          width: 60vw;
+        .ButtonContainer {
+          width: 500px;
           padding: 5px 0;
           display: flex;
           flex-direction: row;
@@ -346,38 +413,37 @@ export default function Catch({socket}: {socket : Socket}) {
           margin-bottom: 20px;
           border: 1px solid gray;
           border-radius: 10px;
-          box-shadow: 0 0 10px rgba(0,0,0,0.5);
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
           background-color: #636363;
           color: white;
         }
-        .lineWidthButton{
+        .lineWidthButton {
           border: 0px solid gray;
           border-radius: 5px;
           padding: 3px 7px;
           color: black;
           margin: 0 3px;
           background-color: white;
-          box-shadow: 0 0 5px rgba(0,0,0,0.5);
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
-        .selectedTool{
+        .selectedTool {
           background-color: #197bbd;
           color: white;
-          box-shadow: 0 0 5px rgba(0,0,0,0.5);
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
         }
-        .eraseBtn{
-          width: 20%;
-        }
-        .eraseBtn{
+        .eraseBtn {
+          width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
+          margin-bottom: 10px;
+          gap: 20px;
         }
-        .snack-bar{
+        .snack-bar {
           width: 200%;
           height: 200%;
         }
-        `}</style>
-        </>
-      );
-};
-
+      `}</style>
+    </>
+  );
+}

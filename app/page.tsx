@@ -151,11 +151,10 @@ export default function Home() {
   return (<>
     <div className='container'>
       <div>
-        <p className='middleLogo'>RecRe</p>
+        <p className='middleLogo' onClick={selectGame}>시작하기</p>
       </div>
       {/* login시에만 보이는 버튼 */}
       <div className="login">
-        <Button className='start-button' onClick={selectGame}>RecRe 시작!</Button>
       </div>
     </div>
     <style jsx>{`
