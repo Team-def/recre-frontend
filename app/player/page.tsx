@@ -1,10 +1,10 @@
 "use client";
 import Button from '@mui/material/Button';
-import { io } from "socket.io-client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useState } from "react";
 import CatchPlayer from '../playerComponent/catchPlayer';
+import { io } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
@@ -119,28 +119,35 @@ export default function Player() {
                 <div className="nickname-container">
                     <div className="headerContainer">
                         <div className="logo">
-                            <h1 className='logoH1'>RecRe</h1>
+                            <span className='logoSpan'>RecRe</span>
                             <Image src="/teamDEF_logo.png" alt='logo' width={100} height={100} />
                         </div>
                     </div>
-                    <div className='alertDiv'><Alert severity={ready ? "success" : "info"}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!\n 닉네임을 변경하시려면 '준비 취소'를 누르신 후 변경해주세요!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
+                    <div className='alertDiv'><Alert severity={ready ? "success" : "info"}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
+                    {ready?<>
                     <div className='emotionDiv'>
                         <Box
                             sx={{
                                 display: 'flex',
+                                justifyContent: 'center',
+                                alignContent: 'center',
                                 flexDirection: 'column',
                                 alignItems: 'center',
+                                fontStyle:'italic',
+                                color: 'gray',
                                 '& > *': {
                                     m: 2,
                                 },
                             }}
-                        >
+                            onClick={() => ready?null:alert('먼저 준비를 완료해주세요!')}
+                        ><span>호스트 화면에 이모티콘을 띄워보세요!</span>
                             <ButtonGroup aria-label="medium button group">{emotions.map((emotion, index) => {
                                 return <Button className="nickname-change" size='large' variant='outlined' key={index} disabled={!ready} onClick={() => expressEmotion(emotion)}>{'' + emotion + ''}</Button>
                             })}</ButtonGroup></Box>
-                    </div>
+                    </div></>:null
+                    }
                     <div className='nickDiv'>
-                        <label className="nickname-label">닉네임: </label>
+                        <label className="nickname-label">닉네임을 입력해주세요! </label>
                         <input
                             type="text"
                             className="nickname-input"
@@ -160,15 +167,15 @@ export default function Player() {
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-evenly;
+                    background-color: #F5F5F5;
                     border-radius: 10px;
-                    background-color: rgb(245,243,231);
+                    ${ready?'padding-top: 7%;':''}
                 }
 
                 .nickname-label {
                     font-size: 20px;
                     font-weight: bold;
                     margin-bottom: 10px;
-                    
                 }
 
                 .nickname-input {
@@ -195,7 +202,7 @@ export default function Player() {
                 }
                 .logo{
                     font-size: 32px;
-                    bakcground-color: rgb(245,243,231);
+                    bakcground-color: #F5F5F5;
                 }
                 .nickDiv{
                     display: flex;
@@ -209,11 +216,11 @@ export default function Player() {
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
+                    background-color: #F5F5F5;
                 }
                 .alertDiv{
                     width: 70%;
                     display: flex;
-                    margin-top: 50px;
                     justify-content: center;
                     align-items: center;
                     text-align: center;
@@ -223,12 +230,12 @@ export default function Player() {
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    background-color: transparent;
+                    background-color: #F5F5F5;
                 }
-                .teamdef{
-                    font-size: 22px;
+                .logoSpan{
+                    font-size: 60px;
                     font-weight: 500;
-                    color: gray;
+                    color:black;
                 }
                 .emotionDiv{
                     width: 70%;
