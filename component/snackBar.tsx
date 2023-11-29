@@ -22,9 +22,9 @@ function MySnackBar({isAns, ans, nick} : {isAns : boolean, ans : string, nick : 
         horizontal: 'right',
       },
       style: {
-        minWidth: '500px',
-        minHeight: '100px',
-        fontSize: '40px',
+        minWidth: '10vw',
+        minHeight: '4vw',
+        fontSize: '2vw',
       }
     });
   };

@@ -45,6 +45,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
         socket.on('game_finished', (res) => {
             setWinners(res.winners);
         });
+        
+        socket.emit('start_game', {  
+            result : true
+        })
+        console.log('game start')
 
         return () => { 
             handleBeforeUnload();
@@ -52,18 +57,21 @@ export default function RedGreen({socket}: {socket : Socket}) {
     }, [])
 
     useEffect(() => {
-      socket.emit('go_stop', {
-        access_token: acc_token,
-        room_id: userInfo.id,
-        go: go,
-      });
+      if(go){
+        socket.emit('resume', {
+          result : go
+        });
+      } else {
+        socket.emit('stop', {
+          result : go
+        });
+      }
     },[go])
 
     const handleBeforeUnload = () => {
         const user_t = JSON.parse(localStorage.getItem('userInfo')|| 'null');
         socket.emit('end_game', {
-            access_token: acc_token,
-            room_id: user_t.id
+          result : true
         });
     
     };
@@ -73,8 +81,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     
           if(confirm("게임을 나가시겠습니까?")){
             socket.emit('end_game',{
-              access_token: acc_token,
-              room_id : userInfo.id,
+              result : true
             });
     
             socket.emit('leave_game',{
@@ -86,8 +93,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
         } else {
     
           socket.emit('end_game',{
-            access_token: acc_token,
-            room_id : userInfo.id,
+            result : true
           });
     
           socket.emit('leave_game',{

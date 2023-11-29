@@ -123,13 +123,19 @@ export default function QR() {
         };
 
         const startGame = () => {
-            if (!answer) {
-                alert('먼저 정답을 입력해주세요.')
-                return
+            if(gameInfo[0] === '그림 맞추기'){
+                if (!answer) {
+                    alert('먼저 정답을 입력해주세요.')
+                    return
+                }
+                socket.current.emit('start_catch_game', {
+                    access_token: token
+                });
+            } else if(gameInfo[0] === '무궁화 꽃이 피었습니다'){
+                alert(1)
+                socket.current.emit('start_game', {
+                });
             }
-            socket.current.emit('start_catch_game', {
-                access_token: token
-            });
         }
 
         const handleBeforeUnload = () => {
@@ -159,6 +165,9 @@ export default function QR() {
             socket.current.emit('start_catch_game', {
                 access_token: token
             });
+
+            // socket.current.emit('start_game', {
+            // });
         }
 
         const makeEmotion = async(emotion : string) => {
@@ -220,8 +229,8 @@ export default function QR() {
 
                         <div className='gameInfo-start-button'>
                             <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                            <Button onClick={testGame}>TestPlay</Button>
-                            <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button>
+                            {/* <Button onClick={testGame}>TestPlay</Button> */}
+                            {/* <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button> */}
                         </div>
                     </div>
                     <style jsx>{`
@@ -233,6 +242,8 @@ export default function QR() {
             }
             .QR-code{
                 width: 20vw;
+                max-width: 350px;
+                max-height: 350px;
                 height: 20vw;
                 margin: 0 auto;
                 display: flex;
