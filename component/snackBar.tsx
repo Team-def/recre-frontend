@@ -22,8 +22,8 @@ function MySnackBar({isAns, ans, nick} : {isAns : boolean, ans : string, nick : 
         horizontal: 'right',
       },
       style: {
-        minWidth: '500px',
-        minHeight: '100px',
+        minWidth: '30vw',
+        minHeight: '10vh',
         fontSize: '40px',
       }
     });
