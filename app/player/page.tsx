@@ -44,10 +44,10 @@ export default function Player() {
         if(data[1]){
             switch (data[1]) {
                 case 'catch':
-                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
+                    setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
                     break;
                 case 'redgreen':
-                    setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
+                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
                     break;
             }
         }
