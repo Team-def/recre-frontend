@@ -1,7 +1,7 @@
 "use client";
 import Button from '@mui/material/Button';
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import CatchPlayer from '../playerComponent/catchPlayer';
 import { io } from "socket.io-client";
@@ -33,6 +33,7 @@ export default function Player() {
         transports: ["websocket"],
         autoConnect: false,
     }));
+    const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
 
     useEffect(() => {
         if (parseInt(data[0]) === null) {
@@ -40,7 +41,20 @@ export default function Player() {
             router.push("/");
         }
 
-
+        if(data[1]){
+            switch (data[1]) {
+                case 'catch':
+                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
+                    break;
+                case 'redgreen':
+                    setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
+                    break;
+            }
+        }
+        else{
+            alert('잘못된 접근입니다.');
+            router.push("/");
+        }
 
         socket.current.on("start_catch_game", (res) => {
             if (res.result === true) {
@@ -72,7 +86,6 @@ export default function Player() {
         })
 
         socket.current.on("ready", (res) => {
-            alert(32323)
             if (res.result === true) {
                 // alert('ready')
                 setReady(true)
@@ -96,7 +109,6 @@ export default function Player() {
     }, []);
 
     const readyToPlay = () => {
-        alert(`${parseInt(data[0])}, ${data[1]}`)
         if (playerNickname === null || playerNickname === '') {
             alert('닉네임을 입력해주세요.')
             return
@@ -125,9 +137,7 @@ export default function Player() {
 
 
     return (
-        <>{isGame ? data[1] === 'redgreen'?<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>:
-            //캐치마인드 게임이 시작되면 catch로 이동
-            <CatchPlayer roomId={data[0] as string} socket={socket.current} /> :
+        <>{isGame ? gameContent :
             //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
