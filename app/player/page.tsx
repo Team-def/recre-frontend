@@ -12,6 +12,7 @@ import { Alert, Box, ButtonGroup } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
 import Image from 'next/image';
 import { type } from 'os';
+import RedGreenPlayer from '../redgreentemp/page';
 
 
 
@@ -115,7 +116,7 @@ export default function Player() {
 
 
     return (
-        <>{isGame ?
+        <>{isGame ? data[1] === 'redgreen'?<RedGreenPlayer/>:
             //캐치마인드 게임이 시작되면 catch로 이동
             <CatchPlayer roomId={data[0] as string} socket={socket.current} /> :
             //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
