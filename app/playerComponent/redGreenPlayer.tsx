@@ -10,6 +10,7 @@ let lastAcceleration = 0;
 export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
+    const [start, setStart] = useState(false);
     //test를 위한 임시 socket 설정
     // const socket = useRef(io(`${socketApi}?uuId=123`, {
     //     withCredentials: true,
@@ -71,12 +72,14 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                     return;
                 } else if (permissionState === 'granted') {
                     window.addEventListener('devicemotion', handleDeviceMotion);
+                    setStart(true);
                 };
             })
 
         //android         
         } else {
             window.addEventListener('devicemotion', handleDeviceMotion);
+            setStart(true);
         };
     }
 
@@ -107,8 +110,8 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     return (
         <div>
             <button onClick={requestPermissionSafari}>허가</button>
-            <button style={{width:'30vw', height:'30vh'}} onClick={()=>setShakeCount((prev)=>prev+1)}>허가</button>
             <p>Shake Count: {shakeCount};</p>
         </div>
+    
     );
 }

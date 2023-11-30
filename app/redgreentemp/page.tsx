@@ -7,11 +7,7 @@ import { socketApi } from '../modules/socketApi';
 export default function RedGreenPlayer({ roomId,  }: { roomId: string, socket: Socket }) {
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
-    const [yCount, setYCount] = useState(0);
-    // const [minY, setMinY] = useState(0);
-    // const [maxY, setMaxY] = useState(0);
-    // const [wasYBelowThreshold, setWasYBelowThreshold] = useState<boolean>(true);
-    // const [text,setText] = useState<string>(''); //텍스트 입력창에 입력된 텍스트를 관리하는 상태
+    const [start, setStart] = useState(false);
     //test를 위한 임시 socket 설정
     const socket = useRef(io(`${socketApi}?uuId=123`, {
         withCredentials: true,
@@ -30,16 +26,18 @@ export default function RedGreenPlayer({ roomId,  }: { roomId: string, socket: S
                     //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
                     alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
                     return;
-                // } else if (permissionState === 'granted') {
-                //     window.addEventListener('devicemotion', handleDeviceMotion);
-                }
-            });
-        }          
-    };
+                } else if (permissionState === 'granted') {
+                    window.addEventListener('devicemotion', handleDeviceMotion);
+                    setStart(true);
+                };
+            })
 
-    let stepCount = 0;
-    let accelerationData:any = [];
-    let lastAcceleration = 0;
+        //android         
+        } else {
+            window.addEventListener('devicemotion', handleDeviceMotion);
+            setStart(true);
+        };
+    }
 
         // Check if the DeviceMotion API is supported
     window.addEventListener('devicemotion', handleDeviceMotion);
@@ -116,5 +114,6 @@ export default function RedGreenPlayer({ roomId,  }: { roomId: string, socket: S
             <p>y: {minY}</p> */}
 
         </div>
+
     );
 }
