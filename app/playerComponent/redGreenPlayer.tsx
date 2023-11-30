@@ -57,32 +57,32 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
           }
         }
         return -1;
-      };
+    };
 
     //iOS 13 이상의 safari 브라우저에서는 모션 이벤트 권한을 요청해야 함
-    const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
+    // const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
 
-    const requestPermissionSafari = () => {
-        //iOS
-        if (isSafariOver13) {
-            window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
-                if (permissionState === 'denied') {
-                    //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
-                    alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
-                    return;
-                } else if (permissionState === 'granted') {
-                    window.addEventListener('devicemotion', handleDeviceMotion);
-                    setStart(true);
-                };
-            })
+    // const requestPermissionSafari = () => {
+    //     //iOS
+    //     if (isSafariOver13) {
+    //         window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
+    //             if (permissionState === 'denied') {
+    //                 //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
+    //                 alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
+    //                 return;
+    //             } else if (permissionState === 'granted') {
+    //                 window.addEventListener('devicemotion', handleDeviceMotion);
+    //                 setStart(true);
+    //             };
+    //         })
 
-        //android         
-        } else {
-            window.addEventListener('devicemotion', handleDeviceMotion);
-            setStart(true);
-        };
-    }
-
+    //     //android         
+    //     } else {
+    //         window.addEventListener('devicemotion', handleDeviceMotion);
+    //         setStart(true);
+    //     };
+    // }
+    window.addEventListener('devicemotion', handleDeviceMotion);
     // //통과
     // socket.current.on('touchdown', (res) => {
     //     alert(`이겼습니다. 우승자는 ${res.name}입니다.
