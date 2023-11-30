@@ -20,6 +20,7 @@ import { type } from 'os';
 export default function Player() {
     const params = useSearchParams();
     const room_id = params.get('id');
+    const namespace = params.get('nameSpace');
     const router = useRouter();
     //query string에서 hostId를 가져옴
     const [playerNickname, setPlayerNickname] = useState<string | null>(null);
@@ -27,7 +28,7 @@ export default function Player() {
     const [isGame, setIsGame] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
-    const socket = useRef(io(`${socketApi}?uuId=${uuId}`, {
+    const socket = useRef(io(`${socketApi}/${namespace}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
@@ -218,7 +219,7 @@ export default function Player() {
                     justify-content: center;
                     background-color: #F5F5F5;
                 }
-                .alertDiv{
+                .alertDiv{ 
                     width: 70%;
                     display: flex;
                     justify-content: center;
