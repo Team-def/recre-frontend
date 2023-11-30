@@ -116,7 +116,7 @@ export default function Player() {
 
 
     return (
-        <>{isGame ? data[1] === 'redgreen'?<RedGreenPlayer/>:
+        <>{isGame ? data[1] === 'redgreen'?<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>:
             //캐치마인드 게임이 시작되면 catch로 이동
             <CatchPlayer roomId={data[0] as string} socket={socket.current} /> :
             //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
