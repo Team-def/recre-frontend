@@ -34,7 +34,7 @@ export default function Player() {
     }));
 
     useEffect(() => {
-        if (data[0] === null) {
+        if (parseInt(data[0]) === null) {
             alert('잘못된 접근입니다.');
             router.push("/");
         }
@@ -91,7 +91,7 @@ export default function Player() {
         }
         socket.current.connect();
         socket.current.emit("ready", {
-            room_id: data[0],
+            room_id: parseInt(data[0]),
             nickname: playerNickname
         });
     };
@@ -104,7 +104,7 @@ export default function Player() {
 
     const expressEmotion = (emotion: string) => {
         socket.current.emit("express_emotion", {
-            room_id: data[0],
+            room_id: parseInt(data[0]),
             emotion: emotion
         });
     }
