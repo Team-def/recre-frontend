@@ -50,6 +50,15 @@ export default function Player() {
             }
         })
 
+        socket.current.on("start_game", (res) => {
+            if (res.result === true) {
+                setIsGame(true)
+            } else {
+                alert(res.message)
+            }
+        })
+
+
         socket.current.on("end", (res) => {
             if (res.result === true) {
                 alert('게임이 종료되었습니다.')
