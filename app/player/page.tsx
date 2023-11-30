@@ -291,7 +291,7 @@ export default function Player() {
                         <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay}>
                             {ready ? "준비 취소!" : "준비 완료!"}
                         </Button></div>
-                        <MyModal open={modalOpen} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
+                        <MyModal open={ready && data[1] === 'redgreen'} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
                 </div></>}
             <style jsx>{`
                 .nickname-container {
