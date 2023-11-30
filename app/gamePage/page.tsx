@@ -34,7 +34,7 @@ export default function QR() {
     const [answer, setAnswer] = useAtom(answerAtom);
     const [uuId,] = useState<string>(uuidv4());
     const [nameSpace ,setNameSpace] = useState<string>('');
-    const socket = useRef(io(`${socketApi}/${nameSpace}?uuId=${uuId}`, {
+    const socket = useRef(io(`${socketApi}/${JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기'?'catch':'redgreen'}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
@@ -68,7 +68,6 @@ export default function QR() {
                 setNameSpace('redgreen')
                 break;
         }
-
         socket.current.connect();
 
         socket.current.volatile.on("connect", () => {
