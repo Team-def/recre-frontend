@@ -20,6 +20,7 @@ import Popover from '@mui/material/Popover';
 import { css, keyframes } from "@emotion/react";
 import React from 'react';
 import Flower from '../redGreen/page';
+import { redGreenInfoAtom } from '../modules/redGreenAtoms';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -43,6 +44,7 @@ export default function QR() {
     const modalRef = useRef<HTMLDivElement | null>(null);
     const [emotions, setEmotions] = useState<emotion[]>([]);
     const popoverRef = useRef<HTMLDivElement | null>(null);
+    const [redGreenInfo, ] = useAtom(redGreenInfoAtom);
 
     interface emotion {
         x: number;
@@ -58,7 +60,7 @@ export default function QR() {
             router.push("/")
         }
 
-        switch (gameInfo[0]) {
+        switch (JSON.parse(localStorage.getItem('game') || 'null')[0]) {
             case '그림 맞추기':
                 setNameSpace('catch')
                 break;
@@ -131,8 +133,8 @@ export default function QR() {
         const makeRoom = (acc_token: string) => {
             const game_t = JSON.parse(localStorage.getItem('game') || 'null');
             socket.current.emit('make_room', {
-                goalDistance : 100,
-                winnerNum : 3,
+                goalDistance : redGreenInfo[1],
+                winnerNum : redGreenInfo[0],
                 game_type: game_t[0],
                 user_num: game_t[1],
                 answer: answer,
