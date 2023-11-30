@@ -49,7 +49,7 @@ export default function QR() {
         y: number;
         emotion: string;
     }
-    const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?id=${userInfo.id}&game=${nameSpace}`;
+    const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?data=${userInfo.id}_${nameSpace}`;
 
     useEffect(() => {
         if (!isLogin) {
