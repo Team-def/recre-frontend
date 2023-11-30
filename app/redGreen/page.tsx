@@ -18,17 +18,24 @@ export default function RedGreen({socket}: {socket : Socket}) {
       score: 1,
     }]);
     const [isFinished, setIsFinished] = useState(false);
+
+    enum state {
+      alive = 'ALIVE',
+      dead = 'DEAD',
+      finish = 'FINISH',
+    }
+
     const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
       nickname: '',
       distance: 0,
-      isAlive: true,
+      state: state.alive,
     }]);
     const [go,setGo] = useState(false);
 
     interface playerInfo {
         nickname: string,
         distance: number,
-        isAlive : boolean,
+        state : state,
     }
 
     interface winnerInfo { 
@@ -38,7 +45,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
 
     useEffect(() => {
         socket.on('players_status', (res) => {
-            setPlayerInfo(res.playerInfo.filter((player: playerInfo) => player.isAlive === true));
+
+          console.log(res.player_info)
+          if(res.player_info){
+            setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
+          }
         });
 
 

@@ -11,12 +11,6 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [start, setStart] = useState(false);
-    //test를 위한 임시 socket 설정
-    // const socket = useRef(io(`${socketApi}?uuId=123`, {
-    //     withCredentials: true,
-    //     transports: ["websocket"],
-    //     autoConnect: false,
-    // }));
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
     const handleShake = () => {
@@ -120,7 +114,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 </button>
             </div> : <></> }
             
-            <div>
+            <div className="redgreen">
                 <p>Shake Count: {shakeCount};</p>
             </div>
         </div>
@@ -132,7 +126,6 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 justify-content: center;
                 gap: 20px;
             }
-            
             .redgreen{
                 margin-top: 20px;
                 width: 85%;

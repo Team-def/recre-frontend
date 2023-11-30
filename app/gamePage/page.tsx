@@ -25,7 +25,6 @@ export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [userInfo,] = useAtom(userInfoAtoms);
-    const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?id=${userInfo.id}`;
     const [isLogin,] = useAtom(loginAtom);
     const router = useRouter();
     const [open, setOpen] = useState(true);
@@ -33,7 +32,8 @@ export default function QR() {
     const [token,] = useAtom(tokenAtoms);
     const [answer, setAnswer] = useAtom(answerAtom);
     const [uuId,] = useState<string>(uuidv4());
-    const socket = useRef(io(`${socketApi}?uuId=${uuId}`, {
+    const [nameSpace ,setNameSpace] = useState<string>('');
+    const socket = useRef(io(`${socketApi}/${nameSpace}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
@@ -49,12 +49,22 @@ export default function QR() {
         y: number;
         emotion: string;
     }
+    const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?data=${userInfo.id}_${nameSpace}`;
 
     useEffect(() => {
         if (!isLogin) {
             // console.log(isLogin)
             alert('로그인이 필요합니다.')
             router.push("/")
+        }
+
+        switch (gameInfo[0]) {
+            case '그림 맞추기':
+                setNameSpace('catch')
+                break;
+            case '무궁화 꽃이 피었습니다':
+                setNameSpace('redgreen')
+                break;
         }
 
         socket.current.connect();
@@ -83,6 +93,11 @@ export default function QR() {
                 setOpen(false);
             else
                 alert(response.message)
+        });
+
+        socket.current.on("start_game", (response) => {
+            // console.log(response)
+            setOpen(false);
         });
 
         socket.current.on('set_catch_answer', (res)=>{
@@ -116,6 +131,8 @@ export default function QR() {
         const makeRoom = (acc_token: string) => {
             const game_t = JSON.parse(localStorage.getItem('game') || 'null');
             socket.current.emit('make_room', {
+                goalDistance : 100,
+                winnerNum : 3,
                 game_type: game_t[0],
                 user_num: game_t[1],
                 answer: answer,

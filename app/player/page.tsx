@@ -19,7 +19,7 @@ import { type } from 'os';
 
 export default function Player() {
     const params = useSearchParams();
-    const room_id = params.get('id');
+    const [data, setData] = useState<string[]>(params.get('data')?.split('_') ?? []);
     const router = useRouter();
     //query string에서 hostId를 가져옴
     const [playerNickname, setPlayerNickname] = useState<string | null>(null);
@@ -27,17 +27,19 @@ export default function Player() {
     const [isGame, setIsGame] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
-    const socket = useRef(io(`${socketApi}?uuId=${uuId}`, {
+    const socket = useRef(io(`${socketApi}/${data[1]}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
     }));
 
     useEffect(() => {
-        if (room_id === null) {
+        if (parseInt(data[0]) === null) {
             alert('잘못된 접근입니다.');
             router.push("/");
         }
+
+
 
         socket.current.on("start_catch_game", (res) => {
             if (res.result === true) {
@@ -60,6 +62,7 @@ export default function Player() {
         })
 
         socket.current.on("ready", (res) => {
+            alert(32323)
             if (res.result === true) {
                 // alert('ready')
                 setReady(true)
@@ -83,13 +86,14 @@ export default function Player() {
     }, []);
 
     const readyToPlay = () => {
+        alert(`${parseInt(data[0])}, ${data[1]}`)
         if (playerNickname === null || playerNickname === '') {
             alert('닉네임을 입력해주세요.')
             return
         }
         socket.current.connect();
         socket.current.emit("ready", {
-            room_id: room_id,
+            room_id: parseInt(data[0]),
             nickname: playerNickname
         });
     };
@@ -102,7 +106,7 @@ export default function Player() {
 
     const expressEmotion = (emotion: string) => {
         socket.current.emit("express_emotion", {
-            room_id: room_id,
+            room_id: parseInt(data[0]),
             emotion: emotion
         });
     }
@@ -113,7 +117,7 @@ export default function Player() {
     return (
         <>{isGame ?
             //캐치마인드 게임이 시작되면 catch로 이동
-            <CatchPlayer roomId={room_id as string} socket={socket.current} /> :
+            <CatchPlayer roomId={data[0] as string} socket={socket.current} /> :
             //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
@@ -218,7 +222,7 @@ export default function Player() {
                     justify-content: center;
                     background-color: #F5F5F5;
                 }
-                .alertDiv{
+                .alertDiv{ 
                     width: 70%;
                     display: flex;
                     justify-content: center;
