@@ -109,7 +109,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     return (
         <>
         <div className='p-redgreen-div'>
-            {!start ? 
+            {/* {!start ? 
             <div className="request-button-div">
                 <button className="button-82-pushable" role="button" onClick={requestPermissionSafari}>
                     <span className="button-82-shadow"></span>
@@ -118,7 +118,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                         시작하기
                     </span>
                 </button>
-            </div> : <></> }
+            </div> : <></> } */}
             
             <div className="redgreen">
                 <p>Shake Count: {shakeCount};</p>
