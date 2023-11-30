@@ -12,7 +12,7 @@ import { Alert, Box, ButtonGroup } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
 import Image from 'next/image';
 import { type } from 'os';
-import RedGreenPlayer from '../redgreentemp/page';
+import RedGreenPlayer from '../playerComponent/redGreenPlayer';
 
 
 
