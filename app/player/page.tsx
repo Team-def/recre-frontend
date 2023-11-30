@@ -62,6 +62,7 @@ export default function Player() {
         })
 
         socket.current.on("ready", (res) => {
+            alert(32323)
             if (res.result === true) {
                 // alert('ready')
                 setReady(true)
@@ -85,6 +86,7 @@ export default function Player() {
     }, []);
 
     const readyToPlay = () => {
+        alert(`${parseInt(data[0])}, ${data[1]}`)
         if (playerNickname === null || playerNickname === '') {
             alert('닉네임을 입력해주세요.')
             return
