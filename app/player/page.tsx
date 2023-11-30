@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import CatchPlayer from '../playerComponent/catchPlayer';
+import RedGreenPlayer from '../playerComponent/redGreenPlayer';
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
@@ -11,12 +12,8 @@ import useVH from 'react-viewport-height';
 import { Alert, Box, ButtonGroup } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
 import Image from 'next/image';
+import MyModal from '@/component/MyModal';
 import { type } from 'os';
-import RedGreenPlayer from '../playerComponent/redGreenPlayer';
-
-
-
-
 
 export default function Player() {
     const params = useSearchParams();
@@ -26,6 +23,7 @@ export default function Player() {
     const [playerNickname, setPlayerNickname] = useState<string | null>(null);
     const [ready, setReady] = useState<boolean>(false);
     const [isGame, setIsGame] = useState<boolean>(false);
+    const [shakeCount, setShakeCount] = useState(0);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
     const socket = useRef(io(`${socketApi}/${data[1]}?uuId=${uuId}`, {
@@ -110,15 +108,118 @@ export default function Player() {
 
     const readyToPlay = () => {
         if (playerNickname === null || playerNickname === '') {
-            alert('닉네임을 입력해주세요.')
-            return
+            alert('닉네임을 입력해주세요.');
+            return;
+        } else if (playerNickname.length > 10) {
+            alert('닉네임은 10자 미만으로 입력해주세요.');
+            return;
         }
-        socket.current.connect();
-        socket.current.emit("ready", {
-            room_id: parseInt(data[0]),
-            nickname: playerNickname
-        });
+
+        //gametype에 따라 다른 socket 연결
+        if (data[1] === null || data[1] === '') {
+            alert('잘못된 접근입니다.');
+            return;
+            //catchmind
+        } else if (data[1] === 'catch') {
+            socket.current.connect();
+            socket.current.emit("ready", {
+                room_id: parseInt(data[0]),
+                nickname: playerNickname
+            });
+            return;
+            //redgreen
+        } else if (data[1] === 'redgreen') {
+            //여기서부터 sensor 허가 요청
+            const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
+
+            const requestPermissionSafari = () => {
+                //iOS
+                if (isSafariOver13) {
+                    window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
+                        if (permissionState === 'denied') {
+                            //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
+                            alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
+                            return;
+                        } else if (permissionState === 'granted') {
+                            window.addEventListener('devicemotion', handleDeviceMotion);
+                        };
+                    })
+        
+                //android         
+                } else {
+                    alert('게임 참여를 위하여 모션 센서를 사용합니다.');
+                    window.addEventListener('devicemotion', handleDeviceMotion);
+                };
+            }
+            
+            requestPermissionSafari();
+            //여기까지 sensor 허가 요청
+
+            //여기서부터 움직임 측정 함수
+            let accelerationData: number[] = [];
+            let lastAcceleration = 0;
+            const handleShake = () => {
+                    setShakeCount((prevCount) => prevCount + 1);
+            }
+        
+            //device의 움직임을 읽어오는 함수
+            const handleDeviceMotion = (event: DeviceMotionEvent) => {
+                const acceleration= event.acceleration;
+        
+                if (acceleration) {
+                    const accelerationMagnitude = (acceleration.y??0)
+                    const smoothedAcceleration = 0.2 * accelerationMagnitude + 0.8 * lastAcceleration;
+                    lastAcceleration = smoothedAcceleration;
+                    accelerationData.push(smoothedAcceleration);
+        
+                    const maxDataLength = 3;
+                    if (accelerationData.length > maxDataLength) {
+                        accelerationData = accelerationData.slice(1);
+                    }
+        
+                    const peakIndex = detectPeak(accelerationData);
+        
+                    if (peakIndex !== -1) {
+                        handleShake();
+                    }
+                }
+            };
+        
+            const detectPeak = (data: number[]): number => {
+                const threshold = 1.5; // Adjust this threshold based on testing
+            
+                for (let i = 1; i < data.length - 1; i++) {
+                  if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
+                    return i;
+                  }
+                }
+                return -1;
+            };
+            //여기까지 움직임 측정 함수
+            
+            //10번 흔들어서 준비 완료
+            socket.current.connect();
+            if (shakeCount > 10) {
+                socket.current.emit("ready", {
+                    room_id: parseInt(data[0]),
+                    nickname: playerNickname,
+                });
+            }
+        }
     };
+
+    //modal창 띄우기
+    const ReadyModal = () => {
+        if (data[1] === 'redgreen') {
+        return (
+            <div className='readyModalDiv'>
+                <div className='readyModalHeader'>흔들어서 준비하기! </div>
+                <div className='readyModalContent'>호스트가 준비를 완료하면 게임이 시작됩니다.</div>
+                <div className='readyModalCount'> {shakeCount} / 10 </div>
+            </div>
+        )
+        }
+    }
 
     const cancleReady = () => {
         socket.current.emit("leave_game", {
@@ -138,7 +239,6 @@ export default function Player() {
 
     return (
         <>{isGame ? gameContent :
-            //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
                     <div className="headerContainer">
@@ -183,6 +283,7 @@ export default function Player() {
                         <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay}>
                             {ready ? "준비 취소!" : "준비 완료!"}
                         </Button></div>
+                        <MyModal open={ready && data[1] === 'redgreen'} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
                 </div></>}
             <style jsx>{`
                 .nickname-container {
