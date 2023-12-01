@@ -21,6 +21,7 @@ import { css, keyframes } from "@emotion/react";
 import React from 'react';
 import Flower from '../redGreen/page';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
+import { redGreenStartAtom } from '../modules/redGreenStartAtom';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -45,6 +46,7 @@ export default function QR() {
     const [emotions, setEmotions] = useState<emotion[]>([]);
     const popoverRef = useRef<HTMLDivElement | null>(null);
     const [redGreenInfo, ] = useAtom(redGreenInfoAtom);
+    const [isStart, setIsStart] = useAtom(redGreenStartAtom);
 
     interface emotion {
         x: number;
@@ -94,11 +96,6 @@ export default function QR() {
                 setOpen(false);
             else
                 alert(response.message)
-        });
-
-        socket.current.on("start_game", (response) => {
-            // console.log(response)
-            setOpen(false);
         });
 
         socket.current.on('set_catch_answer', (res)=>{
@@ -151,9 +148,8 @@ export default function QR() {
                     access_token: token
                 });
             } else if(gameInfo[0] === '무궁화 꽃이 피었습니다'){
-                alert(1)
-                socket.current.emit('start_game', {
-                });
+                setIsStart(true);
+            setOpen(false);
             }
         }
 

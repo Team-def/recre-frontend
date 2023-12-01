@@ -107,7 +107,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     return (
         <div>
             <button onClick={requestPermissionSafari}>허가</button>
-            <button onClick={()=>setShakeCount((prev)=>prev+1)}>허가</button>
+            <button style={{width:'30vw', height:'30vh'}} onClick={()=>setShakeCount((prev)=>prev+1)}>허가</button>
             <p>Shake Count: {shakeCount};</p>
         </div>
     );
