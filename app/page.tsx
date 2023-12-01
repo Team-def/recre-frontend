@@ -150,12 +150,11 @@ export default function Home() {
 
   return (<>
     <div className='container'>
-      <div>
+      {/* <div> */}
         <p className='middleLogo' onClick={selectGame}>시작하기</p>
-      </div>
-      {/* login시에만 보이는 버튼 */}
-      <div className="login">
-      </div>
+        <div className="sketchfab-embed-wrapper"> <iframe title="GAME ROOM | Pixel Art" frameBorder="0" allowFullScreen allow="autoplay, fullscreen, xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/d02c6808cbd34259be5ae86650afef1b/embed?autostart=1"> </iframe> <p style={{fontSize: '13px', fontWeight: 'normal', margin: '5px', color: '#4A4A4A'}}> </p></div>
+        
+      {/* </div> */}
     </div>
     <style jsx>{`
             .container{

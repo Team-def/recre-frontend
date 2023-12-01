@@ -26,7 +26,7 @@ export default function CatchAnswer() {
     const vh = useVH();
     const [open, setOpen] = useState<boolean>(!isLogin);
 
-    const socket = useRef(io(`${socketApi}?uuId=${uuId}`,{
+    const socket = useRef(io(`${socketApi}/catch?uuId=${uuId}`,{
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,

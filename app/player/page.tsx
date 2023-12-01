@@ -1,7 +1,7 @@
 "use client";
 import Button from '@mui/material/Button';
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import CatchPlayer from '../playerComponent/catchPlayer';
 import { io } from "socket.io-client";
@@ -12,6 +12,7 @@ import { Alert, Box, ButtonGroup } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
 import Image from 'next/image';
 import { type } from 'os';
+import RedGreenPlayer from '../playerComponent/redGreenPlayer';
 
 
 
@@ -19,7 +20,7 @@ import { type } from 'os';
 
 export default function Player() {
     const params = useSearchParams();
-    const room_id = params.get('id');
+    const [data, setData] = useState<string[]>(params.get('data')?.split('_') ?? []);
     const router = useRouter();
     //query string에서 hostId를 가져옴
     const [playerNickname, setPlayerNickname] = useState<string | null>(null);
@@ -27,14 +28,30 @@ export default function Player() {
     const [isGame, setIsGame] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
-    const socket = useRef(io(`${socketApi}?uuId=${uuId}`, {
+    const socket = useRef(io(`${socketApi}/${data[1]}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
     }));
+    const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
 
     useEffect(() => {
-        if (room_id === null) {
+        if (parseInt(data[0]) === null) {
+            alert('잘못된 접근입니다.');
+            router.push("/");
+        }
+
+        if(data[1]){
+            switch (data[1]) {
+                case 'catch':
+                    setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
+                    break;
+                case 'redgreen':
+                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
+                    break;
+            }
+        }
+        else{
             alert('잘못된 접근입니다.');
             router.push("/");
         }
@@ -46,6 +63,15 @@ export default function Player() {
                 alert(res.message)
             }
         })
+
+        socket.current.on("start_game", (res) => {
+            if (res.result === true) {
+                setIsGame(true)
+            } else {
+                alert(res.message)
+            }
+        })
+
 
         socket.current.on("end", (res) => {
             if (res.result === true) {
@@ -89,7 +115,7 @@ export default function Player() {
         }
         socket.current.connect();
         socket.current.emit("ready", {
-            room_id: room_id,
+            room_id: parseInt(data[0]),
             nickname: playerNickname
         });
     };
@@ -102,7 +128,7 @@ export default function Player() {
 
     const expressEmotion = (emotion: string) => {
         socket.current.emit("express_emotion", {
-            room_id: room_id,
+            room_id: parseInt(data[0]),
             emotion: emotion
         });
     }
@@ -111,9 +137,7 @@ export default function Player() {
 
 
     return (
-        <>{isGame ?
-            //캐치마인드 게임이 시작되면 catch로 이동
-            <CatchPlayer roomId={room_id as string} socket={socket.current} /> :
+        <>{isGame ? gameContent :
             //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
@@ -218,7 +242,7 @@ export default function Player() {
                     justify-content: center;
                     background-color: #F5F5F5;
                 }
-                .alertDiv{
+                .alertDiv{ 
                     width: 70%;
                     display: flex;
                     justify-content: center;

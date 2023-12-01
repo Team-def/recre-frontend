@@ -11,6 +11,13 @@ import { loginAtom } from "@/app/modules/loginAtoms";
 import { gameAtoms } from '../modules/gameAtoms';
 import { useRouter } from "next/navigation";
 import TextField from '@mui/material/TextField';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import { InputLabel, MenuItem, Select } from '@mui/material';
+import { redGreenInfoAtom } from '../modules/redGreenAtoms';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -27,6 +34,7 @@ export default function GameSelect() {
     const router = useRouter();
     const [isHovering, setIsHovered] = useState(false);
     const [hoverElement, setHoverElement] = useState('');
+    const [redGreenInfo, setRedGreenInfo] = useAtom(redGreenInfoAtom);
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -43,17 +51,32 @@ export default function GameSelect() {
     }, []);
 
     useEffect(() => {
+
         if (gameInfo[1] && gameInfo[1] > 0 && gameInfo[0]) {
             if (gameInfo[1] > 1000) {
                 alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
                 setGameInfo([gameInfo[0], 0])
             }
-            else setIsReady(true);
+            else {
+                if(gameInfo[0] === '무궁화 꽃이 피었습니다'){
+                    if(redGreenInfo[0] && redGreenInfo[0] > 0){
+                        if(redGreenInfo[0] > gameInfo[1]){
+                            alert('우승자 수가 참여 인원보다 많습니다.')
+                            setRedGreenInfo([gameInfo[1],redGreenInfo[1]])
+                        }
+                        else{
+                            setIsReady(true);
+                        }
+                    }
+                    else setIsReady(false);
+                }
+                else setIsReady(true);
+            }
         }
         else {
             setIsReady(false);
         }
-    }, [gameInfo]);
+    }, [gameInfo, redGreenInfo]);
 
     const handleGameSelect = (game: string) => {
         if (gameInfo[0] === game) {
@@ -106,6 +129,7 @@ export default function GameSelect() {
             </div>
             <div className='gameInfoDiv'>
                 <div className='input_alert'>
+                    {(gameInfo[0] === '' || gameInfo[0] === null)?'':
                     <TextField
                         id="outlined-number"
                         label="인원 수"
@@ -116,7 +140,32 @@ export default function GameSelect() {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                    />}{gameInfo[0] === '무궁화 꽃이 피었습니다'?<>
+                    <TextField
+                        id="outlined-number"
+                        label="우승자"
+                        placeholder='우승자 수를 입력해주세요'
+                        type="number"
+                        value={redGreenInfo[0]}
+                        onChange={(e) => setRedGreenInfo([parseInt(e.target.value),redGreenInfo[1]])}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
                     />
+                    <FormControl >
+  <InputLabel id="demo-simple-select-label">거리</InputLabel>
+  <Select
+    labelId="demo-simple-select-label"
+    id="demo-simple-select"
+    value={redGreenInfo[1]}
+    label="Age"
+    onChange={(e)=>setRedGreenInfo([redGreenInfo[0],parseInt(e.target.value as string)])}
+  >
+    <MenuItem value={50}>짧게</MenuItem>
+    <MenuItem value={100}>중간</MenuItem>
+    <MenuItem value={150}>길게</MenuItem>
+  </Select>
+</FormControl></>:''}
                 </div>
             </div>
             <Button variant='outlined' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
@@ -192,7 +241,7 @@ export default function GameSelect() {
             .input_alert{
                 height: 100%;
                 display: flex;
-                flex-direction: column; 
+                flex-direction: row; 
                 align-items: center;
                 justify-content: space-evenly;
                 gap: 20px;
