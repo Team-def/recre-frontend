@@ -199,17 +199,19 @@ export default function Player() {
         } else if (data[1] === 'redgreen') {
             setModalOpen(true)
             requestPermissionSafari();
-            
-            //10번 흔들어서 준비 완료
-            socket.current.connect();
-            if (shakeCount > 10) {
-                socket.current.emit("ready", {
-                    room_id: parseInt(data[0]),
-                    nickname: playerNickname,
-                });
-            }
         }
     };
+
+    useEffect(() => {
+        //10번 흔들어서 준비 완료
+        if (shakeCount > 10) {
+            socket.current.connect();
+            socket.current.emit("ready", {
+                room_id: parseInt(data[0]),
+                nickname: playerNickname,
+            });
+        }
+    }, [shakeCount])
 
     //modal창 띄우기
     const ReadyModal = () => {
@@ -219,6 +221,7 @@ export default function Player() {
                 <div className='readyModalHeader'>흔들어서 준비하기! </div>
                 <div className='readyModalContent'>호스트가 준비를 완료하면 게임이 시작됩니다.</div>
                 <div className='readyModalCount'> {shakeCount} / 10 </div>
+                <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button>
             </div>
         )
         }

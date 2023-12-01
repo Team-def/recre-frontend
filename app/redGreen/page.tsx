@@ -86,6 +86,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
         socket.on("start_game", (response) => {
           // console.log(response)
           setOpenModal(false);
+          setGo(true);
+
       });
 
         return () => { 
@@ -103,7 +105,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
 
         setTimeout(() => {  
           clearInterval(timer);
-          setIsStart(true)
+          setIsStart(false)
           socket.emit('start_game', {  
             result : true
           })

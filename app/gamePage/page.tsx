@@ -175,14 +175,8 @@ export default function QR() {
         const id = openPopover ? 'simple-popover' : undefined;
 
         const testGame = () => {
-            setGameInfo(['무궁화 꽃이 피었습니다', 1])
-
-            socket.current.emit('start_catch_game', {
-                access_token: token
-            });
-
-            // socket.current.emit('start_game', {
-            // });
+            setIsStart(true);
+            setOpen(false);
         }
 
         const makeEmotion = async(emotion : string) => {
@@ -246,7 +240,7 @@ export default function QR() {
 
                         <div className='gameInfo-start-button'>
                             <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                            {/* <Button onClick={testGame}>TestPlay</Button> */}
+                            <Button onClick={testGame}>TestPlay</Button>
                             {/* <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button> */}
                         </div>
                     </div>
