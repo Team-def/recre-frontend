@@ -6,6 +6,7 @@ import { socketApi } from '../modules/socketApi';
 
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
+let startTime = new Date;
 
 export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const startTime = new Date(); //게임 시작시에 시간 기록
