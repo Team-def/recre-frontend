@@ -69,7 +69,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           case 100:
             setPercentVar(1);
             break;
-          case 150:
+          case 160:
             setPercentVar(0.625);
             break;
         }
