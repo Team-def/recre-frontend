@@ -76,6 +76,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     //             };
     //         })
 
+
     //     //android         
     //     } else {
     //         window.addEventListener('devicemotion', handleDeviceMotion);
@@ -83,46 +84,43 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     //     };
     // }
     window.addEventListener('devicemotion', handleDeviceMotion);
-    // //통과
-    // socket.current.on('touchdown', (res) => {
-    //     alert(`이겼습니다. 우승자는 ${res.name}입니다.
-    //         이동거리: ${res.distance}, 걸린 시간: ${res.endtime}`);
-    //     //이겼을 때 화면에 표시되어야 할 것들
-    // });
 
-    // //죽음
-    // socket.current.on('youdie', (res)=> {
-    //     setIsAlive(false);
-    //     alert(`죽었습니다. ${res.name}는 ${res.endtime}만큼 생존했습니다.`);
-    //     //기타 죽었을 때 화면에 표시되어야 할 것들
-    // })
 
-    // //달리는 중
-    // useEffect(() => {
-    //     if (isAlive) {
-    //         socket.current.emit('run', {
-    //             roomId: roomId,
-    //             shakeCount: shakeCount,});
-    //     }
-    // }, [shakeCount]);
+    useEffect(() => {
+        //통과
+        socket.on('touchdown', (res) => {
+            alert(`이겼습니다. 우승자는 ${res.name}입니다.
+                이동거리: ${res.distance}, 걸린 시간: ${res.endtime}`);
+            //이겼을 때 화면에 표시되어야 할 것들
+        });
+    
+        //죽음
+        socket.on('youdie', (res)=> {
+            setIsAlive(false);
+            alert(`죽었습니다. ${res.name}는 ${res.endtime}만큼 생존했습니다.`);
+            //기타 죽었을 때 화면에 표시되어야 할 것들
+        })
+    },[])
+
+    //달리는 중
+    useEffect(() => {
+        if (isAlive) {
+            socket.emit('run', {
+                shakeCount: shakeCount,});
+        }
+    }, [shakeCount]);
 
     return (
         <>
-        <div className='p-redgreen-div'>
-            {/* {!start ? 
-            <div className="request-button-div">
-                <button className="button-82-pushable" role="button" onClick={requestPermissionSafari}>
-                    <span className="button-82-shadow"></span>
-                    <span className="button-82-edge"></span>
-                    <span className="button-82-front text">
-                        시작하기
-                    </span>
-                </button>
-            </div> : <></> } */}
-            
             <div className="redgreen">
                 <p>Shake Count: {shakeCount};</p>
             </div>
+
+        <div>
+            {/* <button onClick={requestPermissionSafari}>허가</button> */}
+            <button style={{width:'30vw', height:'30vh'}} onClick={()=>setShakeCount((prev)=>prev+1)}>허가</button>
+            <p>Shake Count: {shakeCount};</p>
+
         </div>
         <style jsx>{`
             .p-redgreen-div{
