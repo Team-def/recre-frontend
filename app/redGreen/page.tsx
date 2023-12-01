@@ -61,6 +61,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
 
 
         socket.on('game_finished', (res) => {
+          setOpenModal(true);
           setModalHeader('우승자 목록');
           setModalContent(<FinishedModal/>);
             setWinners(res.winners);
@@ -82,7 +83,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       if(isStart){
         setOpenModal(true);
         let timer = setInterval(() => {
-          setCounter(prev => prev - 1);
+          // setCounter(prev => prev - 1);
         }, 1000)
 
         setTimeout(() => {  
