@@ -109,6 +109,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     return (
         <div>
             <p>Shake Count: {shakeCount};</p>
+            <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
         </div>
     
     );
