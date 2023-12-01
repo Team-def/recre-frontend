@@ -35,7 +35,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       distance: 0,
       state: state.alive,
     }]);
-    const [go,setGo] = useState(true);
+    const [go,setGo] = useState(false);
 
     interface playerInfo {
         nickname: string,
