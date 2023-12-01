@@ -16,7 +16,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [acc_token,] = useAtom(tokenAtoms)
     const router = useRouter();
     const [winners, setWinners] = useState<winnerInfo[]>([{
-      nickname: '',
+      name: '',
       score: 1,
     }]);
     const [openModal, setOpenModal] = useState(false);
@@ -24,7 +24,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
     const [counter, setCounter] = useState<number>(3);
     const [gameInfo, setGameInfo] = useAtom(redGreenInfoAtom);
-    const [isStart, setIsStart] = useAtom(redGreenStartAtom);
+    const [isReady, setIsReady] = useAtom(redGreenStartAtom);
+    const [isStart,setIsStart] = useState<boolean>(false);
     const [percentVar, setPercentVar] = useState<number>(0);
 
     enum state {
@@ -34,25 +35,24 @@ export default function RedGreen({socket}: {socket : Socket}) {
     }
 
     const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
-      nickname: '',
+      name: '',
       distance: 0,
       state: state.alive,
     }]);
     const [go,setGo] = useState(false);
 
     interface playerInfo {
-        nickname: string,
+        name: string,
         distance: number,
         state : state,
     }
 
     interface winnerInfo { 
-      nickname: string,
+      name: string,
       score: number,
     }
 
     useEffect(() => {
-      if(isStart){
         socket.on('players_status', (res) => {
 
           console.log(res.player_info)
@@ -60,7 +60,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
             setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
           }
         });
-      }
+
         setModalHeader('곧 게임이 시작됩니다!');
         setModalContent(<CounterModal/>);
 
@@ -89,7 +89,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           // console.log(response)
           setOpenModal(false);
           setGo(true);
-
+          setIsStart(true)
       });
 
         return () => { 
@@ -98,23 +98,23 @@ export default function RedGreen({socket}: {socket : Socket}) {
     }, [])
 
     useEffect(() => {
-      console.log(isStart);
-      if(isStart){
+      console.log(isReady);
+      if(isReady){
         setOpenModal(true);
         let timer = setInterval(() => {
           // setCounter(prev => prev - 1);
         }, 1000)
-
+        
         setTimeout(() => {  
           clearInterval(timer);
-          setIsStart(false)
           socket.emit('start_game', {  
             result : true
           })
+          setIsReady(false)
           console.log('game start')
         }, 3000)
       }
-    },[isStart])
+    },[isReady])
 
 
     useEffect(() => {
@@ -132,7 +132,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
     },[go])
 
     const handleBeforeUnload = () => {
-      setIsStart(false);
         socket.emit('end_game', {
           result : true
         });
@@ -141,7 +140,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     };
 
     const leaveGame = () => {
-        if(!openModal){
+        if(isStart){
     
           if(confirm("게임을 나가시겠습니까?")){
             setIsStart(false);
@@ -189,7 +188,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 {winners.map((winner, index) => {
                   return (
                     <div key={index}>
-                      <div className="winners">{winner.nickname} : {winner.score}등</div>
+                      <div className="winners">{winner.name} : {winner.score}등</div>
                     </div>
                   )
                 })}
@@ -215,13 +214,15 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 return (
                   <div key={index} className='playerDiv'>
                     <div className='distanceBar' style={{width:player.distance*percentVar + `%`, backgroundColor: colorArr[colorIndex]}}></div>
-                    <div className='playerInfo'>{player.nickname} : {player.distance} / {gameInfo[1]}</div>
+                    <div className='playerInfo'>{player.name} : {player.distance} / {gameInfo[1]}</div>
                   </div>
                 )
               })}
             </div>
+            <div className='redGreenBtns'>
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
-            <Button onClick={()=>{stopGame}}>우승자 마감</Button>
+            <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
+            </div>
             <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{}} myref={null}/>
           </div>
           <style jsx>{`
@@ -286,6 +287,12 @@ export default function RedGreen({socket}: {socket : Socket}) {
               font-size: 20px;
               font-weight: bold;
               margin-bottom: 10px;
+            }
+            .redGreenBtns{
+              display: flex;
+              justify-content: space-evenly;
+              align-items: center;
+              flex-direction: row;
             }
           `}</style>
         </>
