@@ -81,16 +81,20 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         
         //통과
         socket.on('touchdown', (res) => {
-            alert(`이겼습니다. 우승자는 ${res.name}입니다.
-                이동거리: ${res.distance}, 걸린 시간: ${res.endtime}`);
-            //이겼을 때 화면에 표시되어야 할 것들
+            if(res.result === true){
+                alert(`이겼습니다. 우승자는 ${res.name}입니다.\n
+                     걸린 시간: ${res.endtime}`);
+                //이겼을 때 화면에 표시되어야 할 것들
+            }
         });
     
         //죽음
         socket.on('youdie', (res)=> {
-            setIsAlive(false);
-            alert(`죽었습니다. ${res.name}는 ${res.endtime}만큼 생존했습니다.`);
-            //기타 죽었을 때 화면에 표시되어야 할 것들
+            if(res.result === true){
+                setIsAlive(false);
+                alert(`죽었습니다. ${res.name}는 ${res.endtime}만큼 생존했습니다.`);
+                //기타 죽었을 때 화면에 표시되어야 할 것들
+            }
         })
     },[])
 

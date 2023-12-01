@@ -203,13 +203,15 @@ export default function Player() {
     };
 
     useEffect(() => {
-        //10번 흔들어서 준비 완료
-        if (shakeCount >= 10) {
-            socket.current.connect();
-            socket.current.emit("ready", {
-                room_id: parseInt(data[0]),
-                nickname: playerNickname,
-            });
+        if(!ready){
+            //10번 흔들어서 준비 완료
+            if (shakeCount >= 10) {
+                socket.current.connect();
+                socket.current.emit("ready", {
+                    room_id: parseInt(data[0]),
+                    nickname: playerNickname,
+                });
+            }
         }
     }, [shakeCount])
 
