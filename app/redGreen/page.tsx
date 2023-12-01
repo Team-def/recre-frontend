@@ -52,6 +52,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     }
 
     useEffect(() => {
+      if(isStart){
         socket.on('players_status', (res) => {
 
           console.log(res.player_info)
@@ -59,6 +60,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
             setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
           }
         });
+      }
         setModalHeader('곧 게임이 시작됩니다!');
         setModalContent(<CounterModal/>);
 
