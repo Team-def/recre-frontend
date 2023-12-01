@@ -6,6 +6,7 @@ import { socketApi } from '../modules/socketApi';
 
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
+let startTime = new Date;
 
 export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [shakeCount, setShakeCount] = useState(0);
@@ -90,14 +91,14 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         //통과
         socket.on('touchdown', (res) => {
             alert(`이겼습니다. 우승자는 ${res.name}입니다.
-                이동거리: ${res.distance}, 걸린 시간: ${res.endtime}`);
+                이동거리: ${res.distance}, 걸린 시간: ${res.endtime.getMinutes() - startTime.getMinutes()}분 ${res.endtime.getSeconds() - startTime.getSeconds()}초`);
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
         //죽음
         socket.on('youdie', (res)=> {
             setIsAlive(false);
-            alert(`죽었습니다. ${res.name}는 ${res.endtime}만큼 생존했습니다.`);
+            alert(`죽었습니다. 당신은 ${res.endtime.getMinutes() - startTime.getMinutes()}분 ${res.endtime.getSeconds() - startTime.getSeconds()}초만큼 생존했습니다.`);
             //기타 죽었을 때 화면에 표시되어야 할 것들
         })
     },[])
