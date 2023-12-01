@@ -210,7 +210,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 let colorIndex = index % colorArr.length;
                 return (
                   <div key={index} className='playerDiv'>
-                    <div className='distanceBar' style={{width:player.distance + `%`, backgroundColor: colorArr[colorIndex]}}></div>
+                    <div className='distanceBar' style={{width:player.distance*percentVar + `%`, backgroundColor: colorArr[colorIndex]}}></div>
                     <div className='playerInfo'>{player.nickname} : {player.distance} / {gameInfo[1]}</div>
                   </div>
                 )
