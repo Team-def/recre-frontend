@@ -32,6 +32,7 @@ export default function Player() {
         autoConnect: false,
     }));
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
 
     let accelerationData: number[] = [];
     let lastAcceleration = 0;
@@ -96,6 +97,8 @@ export default function Player() {
             window.addEventListener('devicemotion', handleDeviceMotion);
         };
     }
+
+    window.addEventListener('devicemotion', handleDeviceMotion);
 
     useEffect(() => {
         if (parseInt(data[0]) === null) {
@@ -193,7 +196,7 @@ export default function Player() {
             return;
             //redgreen
         } else if (data[1] === 'redgreen') {
-            
+            setModalOpen(true)
             requestPermissionSafari();
             
             //10번 흔들어서 준비 완료
@@ -282,7 +285,7 @@ export default function Player() {
                         <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay}>
                             {ready ? "준비 취소!" : "준비 완료!"}
                         </Button></div>
-                        <MyModal open={ready && data[1] === 'redgreen'} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
+                        <MyModal open={modalOpen} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
                 </div></>}
             <style jsx>{`
                 .nickname-container {
