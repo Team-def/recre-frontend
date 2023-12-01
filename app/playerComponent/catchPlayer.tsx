@@ -93,7 +93,8 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
     }, []);
     
 
-    return (<><div className="p_catch_div">
+    return (<>
+    <div className="p_catch_div">
         <div className="submitDiv">
             <TextField
             id="filled-start-adornment"
@@ -115,7 +116,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             </canvas>
         </div>
         <Button variant="outlined" onClick={leave_game}>게임 나가기</Button>
-        </div>
+    </div>
         <style jsx>{`
                 canvas{
                     background-color: white !important;

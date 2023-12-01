@@ -8,14 +8,19 @@ let accelerationData: number[] = [];
 let lastAcceleration = 0;
 
 export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
+    const startTime = new Date(); //게임 시작시에 시간 기록
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
-    //test를 위한 임시 socket 설정
-    // const socket = useRef(io(`${socketApi}?uuId=123`, {
-    //     withCredentials: true,
-    //     transports: ["websocket"],
-    //     autoConnect: false,
-    // }));
+    const [start, setStart] = useState(false);
+
+    //시간 측정 함수
+    const timeCheck = (startTime: Date, endTime: Date):string => {
+        const timeDifference = endTime.getTime() - startTime.getTime();
+        const minutes = Math.floor(timeDifference / (1000 * 60));
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        const formattedElapsedTime = `${minutes}분 ${seconds}초`;
+        return formattedElapsedTime;
+    }
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
     const handleShake = () => {
@@ -56,45 +61,55 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
           }
         }
         return -1;
-      };
+    };
 
     //iOS 13 이상의 safari 브라우저에서는 모션 이벤트 권한을 요청해야 함
-    const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
+    // const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
 
-    const requestPermissionSafari = () => {
-        //iOS
-        if (isSafariOver13) {
-            window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
-                if (permissionState === 'denied') {
-                    //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
-                    alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
-                    return;
-                } else if (permissionState === 'granted') {
-                    window.addEventListener('devicemotion', handleDeviceMotion);
-                };
-            })
+    // const requestPermissionSafari = () => {
+    //     //iOS
+    //     if (isSafariOver13) {
+    //         window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
+    //             if (permissionState === 'denied') {
+    //                 //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
+    //                 alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
+    //                 return;
+    //             } else if (permissionState === 'granted') {
+    //                 window.addEventListener('devicemotion', handleDeviceMotion);
+    //                 setStart(true);
+    //             };
+    //         })
 
-        //android         
-        } else {
-            window.addEventListener('devicemotion', handleDeviceMotion);
-        };
-    }
+
+    //     //android         
+    //     } else {
+    //         window.addEventListener('devicemotion', handleDeviceMotion);
+    //         setStart(true);
+    //     };
+    // }
+
+    window.addEventListener('devicemotion', handleDeviceMotion);
+
 
     useEffect(() => {
         //통과
         socket.on('touchdown', (res) => {
+            const endTime = res.endtime; //게임 종료시에 시간 기록
+            const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             alert(`이겼습니다. 우승자는 ${res.name}입니다.
-                이동거리: ${res.distance}, 걸린 시간: ${res.endtime}`);
+                이동거리: ${res.distance}, 걸린 시간: ${elapsedTime}`);
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
         //죽음
         socket.on('youdie', (res)=> {
+            const endTime = res.endtime; //게임 종료시에 시간 기록
+            const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
-            alert(`죽었습니다. ${res.name}는 ${res.endtime}만큼 생존했습니다.`);
+            alert(`죽었습니다. 당신은 ${elapsedTime}만큼 생존했습니다.`);
             //기타 죽었을 때 화면에 표시되어야 할 것들
-        })
-    },[])
+        });
+    },[]);
 
     //달리는 중
     useEffect(() => {
@@ -105,10 +120,138 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     }, [shakeCount]);
 
     return (
+        <>
+            <div className="redgreen">
+                <p>Shake Count: {shakeCount};</p>
+            </div>
+
         <div>
-            <button onClick={requestPermissionSafari}>허가</button>
+            {/* <button onClick={requestPermissionSafari}>허가</button> */}
             <button style={{width:'30vw', height:'30vh'}} onClick={()=>setShakeCount((prev)=>prev+1)}>허가</button>
             <p>Shake Count: {shakeCount};</p>
+
         </div>
+        <style jsx>{`
+            .p-redgreen-div{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+            }
+            .redgreen{
+                margin-top: 20px;
+                width: 85%;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* button CSS */
+            .button-82-pushable {
+                position: relative;
+                border: none;
+                background: transparent;
+                padding: 0;
+                cursor: pointer;
+                outline-offset: 4px;
+                transition: filter 250ms;
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+            }
+
+            .button-82-shadow {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 12px;
+                background: hsl(0deg 0% 0% / 0.25);
+                will-change: transform;
+                transform: translateY(2px);
+                transition:
+                    transform
+                    600ms
+                    cubic-bezier(.3, .7, .4, 1);
+            }
+
+            .button-82-edge {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 12px;
+                background: linear-gradient(
+                    to left,
+                    hsl(340deg 100% 16%) 0%,
+                    hsl(340deg 100% 32%) 8%,
+                    hsl(340deg 100% 32%) 92%,
+                    hsl(340deg 100% 16%) 100%
+                );
+            }
+
+            .button-82-front {
+                display: block;
+                position: relative;
+                padding: 12px 27px;
+                border-radius: 12px;
+                font-size: 1.1rem;
+                color: white;
+                background: hsl(345deg 100% 47%);
+                will-change: transform;
+                transform: translateY(-4px);
+                transition:
+                    transform
+                    600ms
+                    cubic-bezier(.3, .7, .4, 1);
+            }
+
+            @media (min-width: 768px) {
+                .button-82-front {
+                    font-size: 1.25rem;
+                    padding: 12px 42px;
+                }
+            }
+
+            .button-82-pushable:hover {
+                filter: brightness(110%);
+                -webkit-filter: brightness(110%);
+            }
+
+            .button-82-pushable:hover .button-82-front {
+                transform: translateY(-6px);
+                transition:
+                    transform
+                    250ms
+                    cubic-bezier(.3, .7, .4, 1.5);
+            }
+
+            .button-82-pushable:active .button-82-front {
+                transform: translateY(-2px);
+                transition: transform 34ms;
+            }
+
+            .button-82-pushable:hover .button-82-shadow {
+                transform: translateY(4px);
+                transition:
+                    transform
+                    250ms
+                    cubic-bezier(.3, .7, .4, 1.5);
+            }
+
+            .button-82-pushable:active .button-82-shadow {
+                transform: translateY(1px);
+                transition: transform 34ms;
+            }
+
+            .button-82-pushable:focus:not(:focus-visible) {
+                outline: none;
+            }
+        `}</style>
+        </>
     );
 }
