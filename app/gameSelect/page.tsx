@@ -163,7 +163,7 @@ export default function GameSelect() {
   >
     <MenuItem value={50}>짧게</MenuItem>
     <MenuItem value={100}>중간</MenuItem>
-    <MenuItem value={150}>길게</MenuItem>
+    <MenuItem value={160}>길게</MenuItem>
   </Select>
 </FormControl></>:''}
                 </div>
