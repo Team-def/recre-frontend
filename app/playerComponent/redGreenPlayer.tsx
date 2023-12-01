@@ -6,18 +6,21 @@ import { socketApi } from '../modules/socketApi';
 
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
-let startTime = new Date;
 
 export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
+    const startTime = new Date(); //게임 시작시에 시간 기록
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [start, setStart] = useState(false);
-    //test를 위한 임시 socket 설정
-    // const socket = useRef(io(`${socketApi}?uuId=123`, {
-    //     withCredentials: true,
-    //     transports: ["websocket"],
-    //     autoConnect: false,
-    // }));
+
+    //시간 측정 함수
+    const timeCheck = (startTime: Date, endTime: Date):string => {
+        const timeDifference = endTime.getTime() - startTime.getTime();
+        const minutes = Math.floor(timeDifference / (1000 * 60));
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        const formattedElapsedTime = `${minutes}분 ${seconds}초`;
+        return formattedElapsedTime;
+    }
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
     const handleShake = () => {
@@ -82,20 +85,22 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         
         //통과
         socket.on('touchdown', (res) => {
-            if(res.result === true){
-                alert(`이겼습니다. 우승자는 ${res.name}입니다.\n
-                     걸린 시간: ${res.endtime}`);
-                //이겼을 때 화면에 표시되어야 할 것들
-            }
+            const endTime = res.endtime; //게임 종료시에 시간 기록
+            const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+            alert(`이겼습니다. 우승자는 ${res.name}입니다.
+                이동거리: ${res.distance}, 걸린 시간: ${elapsedTime}`);
+            //이겼을 때 화면에 표시되어야 할 것들
         });
     
         //죽음
         socket.on('youdie', (res)=> {
+            const endTime = res.endtime; //게임 종료시에 시간 기록
+            const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
-            alert(`죽었습니다. 당신은 ${res.endtime.getMinutes() - startTime.getMinutes()}분 ${res.endtime.getSeconds() - startTime.getSeconds()}초만큼 생존했습니다.`);
+            alert(`죽었습니다. 당신은 ${elapsedTime}만큼 생존했습니다.`);
             //기타 죽었을 때 화면에 표시되어야 할 것들
-        })
-    },[])
+        });
+    },[]);
 
     //달리는 중
     useEffect(() => {
