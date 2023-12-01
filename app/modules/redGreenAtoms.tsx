@@ -1,7 +1,7 @@
 import { atom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 
-export const redGreenInfoAtom = atomWithStorage<number[]>('redGreenInfo',[3, 100]);
+export const redGreenInfoAtom = atomWithStorage<number[]>('redGreenInfo',[0, 100]);
 
 export const setRedGreenInfo = atom(
     null,
