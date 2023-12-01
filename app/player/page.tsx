@@ -33,6 +33,70 @@ export default function Player() {
     }));
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
 
+    let accelerationData: number[] = [];
+    let lastAcceleration = 0;
+
+    const handleShake = () => {
+        setShakeCount((prevCount) => prevCount + 1);
+    }
+
+    //device의 움직임을 읽어오는 함수
+    const handleDeviceMotion = (event: DeviceMotionEvent) => {
+        const acceleration= event.acceleration;
+
+        if (acceleration) {
+            const accelerationMagnitude = (acceleration.y??0)
+            const smoothedAcceleration = 0.2 * accelerationMagnitude + 0.8 * lastAcceleration;
+            lastAcceleration = smoothedAcceleration;
+            accelerationData.push(smoothedAcceleration);
+
+            const maxDataLength = 3;
+            if (accelerationData.length > maxDataLength) {
+                accelerationData = accelerationData.slice(1);
+            }
+
+            const peakIndex = detectPeak(accelerationData);
+
+            if (peakIndex !== -1) {
+                handleShake();
+            }
+        }
+    };
+
+    const detectPeak = (data: number[]): number => {
+        const threshold = 1.5; // Adjust this threshold based on testing
+    
+        for (let i = 1; i < data.length - 1; i++) {
+          if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
+            return i;
+          }
+        }
+        return -1;
+    };
+    //여기까지 움직임 측정 함수
+
+    const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
+
+    const requestPermissionSafari = () => {
+        //iOS
+        if (isSafariOver13) {
+            window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
+                if (permissionState === 'denied') {
+                    //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
+                    alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
+                    return;
+                } else if (permissionState === 'granted') {
+                    window.addEventListener('devicemotion', handleDeviceMotion);
+                };
+            })
+        
+        //android         
+        } else {
+            alert('게임 참여를 위하여 모션 센서를 사용합니다.');
+            window.addEventListener('devicemotion', handleDeviceMotion);
+        };
+    }
+
     useEffect(() => {
         if (parseInt(data[0]) === null) {
             alert('잘못된 접근입니다.');
@@ -129,73 +193,8 @@ export default function Player() {
             return;
             //redgreen
         } else if (data[1] === 'redgreen') {
-            //여기서부터 sensor 허가 요청
-            const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
-
-            const requestPermissionSafari = () => {
-                //iOS
-                if (isSafariOver13) {
-                    window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
-                        if (permissionState === 'denied') {
-                            //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
-                            alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
-                            return;
-                        } else if (permissionState === 'granted') {
-                            window.addEventListener('devicemotion', handleDeviceMotion);
-                        };
-                    })
-        
-                //android         
-                } else {
-                    alert('게임 참여를 위하여 모션 센서를 사용합니다.');
-                    window.addEventListener('devicemotion', handleDeviceMotion);
-                };
-            }
             
             requestPermissionSafari();
-            //여기까지 sensor 허가 요청
-
-            //여기서부터 움직임 측정 함수
-            let accelerationData: number[] = [];
-            let lastAcceleration = 0;
-            const handleShake = () => {
-                    setShakeCount((prevCount) => prevCount + 1);
-            }
-        
-            //device의 움직임을 읽어오는 함수
-            const handleDeviceMotion = (event: DeviceMotionEvent) => {
-                const acceleration= event.acceleration;
-        
-                if (acceleration) {
-                    const accelerationMagnitude = (acceleration.y??0)
-                    const smoothedAcceleration = 0.2 * accelerationMagnitude + 0.8 * lastAcceleration;
-                    lastAcceleration = smoothedAcceleration;
-                    accelerationData.push(smoothedAcceleration);
-        
-                    const maxDataLength = 3;
-                    if (accelerationData.length > maxDataLength) {
-                        accelerationData = accelerationData.slice(1);
-                    }
-        
-                    const peakIndex = detectPeak(accelerationData);
-        
-                    if (peakIndex !== -1) {
-                        handleShake();
-                    }
-                }
-            };
-        
-            const detectPeak = (data: number[]): number => {
-                const threshold = 1.5; // Adjust this threshold based on testing
-            
-                for (let i = 1; i < data.length - 1; i++) {
-                  if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
-                    return i;
-                  }
-                }
-                return -1;
-            };
-            //여기까지 움직임 측정 함수
             
             //10번 흔들어서 준비 완료
             socket.current.connect();
