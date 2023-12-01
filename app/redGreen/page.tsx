@@ -9,6 +9,7 @@ import { Button } from '@mui/material';
 import { green } from '@mui/material/colors';
 import MyModal from '@/component/MyModal';
 import { redGreenStartAtom } from '../modules/redGreenStartAtom';
+import { redGreenInfoAtom } from '../modules/redGreenAtoms';
 
 export default function RedGreen({socket}: {socket : Socket}) {
     const [userInfo,] = useAtom(userInfoAtoms)
@@ -22,7 +23,9 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
     const [counter, setCounter] = useState<number>(3);
+    const [gameInfo, setGameInfo] = useAtom(redGreenInfoAtom);
     const [isStart, setIsStart] = useAtom(redGreenStartAtom);
+    const [percentVar, setPercentVar] = useState<number>(0);
 
     enum state {
       alive = 'ALIVE',
@@ -59,6 +62,18 @@ export default function RedGreen({socket}: {socket : Socket}) {
         setModalHeader('곧 게임이 시작됩니다!');
         setModalContent(<CounterModal/>);
 
+        switch(gameInfo[1]){
+          case 50:
+            setPercentVar(2);
+            break;
+          case 100:
+            setPercentVar(1);
+            break;
+          case 150:
+            setPercentVar(0.625);
+            break;
+        }
+
 
         socket.on('game_finished', (res) => {
           setOpenModal(true);
@@ -88,6 +103,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
 
         setTimeout(() => {  
           clearInterval(timer);
+          setIsStart(true)
           socket.emit('start_game', {  
             result : true
           })
@@ -98,14 +114,16 @@ export default function RedGreen({socket}: {socket : Socket}) {
 
 
     useEffect(() => {
-      if(go){
-        socket.emit('resume', {
-          result : go
-        });
-      } else {
-        socket.emit('stop', {
-          result : go
-        });
+      if(isStart){
+        if(go){
+          socket.emit('resume', {
+            result : go
+          });
+        } else {
+          socket.emit('stop', {
+            result : go
+          });
+        }
       }
     },[go])
 
@@ -114,7 +132,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
         socket.emit('end_game', {
           result : true
         });
-    
+        socket.disconnect();
+        setIsStart(false)
     };
 
     const leaveGame = () => {
@@ -128,7 +147,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
     
             socket.emit('leave_game',{
             });
-    
+            socket.disconnect();
+            setIsStart(false)
             router.push('/gameSelect');
           }
     
@@ -140,7 +160,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
     
           socket.emit('leave_game',{
           });
-          
+          socket.disconnect();
+          setIsStart(false)
           router.push('/gameSelect');
         }
       }
@@ -149,6 +170,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
         return(
           <div>{counter}</div>
         )
+      }
+
+      const stopGame = () => {  
+        socket.emit('game_finished', {
+        });
       }
 
       const FinishedModal = () => {
@@ -185,12 +211,13 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 return (
                   <div key={index} className='playerDiv'>
                     <div className='distanceBar' style={{width:player.distance + `%`, backgroundColor: colorArr[colorIndex]}}></div>
-                    <div className='playerInfo'>{player.nickname} : {player.distance} / 100</div>
+                    <div className='playerInfo'>{player.nickname} : {player.distance} / {gameInfo[1]}</div>
                   </div>
                 )
               })}
             </div>
-            <Button onClick={()=>{leaveGame()}}>나가기</Button>
+            <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
+            <Button onClick={()=>{stopGame}}>우승자 마감</Button>
             <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{}} myref={null}/>
           </div>
           <style jsx>{`
