@@ -154,6 +154,7 @@ export default function Player() {
             if (res.result === true) {
                 // alert('ready')
                 setReady(true)
+                setModalOpen(false)
             }
             else {
                 alert(res.message)
