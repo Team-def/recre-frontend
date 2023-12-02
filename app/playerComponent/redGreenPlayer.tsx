@@ -13,7 +13,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [start, setStart] = useState(false);
-    const [isGreen, setIsGreen] = useState(false); //초록색인지 빨간색인지를 관리하는 상태
+    const [isGreen, setIsGreen] = useState(true); //초록색인지 빨간색인지를 관리하는 상태
     const [rank, setRank] = useState(0); //등수를 관리하는 상태
     const vh = useVH();
 
@@ -123,49 +123,52 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         <>
         <div className={outlineClassName}>
             <div className="speech-bubble-player">
-                <p>달린 거리: {shakeCount}</p>
-                <p>나의 등수: {rank}등</p>
+                <h1>달린 거리: {shakeCount}</h1>
+                <h1>나의 등수: {rank}등</h1>
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
-                <p>미니맵</p>
+                
             </div>
         </div>
         <style jsx>{`
             .outline-player-page-green {
-                margin: 0.1cm auto;
-                padding: 0.1cm auto;
-                outline: 2px solid green;
+                margin: 20px auto;
+                padding: 10px auto;
+                outline: 20px solid green;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-evenly;
                 align-items: center;
-                border-radius: 50%;
-                height: ${100 * vh}px;
-                height: 90vh;
+                border-radius: 5%;
+                height: ${95 * vh}px;
+                width: 80vw;
             }
             .outline-player-page-red {
-                margin: 0.1cm auto;
-                padding: 0.1cm auto;
-                outline: 2px solid red;
+                margin: 20px auto;
+                padding: 10px auto;
+                outline: 20px solid red;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-evenly;
                 align-items: center;
-                border-radius: 50%;
-                height: ${100 * vh}px;
-                height: 90vh;
+                border-radius: 5%;
+                height: ${95 * vh}px;
+                width: 80vw      
             }
             .speech-bubble-player {
+                margin: 20px auto;
                 width: 100%;
                 height: 50%;
                 display: flex;
                 flex: 1;
                 flex-direction: column;
+                outline: 10px solid black;
                 justify-content: space-evenly;
                 align-items: center;
             }
             .minimap-player {
+                margin: 20px auto;
                 width: 100%;
                 height: 50%;
                 display: flex;
@@ -173,8 +176,11 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 flex-direction: column;
                 justify-content: space-evenly;
                 align-items: center;
+                border-bottom: 5px solid purple;
+
             }
             .minimap-player-dead {
+                margin: 20px auto;
                 width: 50%;
                 height: 100%;
                 display: flex;
@@ -183,6 +189,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 justify-content: space-evenly;
                 align-items: center;
                 background-color: gray;
+                border-bottom: 5px solid gray;
             }
         `}</style>
         <style jsx global>{`
