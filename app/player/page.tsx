@@ -44,7 +44,7 @@ export default function Player() {
 
     //device의 움직임을 읽어오는 함수
     const handleDeviceMotion = (event: DeviceMotionEvent) => {
-        event.preventDefault();
+        event.preventDefault(); //shakeToUndo 기능 방지
         const acceleration= event.acceleration;
 
         if (acceleration) {
