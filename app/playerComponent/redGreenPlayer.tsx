@@ -17,6 +17,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
 
     //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
     const outlineClassName = isGreen ? 'outline-player-page-green' : 'outline-player-page-red';
+    //생존 여부에 따라 minimap 색깔을 바꿔주는 클래스 이름을 동적으로 결정
     const minimapClassName = isAlive ? 'minimap-player' : 'minimap-player-dead';
 
     //시간 측정 함수
@@ -130,39 +131,41 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         </div>
         <style jsx>{`
             .outline-player-page-green: {
-                margin: 0.5cm auto;
-                padding: 0.5cm auto;
+                margin: 0.1cm auto;
+                padding: 0.1cm auto;
                 outline: 2px solid green;
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: space-between;
                 align-items: center;
-                width: 100%;
-                height: 100%;
+                width: 100vh;
+                height: 100vh;
             }
             .outline-player-page-red: {
-                margin: 0.5cm auto;
-                padding: 0.5cm auto;
+                margin: 0.1cm auto;
+                padding: 0.1cm auto;
                 outline: 2px solid red;
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: space-between;
                 align-items: center;
-                width: 100%;
-                height: 100%;
+                width: 100vh;
+                height: 100vh;
             }
             .speech-bubble-player {
-                width: 50%;
-                height: 100%;
+                width: 100%;
+                height: 50%;
                 display: flex;
+                flex: 1;
                 flex-direction: column;
                 justify-content: space-between;
                 align-items: center;
             }
             .minimap-player {
-                width: 50%;
-                height: 100%;
+                width: 100%;
+                height: 50%;
                 display: flex;
+                flex: 1;
                 flex-direction: column;
                 justify-content: space-between;
                 align-items: center;
@@ -171,6 +174,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 width: 50%;
                 height: 100%;
                 display: flex;
+                flex: 1;
                 flex-direction: column;
                 justify-content: space-between;
                 align-items: center;
