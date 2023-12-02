@@ -15,10 +15,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [userInfo,] = useAtom(userInfoAtoms)
     const [acc_token,] = useAtom(tokenAtoms)
     const router = useRouter();
-    const [winners, setWinners] = useState<winnerInfo[]>([{
-      name: '',
-      score: 1,
-    }]);
     const [openModal, setOpenModal] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
@@ -80,8 +76,9 @@ export default function RedGreen({socket}: {socket : Socket}) {
         socket.on('game_finished', (res) => {
           setOpenModal(true);
           setModalHeader('우승자 목록');
-          setModalContent(<FinishedModal/>);
-            setWinners(res.winners);
+          setModalContent(<FinishedModal winners={res.winners}/>);
+            // setWinners(res.winners);
+            console.log(res.winners);
             setIsStart(false);
         });
 
@@ -180,7 +177,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
         });
       }
 
-      const FinishedModal = () => {
+      const FinishedModal = ({winners}:{winners : winnerInfo[]}) => {
         return (
           <div>
             <div className="winnerInfo">
