@@ -75,6 +75,7 @@ export default function Player() {
     };
     //여기까지 움직임 측정 함수
 
+    //safari 브라우저에서는 센서 권한을 허용받아야 함
     const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
 
     const requestPermissionSafari = () => {
@@ -117,7 +118,7 @@ export default function Player() {
             alert('잘못된 접근입니다.');
             router.push("/");
         }
-
+        //catchmind 시작
         socket.current.on("start_catch_game", (res) => {
             if (res.result === true) {
                 setIsGame(true)
@@ -125,7 +126,7 @@ export default function Player() {
                 alert(res.message)
             }
         })
-
+        //redgreen 시작
         socket.current.on("start_game", (res) => {
             if (res.result === true) {
                 setIsGame(true)
@@ -133,7 +134,6 @@ export default function Player() {
                 alert(res.message)
             }
         })
-
 
         socket.current.on("end", (res) => {
             if (res.result === true) {
@@ -149,12 +149,15 @@ export default function Player() {
 
         socket.current.on("ready", (res) => {
             if (res.result === true) {
-                // alert('ready')
                 setReady(true)
             }
             else {
                 alert(res.message)
             }
+        })
+
+        socket.current.on("close_gate", (res) => {
+            setShakeCount(0);
         })
 
         if (isMobile && (browserName === 'Samsung Internet')) {
@@ -183,7 +186,7 @@ export default function Player() {
         if (data[1] === null || data[1] === '') {
             alert('잘못된 접근입니다.');
             return;
-            //catchmind
+        //catchmind
         } else if (data[1] === 'catch') {
             socket.current.connect();
             socket.current.emit("ready", {
@@ -191,7 +194,7 @@ export default function Player() {
                 nickname: playerNickname
             });
             return;
-            //redgreen
+        //redgreen
         } else if (data[1] === 'redgreen') {
             
             requestPermissionSafari();
@@ -238,7 +241,6 @@ export default function Player() {
 
     return (
         <>{isGame ? gameContent :
-            //무궁화꽃이피었습니다 게임이 시작되면 flower로 이동
             <>
                 <div className="nickname-container">
                     <div className="headerContainer">
