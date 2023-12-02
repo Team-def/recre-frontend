@@ -8,13 +8,15 @@ import MyModal from '@/component/MyModal';
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
 
-export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number }) {
+export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num, nickname }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number, nickname: string }) {
     const startTime = new Date(); //게임 시작시에 시간 기록
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [open, setOpen] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
+    const [myrank, setMyRank] = useState<number>(0);
+    const [go, setGo] = useState<boolean>(false);
 
     //시간 측정 함수
     const timeCheck = (startTime: Date, endTime: Date):string | void => {
@@ -27,6 +29,19 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         }
         return alert('시간 측정 불가');
     };
+
+    enum state {
+        alive = 'ALIVE',
+        dead = 'DEAD',
+        finish = 'FINISH',
+      }
+
+    interface all_player {
+        name: string,
+        distance: number,
+        state: state,
+        endtime: string,
+    }
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
     const handleShake = () => {
@@ -74,13 +89,25 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
     useEffect(() => {
         window.addEventListener('devicemotion', handleDeviceMotion);
+
+        alert(total_num)
+
+
+        socket.on('game_finished', (res) => {
+            setModalHeader('게임 끝!');
+            setModalContent(<div>{res.player_info.map((player : all_player, index : number)=>{
+                const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
+                const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+                return <div style={{backgroundColor: player.name === nickname?"blue":'white'}}>{index+1}등: {player.name} / {player.distance} / {elapsedTime??''} / {player.state}</div>
+            })}</div>);
+        });
         
         //통과
         socket.on('touchdown', (res) => {
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setModalHeader('통과!');
-            setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {} / {total_num}</div>);
+            setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
             setOpen(true);
             //이겼을 때 화면에 표시되어야 할 것들
         });
@@ -91,9 +118,17 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
             setModalHeader('죽었습니다!');
-            setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} <br></br> 등수 : {} / {total_num}</div> );
+            setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} <br></br> 등수 : {myrank} / {total_num}</div> );
             setOpen(true);
             //기타 죽었을 때 화면에 표시되어야 할 것들
+        });
+
+        socket.on('realtime_my_rank', (res) => {
+            setMyRank(res.rank);
+        });
+
+        socket.on('realtime_redgreen', (res) => {
+            setGo(res.go)
         });
     },[]);
 
@@ -108,9 +143,11 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     return (
         <>
 
-        <div>
+        <div style={{backgroundColor:go?'green':'red'}}>
             <p>Shake Count: {shakeCount};</p>
             <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
+            <div>내 등수 : {myrank} / {total_num}</div>
+            <div>네 거리 : {shakeCount} / {length}</div>
             <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
         </div>
         
