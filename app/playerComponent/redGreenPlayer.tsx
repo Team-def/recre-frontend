@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
 import { Socket } from "socket.io-client";
+import useVH from 'react-viewport-height';
 import { io } from "socket.io-client";
 import { socketApi } from '../modules/socketApi';
 import MyModal from '@/component/MyModal';
@@ -17,9 +18,15 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     const [open, setOpen] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
-    const [myrank, setMyRank] = useState<number>(0);
-    const [go, setGo] = useState<boolean>(true);
+    const [myrank, setMyRank] = useState<number>(0); //등수를 관리하는 상태
     const [nickname, setNickname] = useState<string>('');
+    const [isGreen, setIsGreen] = useState<boolean>(true); //초록색인지 빨간색인지를 관리하는 상태
+    const vh = useVH();
+
+    //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
+    const outlineClassName = isGreen ? 'outline-player-page-green' : 'outline-player-page-red';
+    //생존 여부에 따라 minimap 색깔을 바꿔주는 클래스 이름을 동적으로 결정
+    const minimapClassName = isAlive ? 'minimap-player' : 'minimap-player-dead';
 
     //시간 측정 함수
     const timeCheck = (startTime: Date, endTime: Date):string | void => {
@@ -87,9 +94,6 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         return -1;
     };
 
-    window.addEventListener('devicemotion', handleDeviceMotion);
-
-
     useEffect(() => {
         window.addEventListener('devicemotion', handleDeviceMotion);
 
@@ -135,19 +139,20 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
 
+        //실시간 redgreen 색깔 정보
+        socket.on('realtime_redgreen', (res) => {
+            setIsGreen(res.go);
+        });
+
+        //실시간 등수 정보
         socket.on('realtime_my_rank', (res) => {
-            alert(res.rank)
             setMyRank(res.rank);
         });
-
-        socket.on('realtime_redgreen', (res) => {
-            setGo(res.go)
-        });
-
+        
         return () => {
             localStorage.removeItem('nickname')
         }
-    },[]);
+    }, []);
 
     //달리는 중
     useEffect(() => {
@@ -160,14 +165,84 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     return (
         <>
 
-        <div style={{backgroundColor:go?'green':'red'}}>
-            <p>Shake Count: {shakeCount>length?length:shakeCount};</p>
-            <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
-            <div>내 등수 : {myrank} / {total_num}</div>
-            <div>내 거리 : {shakeCount} / {length}</div>
-            <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
+        <div className={outlineClassName}>
+            <div className="speech-bubble-player">
+                <h1>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
+                <h1>나의 등수 : {myrank} / {total_num} 등</h1>
+                <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
+            </div>
+            <div className={minimapClassName}>
+                
+            </div>
+          <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
         </div>
-        
+        <style jsx>{`
+            .outline-player-page-green {
+                margin: 20px auto;
+                padding: 10px auto;
+                outline: 20px solid green;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-evenly;
+                align-items: center;
+                border-radius: 5%;
+                height: ${95 * vh}px;
+                width: 80vw;
+            }
+            .outline-player-page-red {
+                margin: 20px auto;
+                padding: 10px auto;
+                outline: 20px solid red;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-evenly;
+                align-items: center;
+                border-radius: 5%;
+                height: ${95 * vh}px;
+                width: 80vw      
+            }
+            .speech-bubble-player {
+                margin: 20px auto;
+                width: 100%;
+                height: 50%;
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                outline: 10px solid black;
+                justify-content: space-evenly;
+                align-items: center;
+            }
+            .minimap-player {
+                margin: 20px auto;
+                width: 100%;
+                height: 50%;
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                justify-content: space-evenly;
+                align-items: center;
+                border-bottom: 5px solid purple;
+
+            }
+            .minimap-player-dead {
+                margin: 20px auto;
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                justify-content: space-evenly;
+                align-items: center;
+                background-color: gray;
+                border-bottom: 5px solid gray;
+            }
+        `}</style>
+        <style jsx global>{`
+                body {
+                    overflow: hidden !important;
+                }
+            `}</style>
         </>
-    );
+
+    )
 }
