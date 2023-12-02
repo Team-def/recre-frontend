@@ -74,7 +74,6 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         
         //통과
         socket.on('touchdown', (res) => {
-            console.log(res.endtime);
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             alert(`이겼습니다. 우승자는 ${res.name}입니다. 걸린 시간: ${elapsedTime}`);
@@ -83,7 +82,6 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     
         //죽음
         socket.on('youdie', (res)=> {
-            console.log(res.endtime);
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
