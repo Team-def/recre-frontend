@@ -12,6 +12,12 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [start, setStart] = useState(false);
+    const [isGreen, setIsGreen] = useState(false); //초록색인지 빨간색인지를 관리하는 상태
+    const [rank, setRank] = useState(0); //등수를 관리하는 상태
+
+    //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
+    const outlineClassName = isGreen ? 'outline-player-page-green' : 'outline-player-page-red';
+    const minimapClassName = isAlive ? 'minimap-player' : 'minimap-player-dead';
 
     //시간 측정 함수
     const timeCheck = (startTime: Date, endTime: Date):string | void => {
@@ -66,9 +72,6 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         return -1;
     };
 
-    window.addEventListener('devicemotion', handleDeviceMotion);
-
-
     useEffect(() => {
         window.addEventListener('devicemotion', handleDeviceMotion);
         
@@ -88,7 +91,22 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
             alert(`죽었습니다. 당신은 ${res.distance}만큼 이동했고, ${elapsedTime}만큼 생존했습니다.`);
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
-    },[]);
+
+        //실시간 redgreen 색깔 정보
+        socket.on('realtime_redgreen', (res) => {
+            if (res.go === true) {
+                setIsGreen(true);
+            } else {
+                setIsGreen(false);
+            }   
+        });
+
+        //실시간 등수 정보
+        socket.on('realtime_my_rank', (res) => {
+            setRank(res.rank);
+        });
+
+    }, []);
 
     //달리는 중
     useEffect(() => {
@@ -100,12 +118,66 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
 
     return (
         <>
-
-        <div>
-            <p>Shake Count: {shakeCount};</p>
-            <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
+        <div className={outlineClassName}>
+            <div className="speech-bubble-player">
+                <p>달린 거리: {shakeCount}</p>
+                <p>나의 등수: {rank}등</p>
+                <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
+            </div>
+            <div className={minimapClassName}>
+                <p>미니맵</p>
+            </div>
         </div>
-        
+        <style jsx>{`
+            .outline-player-page-green: {
+                margin: 0.5cm auto;
+                padding: 0.5cm auto;
+                outline: 2px solid green;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+            }
+            .outline-player-page-red: {
+                margin: 0.5cm auto;
+                padding: 0.5cm auto;
+                outline: 2px solid red;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+            }
+            .speech-bubble-player {
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .minimap-player {
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .minimap-player-dead {
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                background-color: gray;
+            }
+        `}</style>
         </>
-    );
+
+    )
 }
