@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && scp -r .next recre:/home/ubuntu/recre-frontend",
     "start": "next start",
     "lint": "next lint"
   },
