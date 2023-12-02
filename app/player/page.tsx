@@ -159,7 +159,7 @@ export default function Player() {
                             break;
                         case 'redgreen':
                             setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current} 
-                                length={res.length as number} win_num={res.win_num as number} total_num={res.total_num as number} nickname={playerNickname as string}/>)
+                                length={res.length as number} win_num={res.win_num as number} total_num={res.total_num as number}/>)
                             break;
                     }
                 }
@@ -200,6 +200,8 @@ export default function Player() {
             alert('닉네임은 10자 미만으로 입력해주세요.');
             return;
         }
+
+        localStorage.setItem('nickname', playerNickname);
 
         //gametype에 따라 다른 socket 연결
         if (data[1] === null || data[1] === '') {
@@ -404,4 +406,4 @@ export default function Player() {
             `}</style>
         </>
     )
-}s
+}

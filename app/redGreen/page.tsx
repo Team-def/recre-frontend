@@ -10,6 +10,10 @@ import { green } from '@mui/material/colors';
 import MyModal from '@/component/MyModal';
 import { redGreenStartAtom } from '../modules/redGreenStartAtom';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 
 export default function RedGreen({socket}: {socket : Socket}) {
     const [userInfo,] = useAtom(userInfoAtoms)
@@ -76,7 +80,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           setModalHeader('우승자 목록');
           setModalContent(<FinishedModal player_info={res.player_info as playerInfo[]}/>);
             // setWinners(res.winners);
-            console.log(res.winners);
+            console.log(res.player_info);
             setIsStart(false);
         });
 
@@ -197,11 +201,26 @@ export default function RedGreen({socket}: {socket : Socket}) {
           <div>
             <div className="winnerInfo">
               <div className="modalText">
+              <List
+      sx={{
+        width: '100%',
+        maxWidth: 360,
+        bgcolor: 'background.paper',
+        position: 'relative',
+        overflow: 'auto',
+        maxHeight: 300,
+        '& ul': { padding: 0 },
+      }}
+      subheader={<li />}
+    >
                 {player_info.map((player : playerInfo, index : number)=>{
                 const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
                 const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
-                return <div style={{backgroundColor: index+1<=gameInfo[0]?"blue":'white'}}>{index+1}등: {player.name} / {player.distance} / {elapsedTime??''} / {player.state}</div>
+                const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
+                return (
+                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
             })}
+            </List>
               </div>
             </div>
             <Button onClick={leaveGame}>게임 끝내기</Button>
@@ -221,10 +240,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
           ,borderTop:`20px solid ${go?'green':'red'}`, borderBottom:`20px solid ${go?'green':'red'}`}}>
               {playerInfo.map((player, index) => {
                 let colorIndex = index % colorArr.length;
+                const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
                   <div key={index} className='playerDiv'>
-                    <div className='distanceBar' style={{width:player.distance*percentVar + `%`, backgroundColor: colorArr[colorIndex]}}></div>
-                    <div className='playerInfo'>{player.name} : {player.distance} / {gameInfo[1]}</div>
+                    <div className='distanceBar' style={{width:playerFixedDistance*percentVar + `%`, backgroundColor: colorArr[colorIndex]}}></div>
+                    <div className='playerInfo'>{player.name} : {playerFixedDistance} / {gameInfo[1]}</div>
                   </div>
                 )
               })}
