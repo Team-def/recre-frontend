@@ -152,6 +152,7 @@ export default function Player() {
         socket.current.on("ready", (res) => {
             if (res.result === true) {
                 setReady(true)
+                setModalOpen(false)
             }
             else {
                 alert(res.message)
@@ -200,17 +201,34 @@ export default function Player() {
         } else if (data[1] === 'redgreen') {
             setModalOpen(true);
             requestPermissionSafari();
-            
+        }
+    };
+
+    useEffect(() => {
+        if(!ready){
             //10번 흔들어서 준비 완료
-            socket.current.connect();
-            if (shakeCount > 10) {
+            if (shakeCount >= 10) {
+                socket.current.connect();
                 socket.current.emit("ready", {
                     room_id: parseInt(data[0]),
                     nickname: playerNickname,
                 });
             }
         }
-    };
+    }, [shakeCount])
+
+    // useEffect(() => {
+    //     if(!ready){
+    //         //10번 흔들어서 준비 완료
+    //         if (shakeCount >= 10) {
+    //             socket.current.connect();
+    //             socket.current.emit("ready", {
+    //                 room_id: parseInt(data[0]),
+    //                 nickname: playerNickname,
+    //             });
+    //         }
+    //     }
+    // }, [shakeCount])
 
     //modal창 띄우기
     const ReadyModal = () => {

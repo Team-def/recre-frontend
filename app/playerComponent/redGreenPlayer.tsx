@@ -70,6 +70,8 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
 
 
     useEffect(() => {
+        window.addEventListener('devicemotion', handleDeviceMotion);
+        
         //통과
         socket.on('touchdown', (res) => {
             console.log(res.endtime);
@@ -102,10 +104,8 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         <>
 
         <div>
-            {/* <button onClick={requestPermissionSafari}>허가</button> */}
-            <button style={{width:'30vw', height:'30vh'}} onClick={()=>setShakeCount((prev)=>prev+1)}>허가</button>
             <p>Shake Count: {shakeCount};</p>
-
+            <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
         </div>
         
         </>
