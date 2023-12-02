@@ -34,6 +34,17 @@ export default function Player() {
     }));
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [redGreenData, setRedGreenData] = useState<redGreenDataType>({
+        length: 0,
+        win_num: 0,
+        total_num : 0,
+    });
+
+    interface redGreenDataType {
+        length: number,
+        win_num: number,
+        total_num : number,
+    }
 
     let accelerationData: number[] = [];
     let lastAcceleration = 0;
@@ -104,23 +115,9 @@ export default function Player() {
     useEffect(() => {
         if (parseInt(data[0]) === null) {
             alert('잘못된 접근입니다.');
-            router.push("/");
+            window.close();
         }
 
-        if(data[1]){
-            switch (data[1]) {
-                case 'catch':
-                    setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
-                    break;
-                case 'redgreen':
-                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
-                    break;
-            }
-        }
-        else{
-            alert('잘못된 접근입니다.');
-            router.push("/");
-        }
         //catchmind 시작
         socket.current.on("start_catch_game", (res) => {
             if (res.result === true) {
@@ -154,6 +151,22 @@ export default function Player() {
             if (res.result === true) {
                 setReady(true)
                 setModalOpen(false)
+
+                if(data[1]){
+                    switch (data[1]) {
+                        case 'catch':
+                            setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
+                            break;
+                        case 'redgreen':
+                            setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current} 
+                                length={res.length as number} win_num={res.win_num as number} total_num={res.total_num as number}/>)
+                            break;
+                    }
+                }
+                else{
+                    alert('잘못된 접근입니다.');
+                    window.close();
+                }
             }
             else {
                 alert(res.message)
@@ -187,6 +200,8 @@ export default function Player() {
             alert('닉네임은 10자 미만으로 입력해주세요.');
             return;
         }
+
+        localStorage.setItem('nickname', playerNickname);
 
         //gametype에 따라 다른 socket 연결
         if (data[1] === null || data[1] === '') {

@@ -4,17 +4,23 @@ import { Socket } from "socket.io-client";
 import useVH from 'react-viewport-height';
 import { io } from "socket.io-client";
 import { socketApi } from '../modules/socketApi';
+import MyModal from '@/component/MyModal';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
 
-export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
+export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number }) {
     const startTime = new Date(); //게임 시작시에 시간 기록
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
-    const [start, setStart] = useState(false);
-    const [isGreen, setIsGreen] = useState(true); //초록색인지 빨간색인지를 관리하는 상태
-    const [rank, setRank] = useState(0); //등수를 관리하는 상태
+    const [open, setOpen] = useState(false);
+    const [modalHeader, setModalHeader] = useState<string>('');
+    const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
+    const [myrank, setMyRank] = useState<number>(0); //등수를 관리하는 상태
+    const [nickname, setNickname] = useState<string>('');
+    const [isGreen, setIsGreen] = useState<boolean>(true); //초록색인지 빨간색인지를 관리하는 상태
     const vh = useVH();
 
     //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
@@ -33,6 +39,19 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         }
         return alert('시간 측정 불가');
     };
+
+    enum state {
+        alive = 'ALIVE',
+        dead = 'DEAD',
+        finish = 'FINISH',
+      }
+
+    interface all_player {
+        name: string,
+        distance: number,
+        state: state,
+        endtime: string,
+    }
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
     const handleShake = () => {
@@ -77,12 +96,35 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
 
     useEffect(() => {
         window.addEventListener('devicemotion', handleDeviceMotion);
+
+        socket.on('game_finished', (res) => {
+            setModalHeader('게임 끝!');
+            setModalContent(<List
+                sx={{
+                  width: '100%',
+                  maxWidth: 360,
+                  bgcolor: 'background.paper',
+                  position: 'relative',
+                  overflow: 'auto',
+                  maxHeight: 300,
+                  '& ul': { padding: 0 },
+                }}
+                subheader={<li />}
+              >{res.player_info.map((player : all_player, index : number)=>{
+                const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
+                const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+                const playerFixedDistance = player.distance>length?length:player.distance;
+                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
+            })}</List>);
+        });
         
         //통과
         socket.on('touchdown', (res) => {
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
-            alert(`이겼습니다. 우승자는 ${res.name}입니다. 걸린 시간: ${elapsedTime}`);
+            setModalHeader('통과!');
+            setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
+            setOpen(true);
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
@@ -91,24 +133,25 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
-            alert(`죽었습니다. 당신은 ${res.distance}만큼 이동했고, ${elapsedTime}만큼 생존했습니다.`);
+            setModalHeader('죽었습니다!');
+            setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance>length?length:res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} <br></br> 등수 : {myrank} / {total_num}</div> );
+            setOpen(true);
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
 
         //실시간 redgreen 색깔 정보
         socket.on('realtime_redgreen', (res) => {
-            if (res.go === true) {
-                setIsGreen(true);
-            } else {
-                setIsGreen(false);
-            }   
+            setIsGreen(res.go);
         });
 
         //실시간 등수 정보
         socket.on('realtime_my_rank', (res) => {
-            setRank(res.rank);
+            setMyRank(res.rank);
         });
-
+        
+        return () => {
+            localStorage.removeItem('nickname')
+        }
     }, []);
 
     //달리는 중
@@ -121,15 +164,17 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
 
     return (
         <>
+
         <div className={outlineClassName}>
             <div className="speech-bubble-player">
-                <h1>달린 거리: {shakeCount}</h1>
-                <h1>나의 등수: {rank}등</h1>
+                <h1>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
+                <h1>나의 등수 : {myrank} / {total_num} 등</h1>
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
                 
             </div>
+          <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
         </div>
         <style jsx>{`
             .outline-player-page-green {
