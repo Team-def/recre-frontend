@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
 import { Socket } from "socket.io-client";
+import useVH from 'react-viewport-height';
 import { io } from "socket.io-client";
 import { socketApi } from '../modules/socketApi';
 
@@ -14,6 +15,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     const [start, setStart] = useState(false);
     const [isGreen, setIsGreen] = useState(false); //초록색인지 빨간색인지를 관리하는 상태
     const [rank, setRank] = useState(0); //등수를 관리하는 상태
+    const vh = useVH();
 
     //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
     const outlineClassName = isGreen ? 'outline-player-page-green' : 'outline-player-page-red';
@@ -130,27 +132,29 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
             </div>
         </div>
         <style jsx>{`
-            .outline-player-page-green: {
+            .outline-player-page-green {
                 margin: 0.1cm auto;
                 padding: 0.1cm auto;
                 outline: 2px solid green;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: space-evenly;
                 align-items: center;
-                width: 100vh;
-                height: 100vh;
+                border-radius: 50%;
+                height: ${100 * vh}px;
+                height: 90vh;
             }
-            .outline-player-page-red: {
+            .outline-player-page-red {
                 margin: 0.1cm auto;
                 padding: 0.1cm auto;
                 outline: 2px solid red;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: space-evenly;
                 align-items: center;
-                width: 100vh;
-                height: 100vh;
+                border-radius: 50%;
+                height: ${100 * vh}px;
+                height: 90vh;
             }
             .speech-bubble-player {
                 width: 100%;
@@ -158,7 +162,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 display: flex;
                 flex: 1;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: space-evenly;
                 align-items: center;
             }
             .minimap-player {
@@ -167,7 +171,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 display: flex;
                 flex: 1;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: space-evenly;
                 align-items: center;
             }
             .minimap-player-dead {
@@ -176,11 +180,16 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
                 display: flex;
                 flex: 1;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: space-evenly;
                 align-items: center;
                 background-color: gray;
             }
         `}</style>
+        <style jsx global>{`
+                body {
+                    overflow: hidden !important;
+                }
+            `}</style>
         </>
 
     )
