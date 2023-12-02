@@ -33,6 +33,17 @@ export default function Player() {
     }));
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
+    const [redGreenData, setRedGreenData] = useState<redGreenDataType>({
+        length: 0,
+        win_num: 0,
+        total_num : 0,
+    });
+
+    interface redGreenDataType {
+        length: number,
+        win_num: number,
+        total_num : number,
+    }
 
     let accelerationData: number[] = [];
     let lastAcceleration = 0;
@@ -112,7 +123,8 @@ export default function Player() {
                     setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
                     break;
                 case 'redgreen':
-                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
+                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current} 
+                        length={redGreenData.length as number} win_num={redGreenData.win_num as number} total_num={redGreenData.total_num}/>)
                     break;
             }
         }
@@ -153,6 +165,9 @@ export default function Player() {
             if (res.result === true) {
                 setReady(true)
                 setModalOpen(false)
+                if(data[1] === 'redgreen'){
+                setRedGreenData({length : res.length, win_num : res.win_num, total_num : res.total_num})
+                }
             }
             else {
                 alert(res.message)

@@ -3,15 +3,18 @@ import { useState, useRef, useEffect } from 'react';
 import { Socket } from "socket.io-client";
 import { io } from "socket.io-client";
 import { socketApi } from '../modules/socketApi';
+import MyModal from '@/component/MyModal';
 
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
 
-export default function RedGreenPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
+export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number }) {
     const startTime = new Date(); //게임 시작시에 시간 기록
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
-    const [start, setStart] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [modalHeader, setModalHeader] = useState<string>('');
+    const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
 
     //시간 측정 함수
     const timeCheck = (startTime: Date, endTime: Date):string | void => {
@@ -76,7 +79,9 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         socket.on('touchdown', (res) => {
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
-            alert(`이겼습니다. 우승자는 ${res.name}입니다. 걸린 시간: ${elapsedTime}`);
+            setModalHeader('통과!');
+            setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {} / {total_num}</div>);
+            setOpen(true);
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
@@ -85,7 +90,9 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
             const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
-            alert(`죽었습니다. 당신은 ${res.distance}만큼 이동했고, ${elapsedTime}만큼 생존했습니다.`);
+            setModalHeader('죽었습니다!');
+            setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} <br></br> 등수 : {} / {total_num}</div> );
+            setOpen(true);
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
     },[]);
@@ -104,6 +111,7 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         <div>
             <p>Shake Count: {shakeCount};</p>
             <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
+            <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
         </div>
         
         </>
