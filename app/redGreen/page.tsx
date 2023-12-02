@@ -185,7 +185,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 {winners.map((winner, index) => {
                   return (
                     <div key={index}>
-                      <div className="winners">{winner.name} : {winner.score}등</div>
+                      <div className="winners">{winner.name} : {winner.score}걸음</div>
                     </div>
                   )
                 })}

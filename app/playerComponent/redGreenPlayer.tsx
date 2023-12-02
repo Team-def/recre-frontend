@@ -14,13 +14,16 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     const [start, setStart] = useState(false);
 
     //시간 측정 함수
-    const timeCheck = (startTime: Date, endTime: Date):string => {
-        const timeDifference = endTime.getTime() - startTime.getTime();
-        const minutes = Math.floor(timeDifference / (1000 * 60));
-        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-        const formattedElapsedTime = `${minutes}분 ${seconds}초`;
-        return formattedElapsedTime;
-    }
+    const timeCheck = (startTime: Date, endTime: Date):string | void => {
+        if (typeof startTime === 'object' && typeof endTime === 'object' && startTime !== null && endTime !== null && 'getTime' in startTime && 'getTime' in endTime) {
+            const timeDifference = endTime.getTime() - startTime.getTime();
+            const minutes = Math.floor(timeDifference / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+            const formattedElapsedTime = `${minutes}분 ${seconds}초`;
+            return formattedElapsedTime;
+        }
+        return alert('시간 측정 불가');
+    };
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
     const handleShake = () => {
@@ -63,41 +66,26 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
         return -1;
     };
 
-    //iOS 13 이상의 safari 브라우저에서는 모션 이벤트 권한을 요청해야 함
-    // const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
+    window.addEventListener('devicemotion', handleDeviceMotion);
 
-    // const requestPermissionSafari = () => {
-    //     //iOS
-    //     if (isSafariOver13) {
-    //         window.DeviceOrientationEvent.requestPermission().then((permissionState) => {
-    //             if (permissionState === 'denied') {
-    //                 //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
-    //                 alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
-    //                 return;
-    //             } else if (permissionState === 'granted') {
-    //                 window.addEventListener('devicemotion', handleDeviceMotion);
-    //                 setStart(true);
-    //             };
-    //         })
 
     useEffect(() => {
         window.addEventListener('devicemotion', handleDeviceMotion);
         
         //통과
         socket.on('touchdown', (res) => {
-            const endTime = res.endtime; //게임 종료시에 시간 기록
+            const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
-            alert(`이겼습니다. 우승자는 ${res.name}입니다.
-                이동거리: ${res.distance}, 걸린 시간: ${elapsedTime}`);
+            alert(`이겼습니다. 우승자는 ${res.name}입니다. 걸린 시간: ${elapsedTime}`);
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
         //죽음
         socket.on('youdie', (res)=> {
-            const endTime = res.endtime; //게임 종료시에 시간 기록
+            const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
             const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
             setIsAlive(false);
-            alert(`죽었습니다. 당신은 ${elapsedTime}만큼 생존했습니다.`);
+            alert(`죽었습니다. 당신은 ${res.distance}만큼 이동했고, ${elapsedTime}만큼 생존했습니다.`);
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
     },[]);
@@ -111,10 +99,13 @@ export default function RedGreenPlayer({ roomId, socket }: { roomId: string, soc
     }, [shakeCount]);
 
     return (
+        <>
+
         <div>
             <p>Shake Count: {shakeCount};</p>
             <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
         </div>
-    
+        
+        </>
     );
 }
