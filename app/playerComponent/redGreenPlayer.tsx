@@ -7,6 +7,7 @@ import { socketApi } from '../modules/socketApi';
 import MyModal from '@/component/MyModal';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import Image from 'next/image';
 
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
@@ -27,6 +28,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     const outlineClassName = isGreen ? 'outline-player-page-green' : 'outline-player-page-red';
     //생존 여부에 따라 minimap 색깔을 바꿔주는 클래스 이름을 동적으로 결정
     const minimapClassName = isAlive ? 'minimap-player' : 'minimap-player-dead';
+    //왼쪽에서 오른쪽으로 얼마나 진행했는지를 계산
+    let progress = 0;
 
     //시간 측정 함수
     const timeCheck = (startTime: Date, endTime: Date):string | void => {
@@ -160,6 +163,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             socket.emit('run', {
                 shakeCount: shakeCount,});
         }
+        progress = (shakeCount / length) * 100;
     }, [shakeCount]);
 
     return (
@@ -172,15 +176,17 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
-                
+                <div className="icon">
+                    <Image src="/walker.png" alt="walker" width={50} height={50} />
+                </div>
             </div>
           <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
         </div>
         <style jsx>{`
             .outline-player-page-green {
                 margin: 20px auto;
-                padding: 10px auto;
-                outline: 20px solid green;
+                /* padding: 10px auto; */
+                outline: 30px solid green;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-evenly;
@@ -191,8 +197,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             }
             .outline-player-page-red {
                 margin: 20px auto;
-                padding: 10px auto;
-                outline: 20px solid red;
+                /* padding: 10px auto; */
+                outline: 30px solid red;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-evenly;
@@ -202,18 +208,17 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 width: 80vw      
             }
             .speech-bubble-player {
-                margin: 20px auto;
+                margin: 30px auto;
                 width: 100%;
                 height: 50%;
                 display: flex;
                 flex: 1;
                 flex-direction: column;
-                outline: 10px solid black;
+                outline: 20px solid black;
                 justify-content: space-evenly;
                 align-items: center;
             }
             .minimap-player {
-                margin: 20px auto;
                 width: 100%;
                 height: 50%;
                 display: flex;
@@ -221,11 +226,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 flex-direction: column;
                 justify-content: space-evenly;
                 align-items: center;
-                border-bottom: 5px solid purple;
+                border-bottom: 5px solid #5C4033;
 
             }
             .minimap-player-dead {
-                margin: 20px auto;
                 width: 50%;
                 height: 100%;
                 display: flex;
@@ -235,6 +239,11 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 align-items: center;
                 background-color: gray;
                 border-bottom: 5px solid gray;
+            }
+            .icon {
+                width: 50%;
+                height: 50%;
+                left: ${progress}%;
             }
         `}</style>
         <style jsx global>{`
