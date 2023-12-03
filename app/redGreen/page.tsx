@@ -28,7 +28,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [isStart,setIsStart] = useState<boolean>(false);
     const [percentVar, setPercentVar] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
-
+    const [go,setGo] = useState(false);
+    //플레이어의 상태를 나타내는 열거형
     enum state {
       alive = 'ALIVE',
       dead = 'DEAD',
@@ -41,7 +42,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       state: state.alive,
       endtime: '',
     }]);
-    const [go,setGo] = useState(false);
+    
 
     interface playerInfo {
       name: string,
@@ -174,6 +175,20 @@ export default function RedGreen({socket}: {socket : Socket}) {
       }
 
       const CounterModal = () => {
+        useEffect(() => {
+          let timer = setInterval(() => {
+            setCounter(prev => prev - 1);
+          }, 1000)
+          
+          setTimeout(() => {  
+            clearInterval(timer);
+            setOpenModal(false);
+            setIsStart(true)
+            console.log('game start')
+            setStartTime(new Date());
+          }, 3000)
+        }, [])
+        
         return(
           <div>{counter}</div>
         )
@@ -214,11 +229,12 @@ export default function RedGreen({socket}: {socket : Socket}) {
       subheader={<li />}
     >
                 {player_info.map((player : playerInfo, index : number)=>{
-                const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
+                //여기 endTime 에서 player.endtime을 가져오니까 ALIVE인 사람의 endtime이 null이라서 오류가 남
+                const endTime = player.endtime ? new Date(player.endtime) : new Date(); //게임 종료시에 시간 기록
                 const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
-                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
+                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
             })}
             </List>
               </div>
