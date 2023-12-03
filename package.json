@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "upload": "scp -r .next recre:/home/ubuntu/recre-frontend"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
