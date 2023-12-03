@@ -2,6 +2,7 @@ import { Button, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { Socket } from "socket.io-client";
 import { useEffect, useRef } from 'react';
+import MyModal from '@/component/MyModal';
 
 export default function CatchPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
