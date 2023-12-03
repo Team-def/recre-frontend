@@ -22,6 +22,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     const [myrank, setMyRank] = useState<number>(0); //등수를 관리하는 상태
     const [nickname, setNickname] = useState<string>('');
     const [isGreen, setIsGreen] = useState<boolean>(true); //초록색인지 빨간색인지를 관리하는 상태
+    const [progress, setProgress] = useState<number>(0); //왼쪽에서 오른쪽으로 얼마나 진행했는지를 관리하는 상태
     const vh = useVH();
 
     //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
@@ -29,7 +30,6 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     //생존 여부에 따라 minimap 색깔을 바꿔주는 클래스 이름을 동적으로 결정
     const minimapClassName = isAlive ? 'minimap-player' : 'minimap-player-dead';
     //왼쪽에서 오른쪽으로 얼마나 진행했는지를 계산
-    let progress = 0;
 
     //시간 측정 함수
     const timeCheck = (startTime: Date, endTime: Date):string | void => {
@@ -162,8 +162,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         if (isAlive) {
             socket.emit('run', {
                 shakeCount: shakeCount,});
+            setProgress((shakeCount / length) * 100);    
         }
-        progress = (shakeCount / length) * 100;
     }, [shakeCount]);
 
     return (
@@ -176,8 +176,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
-                <div className="icon">
-                    <Image src="/walker.png" alt="walker" width={50} height={50} />
+                <div className="icon" style={{left: `${progress}%`}}>
+                    <Image src="/walker.png" alt="walker" width={100} height={100} />
                 </div>
             </div>
           <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
@@ -208,19 +208,18 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 width: 80vw      
             }
             .speech-bubble-player {
-                margin: 30px auto;
                 width: 100%;
                 height: 50%;
                 display: flex;
                 flex: 1;
                 flex-direction: column;
-                outline: 20px solid black;
+                border-bottom: 20px solid black;
                 justify-content: space-evenly;
                 align-items: center;
             }
             .minimap-player {
                 width: 100%;
-                height: 50%;
+                height: 100%;
                 display: flex;
                 flex: 1;
                 flex-direction: column;
@@ -230,7 +229,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
             }
             .minimap-player-dead {
-                width: 50%;
+                width: 100%;
                 height: 100%;
                 display: flex;
                 flex: 1;
@@ -241,9 +240,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 border-bottom: 5px solid gray;
             }
             .icon {
-                width: 50%;
-                height: 50%;
-                left: ${progress}%;
+                position: absolute;
+                margin-right: 30%;
+                bottom: 0;
+                transition: left 0.3s ease;
             }
         `}</style>
         <style jsx global>{`
