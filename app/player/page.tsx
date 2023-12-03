@@ -18,22 +18,25 @@ import { type } from 'os';
 export default function Player() {
     const params = useSearchParams();
     const [data, setData] = useState<string[]>(params.get('data')?.split('_') ?? []);
-    const router = useRouter();
-    //query string에서 hostId를 가져옴
+    const router = useRouter(); //query string에서 hostId를 가져옴
     const [playerNickname, setPlayerNickname] = useState<string | null>(null);
     const [ready, setReady] = useState<boolean>(false);
     const [isGame, setIsGame] = useState<boolean>(false);
     const [isGateClosed, setIsGateClosed] = useState<boolean>(false); //closeGate 여부를 관리하는 상태
+    const [isReadySent, setIsReadySent] = useState<boolean>(false); //ready 이벤트를 보냈는지 여부를 관리하는 상태
     const [shakeCount, setShakeCount] = useState(0);
+    const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
+
     const vh = useVH();
+
     const socket = useRef(io(`${socketApi}/${data[1]}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
     }));
-    const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
+
     const [redGreenData, setRedGreenData] = useState<redGreenDataType>({
         length: 0,
         win_num: 0,
@@ -225,8 +228,9 @@ export default function Player() {
     useEffect(() => {
         if(!ready){
             //10번 흔들어서 준비 완료
-            if (shakeCount >= 10) {
+            if (shakeCount >= 10 && !isReadySent) {
                 socket.current.connect();
+                setIsReadySent(true);
                 socket.current.emit("ready", {
                     room_id: parseInt(data[0]),
                     nickname: playerNickname,
