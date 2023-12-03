@@ -194,6 +194,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 border-radius: 5%;
                 height: ${95 * vh}px;
                 width: 80vw;
+                background-color: #faf9f6;
             }
             .outline-player-page-red {
                 margin: 20px auto;
@@ -205,7 +206,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 align-items: center;
                 border-radius: 5%;
                 height: ${95 * vh}px;
-                width: 80vw      
+                width: 80vw;
+                background-color: #faf9f6;      
             }
             .speech-bubble-player {
                 width: 100%;

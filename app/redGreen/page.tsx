@@ -28,6 +28,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [isStart,setIsStart] = useState<boolean>(false);
     const [percentVar, setPercentVar] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
+    const [go,setGo] = useState(false);
 
     enum state {
       alive = 'ALIVE',
@@ -41,7 +42,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       state: state.alive,
       endtime: '',
     }]);
-    const [go,setGo] = useState(false);
+    
 
     interface playerInfo {
       name: string,
@@ -218,7 +219,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
-                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
+                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
             })}
             </List>
               </div>
