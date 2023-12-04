@@ -22,7 +22,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [openModal, setOpenModal] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
-    const [counter, setCounter] = useState<number>(3);
     const [gameInfo, setGameInfo] = useAtom(redGreenInfoAtom);
     const [isReady, setIsReady] = useAtom(redGreenStartAtom);
     const [isStart,setIsStart] = useState<boolean>(false);
@@ -175,6 +174,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       }
 
       const CounterModal = () => {
+        const [counter, setCounter] = useState<number>(3);
         useEffect(() => {
           let timer = setInterval(() => {
             setCounter(prev => prev - 1);

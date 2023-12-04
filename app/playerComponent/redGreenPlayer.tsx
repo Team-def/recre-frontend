@@ -117,7 +117,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
                 const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
                 const playerFixedDistance = player.distance>length?length:player.distance;
-                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
+                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
             })}</List>);
         });
         
