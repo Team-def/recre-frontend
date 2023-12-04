@@ -22,7 +22,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [openModal, setOpenModal] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
-    const [counter, setCounter] = useState<number>(3);
     const [gameInfo, setGameInfo] = useAtom(redGreenInfoAtom);
     const [isReady, setIsReady] = useAtom(redGreenStartAtom);
     const [isStart,setIsStart] = useState<boolean>(false);
@@ -90,6 +89,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           setOpenModal(false);
           setGo(true);
           setIsStart(true)
+          setStartTime(new Date(response.starttime));
       });
 
         return () => { 
@@ -116,7 +116,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
           })
           setIsReady(false)
           console.log('game start')
-          setStartTime(new Date());
         }, 3000)
       }
     },[isReady])
@@ -175,6 +174,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       }
 
       const CounterModal = () => {
+        const [counter, setCounter] = useState<number>(3);
         useEffect(() => {
           let timer = setInterval(() => {
             setCounter(prev => prev - 1);
@@ -182,12 +182,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
           
           setTimeout(() => {  
             clearInterval(timer);
-            setOpenModal(false);
-            setIsStart(true)
-            console.log('game start')
-            setStartTime(new Date());
+            console.log('game start');
           }, 3000)
-        }, [])
+
+          return () => clearInterval(timer);
+        }, []);
         
         return(
           <div>{counter}</div>
