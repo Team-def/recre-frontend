@@ -12,8 +12,8 @@ import Image from 'next/image';
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
 
-export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number }) {
-    const startTime = new Date(); //게임 시작시에 시간 기록
+export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num, start_time }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number, start_time: Date }) {
+    const startTime = new Date(start_time); //게임 시작시에 시간 기록
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [open, setOpen] = useState(false);
@@ -87,7 +87,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     };
 
     const detectPeak = (data: number[]): number => {
-        const threshold = 1.5; // Adjust this threshold based on testing
+        const threshold = 2.5; // Adjust this threshold based on testing
     
         for (let i = 1; i < data.length - 1; i++) {
           if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {

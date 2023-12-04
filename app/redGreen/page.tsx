@@ -193,9 +193,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
           <div>{counter}</div>
         )
       }
-
+      //우승자 마감 함수
       const stopGame = () => {  
         socket.emit('game_finished', {
+          result : true
         });
       }
 
@@ -269,7 +270,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
             </div>
-            <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{}} myref={null}/>
+            <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{ }} myref={null}/>
           </div>
           <style jsx>{`
             .redGreenContainer{
