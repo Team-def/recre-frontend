@@ -14,8 +14,10 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/material": "^5.14.17",
     "@mui/styled-engine-sc": "^6.0.0-alpha.5",
+    "@react-three/fiber": "^8.15.12",
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
+    "@types/three": "^0.159.0",
     "axios": "^1.6.1",
     "cookie": "^0.6.0",
     "jotai": "^2.5.1",
@@ -31,7 +33,9 @@
     "react-viewport-height": "^1.2.2",
     "socket.io-client": "^4.7.2",
     "styled-components": "^6.1.1",
-    "uuid": "^9.0.1"
+    "three": "^0.159.0",
+    "uuid": "^9.0.1",
+    "waait": "^1.0.5"
   },
   "devDependencies": {
     "@types/node": "^20.9.4",

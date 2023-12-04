@@ -10,6 +10,11 @@ import { green } from '@mui/material/colors';
 import MyModal from '@/component/MyModal';
 import { redGreenStartAtom } from '../modules/redGreenStartAtom';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import YoungHee from '@/component/youngHee';
 
 export default function RedGreen({socket}: {socket : Socket}) {
     const [userInfo,] = useAtom(userInfoAtoms)
@@ -23,6 +28,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [isReady, setIsReady] = useAtom(redGreenStartAtom);
     const [isStart,setIsStart] = useState<boolean>(false);
     const [percentVar, setPercentVar] = useState<number>(0);
+    const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
 
     enum state {
       alive = 'ALIVE',
@@ -34,60 +40,57 @@ export default function RedGreen({socket}: {socket : Socket}) {
       name: '',
       distance: 0,
       state: state.alive,
+      endtime: '',
     }]);
     const [go,setGo] = useState(false);
 
     interface playerInfo {
-        name: string,
-        distance: number,
-        state : state,
-    }
-
-    interface winnerInfo { 
       name: string,
-      score: number,
-    }
+      distance: number,
+      state: state,
+      endtime: string,
+  }
 
     useEffect(() => {
-        socket.on('players_status', (res) => {
+      //   socket.on('players_status', (res) => {
 
-          console.log(res.player_info)
-          if(res.player_info){
-            setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
-          }
-        });
+      //     console.log(res.player_info)
+      //     if(res.player_info){
+      //       setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
+      //     }
+      //   });
 
-        setModalHeader('곧 게임이 시작됩니다!');
-        setModalContent(<CounterModal/>);
+      //   setModalHeader('곧 게임이 시작됩니다!');
+      //   setModalContent(<CounterModal/>);
 
-        switch(gameInfo[1]){
-          case 50:
-            setPercentVar(2);
-            break;
-          case 100:
-            setPercentVar(1);
-            break;
-          case 160:
-            setPercentVar(0.625);
-            break;
-        }
+      //   switch(gameInfo[1]){
+      //     case 50:
+      //       setPercentVar(2);
+      //       break;
+      //     case 100:
+      //       setPercentVar(1);
+      //       break;
+      //     case 160:
+      //       setPercentVar(0.625);
+      //       break;
+      //   }
 
 
-        socket.on('game_finished', (res) => {
-          setOpenModal(true);
-          setModalHeader('우승자 목록');
-          setModalContent(<FinishedModal winners={res.winners}/>);
-            // setWinners(res.winners);
-            console.log(res.winners);
-            setIsStart(false);
-        });
+      //   socket.on('game_finished', (res) => {
+      //     setOpenModal(true);
+      //     setModalHeader('우승자 목록');
+      //     setModalContent(<FinishedModal player_info={res.player_info as playerInfo[]}/>);
+      //       // setWinners(res.winners);
+      //       console.log(res.player_info);
+      //       setIsStart(false);
+      //   });
 
-        socket.on("start_game", (response) => {
-          // console.log(response)
-          setOpenModal(false);
-          setGo(true);
-          setIsStart(true)
-      });
+      //   socket.on("start_game", (response) => {
+      //     // console.log(response)
+      //     setOpenModal(false);
+      //     setGo(true);
+      //     setIsStart(true)
+      // });
 
         return () => { 
             handleBeforeUnload();
@@ -97,6 +100,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
     useEffect(() => {
       console.log(isReady);
       if(isReady){
+        socket.emit('close_gate', {  
+          room_id : userInfo.id,
+          access_token : localStorage.getItem('access_token')??'' as string
+        })
         setOpenModal(true);
         let timer = setInterval(() => {
           // setCounter(prev => prev - 1);
@@ -109,6 +116,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           })
           setIsReady(false)
           console.log('game start')
+          setStartTime(new Date());
         }, 3000)
       }
     },[isReady])
@@ -177,18 +185,43 @@ export default function RedGreen({socket}: {socket : Socket}) {
         });
       }
 
-      const FinishedModal = ({winners}:{winners : winnerInfo[]}) => {
+      //시간 측정 함수
+    const timeCheck = (startTime: Date, endTime: Date):string | void => {
+      if (typeof startTime === 'object' && typeof endTime === 'object' && startTime !== null && endTime !== null && 'getTime' in startTime && 'getTime' in endTime) {
+          const timeDifference = endTime.getTime() - startTime.getTime();
+          const minutes = Math.floor(timeDifference / (1000 * 60));
+          const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+          const formattedElapsedTime = `${minutes}분 ${seconds}초`;
+          return formattedElapsedTime;
+      }
+      return alert('시간 측정 불가');
+  };
+
+      const FinishedModal = ({player_info}:{player_info : playerInfo[]}) => {
         return (
           <div>
             <div className="winnerInfo">
               <div className="modalText">
-                {winners.map((winner, index) => {
-                  return (
-                    <div key={index}>
-                      <div className="winners">{winner.name} : {winner.score}등</div>
-                    </div>
-                  )
-                })}
+              <List
+      sx={{
+        width: '100%',
+        maxWidth: 360,
+        bgcolor: 'background.paper',
+        position: 'relative',
+        overflow: 'auto',
+        maxHeight: 300,
+        '& ul': { padding: 0 },
+      }}
+      subheader={<li />}
+    >
+                {player_info.map((player : playerInfo, index : number)=>{
+                const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
+                const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+                const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
+                return (
+                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
+            })}
+            </List>
               </div>
             </div>
             <Button onClick={leaveGame}>게임 끝내기</Button>
@@ -201,25 +234,28 @@ export default function RedGreen({socket}: {socket : Socket}) {
       return (
         <>
           <div className='redGreenContainer'>
-            <div>
+          
+            {/*<div>
               <div className='signalDiv' style={{backgroundColor:go?'green':'red'}} onClick={()=>setGo(!go)}></div>
             </div>
             <div className='gameContainer' style={{borderLeft:`50px solid ${go?'green':'red'}`, borderRight:`50px solid ${go?'green':'red'}`
           ,borderTop:`20px solid ${go?'green':'red'}`, borderBottom:`20px solid ${go?'green':'red'}`}}>
               {playerInfo.map((player, index) => {
                 let colorIndex = index % colorArr.length;
+                const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
                   <div key={index} className='playerDiv'>
-                    <div className='distanceBar' style={{width:player.distance*percentVar + `%`, backgroundColor: colorArr[colorIndex]}}></div>
-                    <div className='playerInfo'>{player.name} : {player.distance} / {gameInfo[1]}</div>
+                    <div className='distanceBar' style={{width:playerFixedDistance*percentVar + `%`, backgroundColor: colorArr[colorIndex]}}></div>
+                    <div className='playerInfo'>{player.name} : {playerFixedDistance} / {gameInfo[1]}</div>
                   </div>
                 )
               })}
-            </div>
-            <div className='redGreenBtns'>
+            </div> */}
+            <YoungHee/>
+            {/* <div className='redGreenBtns'>
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
-            </div>
+            </div> */}
             <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{}} myref={null}/>
           </div>
           <style jsx>{`
