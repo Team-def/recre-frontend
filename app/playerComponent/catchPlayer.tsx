@@ -33,7 +33,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         setButtonDisabled(true);
         setTimeout(()=>setButtonDisabled(false), 3000);
     }
-
+    const handleClose = () => { setOpen(false); };
     const canvasRef = useRef<HTMLCanvasElement>(null);
     
     useEffect(() => {
@@ -116,7 +116,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             
             <Button className="throw-answer" variant="contained" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '대기':'제출'}</Button>
         </div>
-        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => {}} myref={null}/>
+        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} myref={null}/>
         <div>
             <canvas
                 ref={canvasRef}
