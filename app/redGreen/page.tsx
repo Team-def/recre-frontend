@@ -182,8 +182,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
           
           setTimeout(() => {  
             clearInterval(timer);
-            setOpenModal(false);
-            setIsStart(true);
             console.log('game start');
           }, 3000)
 
