@@ -193,9 +193,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
           <div>{counter}</div>
         )
       }
-
+      //우승자 마감 함수
       const stopGame = () => {  
         socket.emit('game_finished', {
+          result : true
         });
       }
 
