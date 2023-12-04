@@ -1,6 +1,8 @@
 "use client";
+import { Caesar_Dressing } from "next/font/google";
 // import dat from "dat.gui";
 import React, { useEffect, useRef, useState } from "react";
+import { render } from "react-dom";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -12,10 +14,25 @@ const YoungHee = () => {
   const [cube, setCube] = useState<any>();
   const [camera, setCamera] = useState<THREE.PerspectiveCamera>();
   const [myMaterial, setMyMaterial] = useState<any>();
-  const [mixer, setMixer] = useState<any>();  
+  const [mixers, setMixers] = useState<THREE.AnimationMixer[]>();
+  const [scene, setScene] = useState<THREE.Scene>();
+  const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
+  const [playerCount, setPlayerCount] = useState<number>(0);
+  const [playerList, setPlayerList] = useState<Player[]>([]);
 
+  class Player {
+    plyerId: number;
+    name: string;
+    position: number;
+    constructor(plyerId: number, name: string, position: number) {
+      this.plyerId = plyerId;
+      this.name = name;
+      this.position = position;
+    }
+  }
   useEffect(() => {
     const scene = new THREE.Scene();
+    setScene(scene);
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -26,9 +43,9 @@ const YoungHee = () => {
     setCamera(camera);
 
     const renderer = new THREE.WebGLRenderer({
-        canvas: canvasRef.current?? new HTMLCanvasElement(),
-        antialias: true,
-        alpha: true,
+      canvas: canvasRef.current ?? new HTMLCanvasElement(),
+      antialias: true,
+      alpha: true,
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ReinhardToneMapping;
@@ -43,8 +60,6 @@ const YoungHee = () => {
 
     //================================================================================================
     //격자, 편의 도구
-
- 
 
     // const axesHelper = new THREE.AxesHelper(5);
     // scene.add(axesHelper);
@@ -67,7 +82,6 @@ const YoungHee = () => {
     //   .step(0.01)
     //   .name("카메라.x 이동");
 
-
     //================================================================================================
 
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -75,22 +89,27 @@ const YoungHee = () => {
     // renderer.setSize(500, 500);
 
     // 아래가 마우스 스크롤이나 클릭 후 돌리기
-    // const controls = new OrbitControls(camera, renderer.domElement);
+    const controls = new OrbitControls(camera, renderer.domElement);
 
     const loader = new GLTFLoader();
 
-    const geometry = new THREE.PlaneGeometry(120,60,1,1);
+    const geometry = new THREE.PlaneGeometry(1000, 700, 1, 1);
     //material을 투명으로
     // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
 
-    const ground = new THREE.TextureLoader().load('/youngHee/ground.jpg');
-    const material = new THREE.MeshStandardMaterial({ map:ground, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.5});
-    setMyMaterial(material)
-    const plane = new THREE.Mesh( geometry, material );
-    plane.rotation.x = Math.PI * -0.49;
+    const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
+    const material = new THREE.MeshStandardMaterial({
+      map: ground,
+      side: THREE.DoubleSide,
+      roughness: 0.5,
+      metalness: 0.5,
+    });
+    setMyMaterial(material);
+    const plane = new THREE.Mesh(geometry, material);
+    plane.rotation.x = Math.PI * -0.499;
     plane.position.y = -4.7;
     plane.position.z = 0;
-    scene.add( plane );
+    scene.add(plane);
     plane.receiveShadow = true;
 
     // const planeGeometry = new THREE.PlaneGeometry(20, 20, 1, 1)
@@ -100,34 +119,37 @@ const YoungHee = () => {
     // plane.rotation.x = -0.5 * Math.PI
     // plane.position.y = -0.2
     // scene.add(plane)
-    
+
     //================================================================================================
     //광원
     // var ambientLight = new THREE.AmbientLight(0x404040);
     // scene.add(ambientLight);
-    
-    const color =0xe0e0e0;
+
+    var ambientLight = new THREE.AmbientLight(0xf0f0f0); // 색상 지정
+    // ambientLight.
+    // scene.add(ambientLight);
+
+    const color = 0xe0e0e0;
     const intensity = 3;
     const light = new THREE.DirectionalLight(color, intensity);
     //light의 위치와 target의 위치를 지정한다
-    light.position.set(15, 30, 20);
-    light.castShadow = true
-    
+    light.position.set(10, 10, 10);
+    light.castShadow = true;
+
     scene.add(light);
     scene.add(light.target);
-    
-    light.shadow.camera.top = 30;
-    light.shadow.camera.right = 100;
-    light.shadow.camera.bottom = -100;
-    light.shadow.camera.left = -100;
-    light.shadow.radius = 1
+
+    light.shadow.camera.top = 200;
+    light.shadow.camera.right = 500;
+    light.shadow.camera.bottom = -500;
+    light.shadow.camera.left = -500;
+    light.shadow.radius = 1;
 
     // light.shadow.mapSize.width = 256;
     // light.shadow.mapSize.height = 256;
     // light.shadow.camera.near = 1;
     // light.shadow.camera.far = 500;
-    
-    
+
     // const light = new THREE.DirectionalLight(0xffffff, 100);
     // // scene.add(cube);
     // scene.add(light);
@@ -135,20 +157,21 @@ const YoungHee = () => {
     const bgTexture = new THREE.TextureLoader().load(
       "/youngHee/squid_game.png"
     );
-    scene.background = bgTexture
-    
+    scene.background = bgTexture;
+
     // scene.background = new THREE.Color('green');
 
     // window.addEventListener("resize", onResize, false);
 
     function onResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 
-    camera.position.z = 35;
-    camera.position.y = -0;
+    camera.position.z = 70;
+    camera.position.y = 20;
+    // camera.rotateX(Math.PI/2);
 
     // const myRobot;
 
@@ -164,9 +187,10 @@ const YoungHee = () => {
     //       });
     //     }
     //   );
-    
+
     loader.load("/youngHee/youngHee.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
+      object.scene.position.set(0, 0, -50);
       scene.add(object.scene);
 
       // 그림자 생성
@@ -176,7 +200,7 @@ const YoungHee = () => {
           child.receiveShadow = true;
         }
       });
-      
+
       // renderer.render(scene, camera);
       setCube(object.scene);
 
@@ -191,10 +215,8 @@ const YoungHee = () => {
       // alert(clip);
       const action = mixer.clipAction(clip);
       action.play();
-      setMixer(mixer);
+      setMixers([mixer]);
     });
-
-
 
     function animate() {
       requestAnimationFrame(animate);
@@ -204,43 +226,114 @@ const YoungHee = () => {
     animate();
   }, [canvasRef]);
 
+  async function addPlayer() {
+    const loader = new GLTFLoader();
+    loader.load("/blooper.glb", (object) => {
+      object.scene.scale.set(1, 1, 1);
+      const curPlayerCnt = playerCount + 1;
+      const player = new Player(curPlayerCnt, "오징어", 40);
+      // setPlayerList([...playerList, player]);
+
+      setPlayerList((prevItems) => [...prevItems, player]);
+      console.log(playerList.length);
+
+      setPlayerCount(curPlayerCnt);
+      if (curPlayerCnt % 2 === 0) {
+        object.scene.position.set(-curPlayerCnt * 1, 0, 40);
+      } else {
+        object.scene.position.set(curPlayerCnt * 1, 0, 40);
+      }
+      scene?.add(object.scene);
+      object.scene.rotateY(Math.PI);
+
+      //그림자 생성
+      object.scene.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      setCube(object.scene);
+
+      //애니메이션
+      const mixer = new THREE.AnimationMixer(object.scene);
+      const clips = object.animations;
+      const clip = THREE.AnimationClip.findByName(clips, "BlooperAction");
+      const action = mixer.clipAction(clip);
+      action.play();
+
+      async function animate() {
+        // await wait(1000);
+        const playerNum: number = requestAnimationFrame(animate);
+
+        if (object.scene.position.z < -40) {
+          // scene?.remove(object.scene);
+          cancelAnimationFrame(playerNum);
+          return;
+        } else {
+          // console.log(playerList.length);
+          // if (playerList.length === 0) return;
+          // alert(playerList.length)
+          // console.log(player.position, object.scene.position.z)
+          if (player.position < object.scene.position.z) {
+            object.scene.position.z -= 0.1;
+            mixer?.update(1 / 15);
+          }
+          // if(camera)
+          //   camera.position.z -= 0.1;
+        }
+
+        if (scene && camera && renderer) renderer?.render(scene, camera);
+      }
+      animate();
+    });
+  }
+
   useEffect(() => {
-    if(canvasRef.current){
-        canvasRef.current.addEventListener('mousedown', turn);
-        canvasRef.current.addEventListener('mouseup', turnFront);
-        // canvasRef.current.addEventListener('mouseleave', exitPaint);
+    if (canvasRef.current) {
+      canvasRef.current.addEventListener("mousedown", turn);
+      canvasRef.current.addEventListener("mouseup", turnFront);
+      // canvasRef.current.addEventListener('mouseleave', exitPaint);
     }
 
     return () => {
-        if(canvasRef.current){
-      // Unmount 시 이벤트 리스터 제거
-            canvasRef.current.removeEventListener('mousedown', turn);
-            canvasRef.current.removeEventListener('mouseup', turnFront);
-            // canvasRef.current.removeEventListener('mouseleave', exitPaint);
-            };
-        }
-    }, [turn, turnFront]);
+      if (canvasRef.current) {
+        // Unmount 시 이벤트 리스터 제거
+        canvasRef.current.removeEventListener("mousedown", turn);
+        canvasRef.current.removeEventListener("mouseup", turnFront);
+        // canvasRef.current.removeEventListener('mouseleave', exitPaint);
+      }
+    };
+  }, [turn, turnFront]);
 
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   async function turnFront() {
+    if (!mixers) return;
+
     for (let i = 0; i < 20; i++) {
       await wait(3);
-      mixer?.update(1/30);
+      mixers[0].update(1 / 30);
     }
-    mixer?.setTime(0);
+    mixers[0].setTime(0);
     myMaterial?.color.setHex(0x6bff54);
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   async function turn() {
-    const clock = new THREE.Clock();
+    if (!mixers) return;
     for (let i = 0; i < 18; i++) {
       await wait(3);
-      mixer?.update(1/30);
+      mixers[0].update(1 / 30);
       myMaterial?.color.setHex(0xff545a);
     }
   }
 
+  //1번 오징어가 달림
+  async function run(playerId: number) {
+    // alert(playerList.length);
+    console.log(playerList.length);
+    playerList[playerId].position -= 1;
+  }
 
   // async function turnFront() {
   //   console.log("turnFront");
@@ -264,19 +357,31 @@ const YoungHee = () => {
   //   // myScene.background = new THREE.Color('red');
   // }
 
-  return (<>
-      <canvas ref={canvasRef} id="canvas" width={window.innerWidth} height={window.innerHeight}></canvas>
-      {/* <button onClick={() => turnFront()}>Click me</button> */}
+  return (
+    <>
+      <canvas
+        ref={canvasRef}
+        id="canvas"
+        width={window.innerWidth}
+        height={window.innerHeight}
+      ></canvas>
+      <div>
+        {/* // 버튼 가로폭 100 */}
+        <button onClick={() => addPlayer()}>오징어 생성</button>
+        <button onClick={() => run(0)}>1번</button>
+        <button onClick={() => run(1)}>2번</button>
+        <button onClick={() => run(2)}>3번</button>
+      </div>
       <style jsx>{`
         #canvas {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-            background: url("/youngHee/squid_game.png") no-repeat center center;
-            background-size: cover;
+          width: 100vw;
+          height: 100vh;
+          display: block;
+          background: url("/youngHee/squid_game.png") no-repeat center center;
+          background-size: cover;
         }
       `}</style>
-      </>
+    </>
   );
 };
 
