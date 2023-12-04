@@ -7,6 +7,9 @@ import MyModal from '@/component/MyModal';
 export default function CatchPlayer({ roomId, socket }: { roomId: string, socket: Socket }) {
     const [playerAnswer, setPlayerAnswer] = useState<string>('');
     const [buttonDisabled, setButtonDisabled] = useState<boolean>(false);
+    const [open, setOpen] = useState(false);
+    const [modalHeader, setModalHeader] = useState<string>('');
+    const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
     const leave_game = () => {
         if (confirm('게임을 나가시겠습니까?')) {
             socket.emit("leave_game", {
@@ -77,11 +80,15 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         }
 
         socket.on('correct', (res) => {
-            alert(`우승자 : ${res.nickname}\n정답 : ${res.answer}`)
+            setModalHeader('정답입니다!');
+            setModalContent(<div>{res.nickname}님께서 정답을 맞추셨습니다!<br></br> 정답 : {res.answer}</div>);
+            setOpen(true);
         })
 
         socket.on('incorrect', (res) => {
-            alert('정답이 아닙니다.')
+            setModalHeader('오답입니다!');
+            setModalContent(<div>정답이 아닙니다.</div>);
+            setOpen(true);
         })
 
 
@@ -106,10 +113,10 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             variant="standard"
             value={playerAnswer}
             onChange={(e) => setPlayerAnswer(e.target.value)}/>
-
+            
             <Button className="throw-answer" variant="contained" onClick={throwCatchAnswer} disabled={buttonDisabled}> {buttonDisabled? '대기':'제출'}</Button>
         </div>
-
+        <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => {}} myref={null}/>
         <div>
             <canvas
                 ref={canvasRef}
