@@ -87,7 +87,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     };
 
     const detectPeak = (data: number[]): number => {
-        const threshold = 1.5; // Adjust this threshold based on testing
+        const threshold = 2.5; // Adjust this threshold based on testing
     
         for (let i = 1; i < data.length - 1; i++) {
           if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
