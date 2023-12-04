@@ -90,6 +90,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           setOpenModal(false);
           setGo(true);
           setIsStart(true)
+          setStartTime(new Date(response.starttime));
       });
 
         return () => { 
@@ -116,7 +117,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
           })
           setIsReady(false)
           console.log('game start')
-          setStartTime(new Date());
         }, 3000)
       }
     },[isReady])
@@ -183,11 +183,12 @@ export default function RedGreen({socket}: {socket : Socket}) {
           setTimeout(() => {  
             clearInterval(timer);
             setOpenModal(false);
-            setIsStart(true)
-            console.log('game start')
-            setStartTime(new Date());
+            setIsStart(true);
+            console.log('game start');
           }, 3000)
-        }, [])
+
+          return () => clearInterval(timer);
+        }, []);
         
         return(
           <div>{counter}</div>
