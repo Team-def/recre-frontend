@@ -22,6 +22,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     const [nickname, setNickname] = useState<string>('');
     const [isGreen, setIsGreen] = useState<boolean>(true); //초록색인지 빨간색인지를 관리하는 상태
     const [progress, setProgress] = useState<number>(0); //왼쪽에서 오른쪽으로 얼마나 진행했는지를 관리하는 상태
+    const [latency, setLatency] = useState<number>(0); //지연 시간을 관리하는 상태
     const vh = useVH();
 
     //초록색인지 빨간색인지에 따라 outline 색깔을 바꿔주는 클래스 이름을 동적으로 결정
@@ -148,6 +149,16 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         socket.on('realtime_my_rank', (res) => {
             setMyRank(res.rank);
         });
+
+        setInterval(() => {
+          const start = performance.now();
+          socket.emit("ping", {start}, (res: {start: number}) => {
+            const end = performance.now();
+            const latency = (end - res.start) / 2;
+            setLatency(latency);
+            console.log(`latency: ${latency}ms`);
+          });
+        }, 2000);
         
         return () => {
             localStorage.removeItem('nickname')
@@ -158,7 +169,9 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     useEffect(() => {
         if (isAlive) {
             socket.emit('run', {
-                shakeCount: shakeCount,});
+                shakeCount: shakeCount,
+                latency: latency,
+            });
             setProgress((shakeCount / length) * 100);    
         }
     }, [shakeCount]);
