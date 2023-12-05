@@ -176,7 +176,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
-                <div className="icon" style={{left: `${progress}%`}}>
+                <div className="icon" style={{left: `${progress * 0.8}%`}}>
                     <Image src="/walker.png" alt="walker" width={100} height={100} />
                 </div>
             </div>
@@ -243,8 +243,6 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             }
             .icon {
                 position: absolute;
-                margin-right: 30vw;
-                padding-right: 30vw;
                 bottom: 0;
                 transition: left 0.3s ease;
             }
