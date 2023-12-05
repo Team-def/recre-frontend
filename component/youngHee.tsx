@@ -23,7 +23,7 @@ enum state {
   finish = 'FINISH',
 }
 
-const YoungHee = ( {socket} : {socket:Socket}) => {
+const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [cube, setCube] = useState<any>();
@@ -33,7 +33,7 @@ const YoungHee = ( {socket} : {socket:Socket}) => {
   const [scene, setScene] = useState<THREE.Scene>();
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
   const [playerCount, setPlayerCount] = useState<number>(0);
-  const [playerList, setPlayerList] = useState<Player[]>([]);
+  const [playerList, setPlayerList] = useState<any>(new Map());
   const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
     uuid : 0,
     name: '',
@@ -42,6 +42,9 @@ const YoungHee = ( {socket} : {socket:Socket}) => {
     endtime: '',
   }]);
 
+  interface userMap {
+    [key: number]: string;
+  }
   class Player {
     plyerId: number;
     name: string;
@@ -258,44 +261,43 @@ const YoungHee = ( {socket} : {socket:Socket}) => {
       }
     });
 
-    // socket.on('players_status', (res) => {
-    //   console.log('POPP')
-    //   console.log(res.player_info)
-    //   if(res.player_info){
-    //     let alived = res.player_info
-    //     setPlayerInfo(alived);
-    //     alived.forEach((player : playerInfo) => {
-    //       run(player.uuid as number, player.distance as number)
-    //     })
-    //   }
-    // });
+    socket.on('players_status', (res) => {
+      if(res.player_info){
+        let alived = res.player_info.filter((player : playerInfo) => player.state === state.alive)
+        setPlayerInfo(alived);
+        alived.forEach((player : playerInfo) => {
+          run(player.uuid as number, player.distance as number)
+        })
+      }
+    });
     
   },[]);
 
   useEffect(() => {
     // alert('playerInfo')
     console.log(playerInfo)
+    let count = 0;
     playerInfo.forEach((player : playerInfo) => {
-      addPlayer(playerInfo.length,player.uuid,player.name,player.distance)
+      count++;
+      addPlayer(count,player.uuid,player.name,player.distance)
     })
   },[playerInfo]);
 
-  async function addPlayer(total : number,id : number, name : string, distance : number) {
+  async function addPlayer(count : number,id : number, name : string, distance : number) {
     const loader = new GLTFLoader();
     loader.load("/blooper.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
-      const curPlayerCnt = playerCount + 1;
-      const player = new Player(id, name, distance + 40);
+      const player = new Player(count, name, distance + 40);
       // setPlayerList([...playerList, player]);
 
-      setPlayerList((prevItems) => [...prevItems, player]);
-      console.log(playerList.length);
+      setPlayerList((prevItems : any) => new Map([...prevItems, [count , id]]));
+      // console.log(playerList.length);
 
-      setPlayerCount(curPlayerCnt);
-      if (curPlayerCnt % 2 === 0) {
-        object.scene.position.set(-curPlayerCnt * 1, 0, 40);
+      setPlayerCount((prev)=>prev+1);
+      if (count % 2 === 0) {
+        object.scene.position.set(-count * 1, 0, 40);
       } else {
-        object.scene.position.set(curPlayerCnt * 1, 0, 40);
+        object.scene.position.set(count * 1, 0, 40);
       }
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
@@ -386,9 +388,8 @@ const YoungHee = ( {socket} : {socket:Socket}) => {
   async function run(playerId: number, distance: number) {
     // alert(playerList.length);
     console.log(playerList.length);
-    for(let i = 0; i < distance; i++){
-      playerList[playerId].position -= 1;
-    }
+    let moveDistance = 90/length * distance;
+    playerList[playerId].position = moveDistance;
   }
 
   async function test() {
@@ -429,9 +430,9 @@ const YoungHee = ( {socket} : {socket:Socket}) => {
       <div>
         {/* // 버튼 가로폭 100 */}
         <button onClick={() => addPlayer(1,1,'test1',0)}>오징어 생성</button>
-        {/* <button onClick={() => run(0)}>1번</button>
-        <button onClick={() => run(1)}>2번</button>
-        <button onClick={() => run(2)}>3번</button> */}
+        <button onClick={() => run(1,10)}>1번</button>
+        <button onClick={() => run(2,10)}>2번</button>
+        {/* <button onClick={() => run(2)}>3번</button> */}
         <button onClick={() => test()}>test</button>
       </div>
       <style jsx>{`
