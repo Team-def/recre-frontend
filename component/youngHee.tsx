@@ -127,6 +127,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       roughness: 0.5,
       metalness: 0.5,
     });
+    material.color.setHex(0x6bff54);
     setMyMaterial(material);
     const plane = new THREE.Mesh(geometry, material);
     plane.rotation.x = Math.PI * -0.499;
@@ -369,7 +370,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     }
     mixers[0].setTime(0);
     myMaterial?.color.setHex(0x6bff54);
-    setGo(false);
+    setGo(true);
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   async function turn() {
@@ -378,7 +379,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       await wait(3);
       mixers[0].update(1 / 30);
       myMaterial?.color.setHex(0xff545a);
-      setGo(true);
+      setGo(false);
     }
   }
 
@@ -445,14 +446,6 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      <div>
-        {/* // 버튼 가로폭 100 */}
-        <button onClick={() => addPlayer(1,'','test1',0)}>오징어 생성</button>
-        <button onClick={() => run('',10)}>1번</button>
-        <button onClick={() => run('',10)}>2번</button>
-        {/* <button onClick={() => run(2)}>3번</button> */}
-        <button onClick={() => test()}>test</button>
-      </div>
       <style jsx>{`
         #canvas {
           width: 100vw;
