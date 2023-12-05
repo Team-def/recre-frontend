@@ -39,7 +39,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       name: '',
       distance: 0,
       state: state.alive,
-      elapsed_time: '',
+      elapsed_time: 0,
     }]);
     
 
@@ -47,7 +47,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       name: string,
       distance: number,
       state: state,
-      elapsed_time: string,
+      elapsed_time: number,
   }
 
     useEffect(() => {

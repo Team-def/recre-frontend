@@ -52,7 +52,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         name: string,
         distance: number,
         state: state,
-        elapsed_time: string,
+        elapsed_time: number,
     }
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
