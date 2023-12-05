@@ -243,7 +243,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             }
             .icon {
                 position: absolute;
-                margin-right: 30%;
+                margin-right: 30vw;
+                padding-right: 30vw;
                 bottom: 0;
                 transition: left 0.3s ease;
             }
