@@ -43,7 +43,7 @@ export default function QR() {
     const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
     const gamePageUrlAns = `${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`;
     const modalRef = useRef<HTMLDivElement | null>(null);
-    const [emotions, setEmotions] = useState<emotion[]>([]);
+    const emotionsRef = useRef<emotion[]>([]);
     const popoverRef = useRef<HTMLDivElement | null>(null);
     const [redGreenInfo, ] = useAtom(redGreenInfoAtom);
     const [isStart, setIsStart] = useAtom(redGreenStartAtom);
@@ -191,14 +191,14 @@ export default function QR() {
                 }
                 // console.log(randomX, randomY);
 
-                if(emotions.length > 20){
-                    setEmotions((prevEmotions) => [...prevEmotions.slice(1),{ x: randomX, y: randomY, emotion: emotion }]);
+                if(emotionsRef.current.length > 20){
+                    emotionsRef.current = [...emotionsRef.current.slice(1),{ x: randomX, y: randomY, emotion: emotion }];
                 }
-                else 
-                    setEmotions((prevEmotions) => [...prevEmotions, { x: randomX, y: randomY, emotion: emotion }]);
-                ;
+                else {
+                    emotionsRef.current = [...emotionsRef.current, { x: randomX, y: randomY, emotion: emotion }];
+                } 
             }    
-        }
+        };
 
 
         const QRpage = () => {
@@ -304,15 +304,18 @@ export default function QR() {
             <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage />} closeFunc={() => { }} myref={modalRef}/>
             {gameContent}
             <div id='emotionPlace'>{
-                emotions.map((emotion, index) => {
-                    return <div className='emotion' key={index} style={{
-                        position: 'absolute',
-                        left: emotion.x,
-                        top: emotion.y,
-                        fontSize: '30px',
-                        zIndex: 10000,
-                        animation: 'move 2s linear forwards',
-                    }}>{emotion.emotion}</div>
+                emotionsRef.current.map((emotion, index) => {
+                    return <div 
+                        className='emotion' 
+                        key={index} 
+                        style={{
+                            position: 'absolute',
+                            left: emotion.x,
+                            top: emotion.y,
+                            fontSize: '30px',
+                            zIndex: 10000,
+                            animation: 'move 2s linear forwards',
+                        }}>{emotion.emotion}</div>
                 })
             }</div>
             <style jsx>{`
