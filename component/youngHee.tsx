@@ -116,25 +116,26 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
 
     const loader = new GLTFLoader();
 
-    const geometry = new THREE.PlaneGeometry(1000, 700, 1, 1);
     //material을 투명으로
     // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
+
+    const meshGroup = new THREE.Object3D();
+    let texture = new THREE.TextureLoader();
+    let manager = new THREE.LoadingManager();
+    manager.onProgress = function (item, loaded, total) {};
+    let onProgress = function (xhr) {};
+    let onError = function (xhr) {};
+
 
     const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
     const material = new THREE.MeshStandardMaterial({
       map: ground,
-      side: THREE.DoubleSide,
+      side: THREE.BackSide,
       roughness: 0.5,
       metalness: 0.5,
     });
     material.color.setHex(0x6bff54);
     setMyMaterial(material);
-    const plane = new THREE.Mesh(geometry, material);
-    plane.rotation.x = Math.PI * -0.499;
-    plane.position.y = -4.7;
-    plane.position.z = 0;
-    scene.add(plane);
-    plane.receiveShadow = true;
 
     // const planeGeometry = new THREE.PlaneGeometry(20, 20, 1, 1)
     // const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.5 })
@@ -150,8 +151,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     // scene.add(ambientLight);
 
     var ambientLight = new THREE.AmbientLight(0xf0f0f0); // 색상 지정
-    // ambientLight.
-    // scene.add(ambientLight);
+    scene.add(ambientLight);
 
     const color = 0xe0e0e0;
     const intensity = 3;
@@ -241,6 +241,22 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       action.play();
       setMixers([mixer]);
     });
+
+    loader.load("playground.glb", (object) => {
+      object.scene.scale.set(0.2, 0.2, 0.2);
+      object.scene.position.set(0, -5, -0.5);
+      let mesh = object.scene;
+      mesh.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          const material = child.material;
+          if (material instanceof THREE.MeshStandardMaterial) {
+            // Set to Single Faced
+            material.side = THREE.BackSide;
+          }
+        }
+      });
+      scene.add(object.scene);
+    })
 
     function animate() {
       requestAnimationFrame(animate);
