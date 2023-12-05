@@ -189,7 +189,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
         }, []);
         
         return(
-          <div>{counter}</div>
+          <h1>{counter}</h1>
         )
       }
       //우승자 마감 함수
