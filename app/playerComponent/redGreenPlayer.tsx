@@ -168,11 +168,13 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     //달리는 중
     useEffect(() => {
         if (isAlive) {
-            socket.emit('run', {
-                shakeCount: shakeCount,
-                latency: latency,
-            });
-            setProgress((shakeCount / length) * 100);    
+            if(shakeCount<=length){
+                socket.emit('run', {
+                    shakeCount: shakeCount,
+                    latency: latency,
+                });
+                setProgress((shakeCount / length) * 100);    
+            }
         }
     }, [shakeCount]);
 
