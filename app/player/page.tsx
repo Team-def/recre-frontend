@@ -28,7 +28,6 @@ export default function Player() {
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
-    const [startTime, setStartTime] = useState<Date>(new Date());
 
     const vh = useVH();
 
@@ -134,7 +133,6 @@ export default function Player() {
         socket.current.on("start_game", (res) => {
             if (res.result === true) {
                 setIsGame(true)
-                setStartTime(res.starttime);
             } else {
                 alert(res.message)
             }
@@ -164,7 +162,7 @@ export default function Player() {
                             break;
                         case 'redgreen':
                             setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current} 
-                                length={res.length as number} win_num={res.win_num as number} total_num={res.total_num as number} start_time={startTime}/>)
+                                length={res.length as number} win_num={res.win_num as number} total_num={res.total_num as number} />)
                             break;
                     }
                 }

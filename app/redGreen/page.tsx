@@ -39,7 +39,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       name: '',
       distance: 0,
       state: state.alive,
-      endtime: '',
+      elapsed_time: 0,
     }]);
     
 
@@ -47,7 +47,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       name: string,
       distance: number,
       state: state,
-      endtime: string,
+      elapsed_time: number,
   }
 
     useEffect(() => {
@@ -189,7 +189,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
         }, []);
         
         return(
-          <div>{counter}</div>
+          <h1>{counter}</h1>
         )
       }
       //우승자 마감 함수
@@ -200,9 +200,9 @@ export default function RedGreen({socket}: {socket : Socket}) {
       }
 
       //시간 측정 함수
-    const timeCheck = (startTime: Date, endTime: Date):string | void => {
-      if (typeof startTime === 'object' && typeof endTime === 'object' && startTime !== null && endTime !== null && 'getTime' in startTime && 'getTime' in endTime) {
-          const timeDifference = endTime.getTime() - startTime.getTime();
+    const timeCheck = (elapsed_time: Date):string | void => {
+      if (elapsed_time) {
+          const timeDifference = elapsed_time.getTime();
           const minutes = Math.floor(timeDifference / (1000 * 60));
           const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
           const formattedElapsedTime = `${minutes}분 ${seconds}초`;
@@ -229,9 +229,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       subheader={<li />}
     >
                 {player_info.map((player : playerInfo, index : number)=>{
-                //여기 endTime 에서 player.endtime을 가져오니까 ALIVE인 사람의 endtime이 null이라서 오류가 남
-                const endTime = player.endtime ? new Date(player.endtime) : new Date(); //게임 종료시에 시간 기록
-                const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+                const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
                 <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)

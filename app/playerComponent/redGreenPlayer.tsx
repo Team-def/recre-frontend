@@ -12,8 +12,7 @@ import Image from 'next/image';
 let accelerationData: number[] = [];
 let lastAcceleration = 0;
 
-export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num, start_time }: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number, start_time: Date }) {
-    const startTime = new Date(start_time); //게임 시작시에 시간 기록
+export default function RedGreenPlayer({ roomId, socket, length, win_num, total_num}: { roomId: string, socket: Socket, length: number, win_num: number, total_num: number}) {
     const [shakeCount, setShakeCount] = useState(0);
     const [isAlive, setIsAlive] = useState(true); //생존 여부를 관리하는 상태
     const [open, setOpen] = useState(false);
@@ -32,9 +31,9 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     //왼쪽에서 오른쪽으로 얼마나 진행했는지를 계산
 
     //시간 측정 함수
-    const timeCheck = (startTime: Date, endTime: Date):string | void => {
-        if (typeof startTime === 'object' && typeof endTime === 'object' && startTime !== null && endTime !== null && 'getTime' in startTime && 'getTime' in endTime) {
-            const timeDifference = endTime.getTime() - startTime.getTime();
+    const timeCheck = (elapsed_time:Date):string | void => {
+        if(elapsed_time) {
+            const timeDifference =elapsed_time.getTime();
             const minutes = Math.floor(timeDifference / (1000 * 60));
             const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
             const formattedElapsedTime = `${minutes}분 ${seconds}초`;
@@ -53,7 +52,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         name: string,
         distance: number,
         state: state,
-        endtime: string,
+        elapsed_time: number,
     }
     
     //shake 이벤트가 발생하면 shakeCount를 1 증가시키는 함수
@@ -102,6 +101,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
         socket.on('game_finished', (res) => {
             setModalHeader('게임 끝!');
+            setOpen(true);
             setModalContent(<List
                 sx={{
                   width: '100%',
@@ -114,8 +114,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 }}
                 subheader={<li />}
               >{res.player_info.map((player : all_player, index : number)=>{
-                const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
-                const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+                const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance>length?length:player.distance;
                 return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
             })}</List>);
@@ -123,8 +122,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         
         //통과
         socket.on('touchdown', (res) => {
-            const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
-            const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+            const elapsedTime = timeCheck(new Date(res.elapsed_time)); //게임 시간 계산
             setModalHeader('통과!');
             setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
             setOpen(true);
@@ -133,8 +131,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
     
         //죽음
         socket.on('youdie', (res)=> {
-            const endTime = new Date(res.endtime); //게임 종료시에 시간 기록
-            const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+            const elapsedTime = timeCheck(new Date(res.elapsed_time)); //게임 시간 계산
             setIsAlive(false);
             setModalHeader('죽었습니다!');
             setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance>length?length:res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} <br></br> 등수 : {myrank} / {total_num}</div> );
@@ -176,7 +173,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
-                <div className="icon" style={{left: `${progress}%`}}>
+                <div className="icon" style={{left: `${progress * 0.8}%`}}>
                     <Image src="/walker.png" alt="walker" width={100} height={100} />
                 </div>
             </div>
@@ -243,7 +240,6 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             }
             .icon {
                 position: absolute;
-                margin-right: 30%;
                 bottom: 0;
                 transition: left 0.3s ease;
             }
