@@ -1,7 +1,7 @@
 "use client";
 import { Caesar_Dressing } from "next/font/google";
 // import dat from "dat.gui";
-import React, { useEffect, useRef, useState } from "react";
+import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
 import { Socket } from "socket.io-client";
 import * as THREE from "three";
@@ -10,7 +10,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import wait from "waait";
 
 interface playerInfo {
-  uuid : number,
+  uuid : string,
   name: string,
   distance: number,
   state: state,
@@ -23,7 +23,7 @@ enum state {
   finish = 'FINISH',
 }
 
-const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
+const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length : number, go : boolean, setGo : React.Dispatch<React.SetStateAction<boolean>>, isStart : boolean}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [cube, setCube] = useState<any>();
@@ -33,18 +33,15 @@ const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
   const [scene, setScene] = useState<THREE.Scene>();
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
   const [playerCount, setPlayerCount] = useState<number>(0);
-  const [playerList, setPlayerList] = useState<any>(new Map());
+  const playerMap = useRef(new Map<string, Player>());
   const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
-    uuid : 0,
+    uuid : '',
     name: '',
     distance: 0,
     state: state.alive,
     endtime: '',
   }]);
 
-  interface userMap {
-    [key: number]: string;
-  }
   class Player {
     plyerId: number;
     name: string;
@@ -264,9 +261,8 @@ const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
     socket.on('players_status', (res) => {
       if(res.player_info){
         let alived = res.player_info.filter((player : playerInfo) => player.state === state.alive)
-        setPlayerInfo(alived);
         alived.forEach((player : playerInfo) => {
-          run(player.uuid as number, player.distance as number)
+          run(player.uuid as string, player.distance as number)
         })
       }
     });
@@ -283,14 +279,14 @@ const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
     })
   },[playerInfo]);
 
-  async function addPlayer(count : number,id : number, name : string, distance : number) {
+  async function addPlayer(count : number,id : string, name : string, distance : number) {
     const loader = new GLTFLoader();
     loader.load("/blooper.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
       const player = new Player(count, name, distance + 40);
       // setPlayerList([...playerList, player]);
+      playerMap.current.set(id, player);
 
-      setPlayerList((prevItems : any) => new Map([...prevItems, [count , id]]));
       // console.log(playerList.length);
 
       setPlayerCount((prev)=>prev+1);
@@ -373,6 +369,7 @@ const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
     }
     mixers[0].setTime(0);
     myMaterial?.color.setHex(0x6bff54);
+    setGo(false);
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   async function turn() {
@@ -381,16 +378,37 @@ const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
       await wait(3);
       mixers[0].update(1 / 30);
       myMaterial?.color.setHex(0xff545a);
+      setGo(true);
     }
   }
 
   //1번 오징어가 달림
-  async function run(playerId: number, distance: number) {
-    // alert(playerList.length);
-    console.log(playerList.length);
-    let moveDistance = 90/length * distance;
-    playerList[playerId].position = moveDistance;
+  async function run(playerId: string, distance: number) {
+    console.log(playerMap.current.size);
+    let moveDistance = 90 / length * distance;
+    if (playerMap.current.has(playerId)) {
+      // Add your code here
+      const player = playerMap.current.get(playerId);
+      if (player) {
+        player.position = -moveDistance + 40;
+      }
+    }
   }
+
+  useEffect(() => {
+    if(isStart){
+      if(go){
+        socket.emit('resume', {
+          result : go
+        });
+      } else {
+        socket.emit('stop', {
+          result : go
+        });
+      }
+    }
+  },[go])
+
 
   async function test() {
     socket.emit('pre_player_status', {
@@ -429,9 +447,9 @@ const YoungHee = ( {socket, length} : {socket:Socket, length : number}) => {
       ></canvas>
       <div>
         {/* // 버튼 가로폭 100 */}
-        <button onClick={() => addPlayer(1,1,'test1',0)}>오징어 생성</button>
-        <button onClick={() => run(1,10)}>1번</button>
-        <button onClick={() => run(2,10)}>2번</button>
+        <button onClick={() => addPlayer(1,'','test1',0)}>오징어 생성</button>
+        <button onClick={() => run('',10)}>1번</button>
+        <button onClick={() => run('',10)}>2번</button>
         {/* <button onClick={() => run(2)}>3번</button> */}
         <button onClick={() => test()}>test</button>
       </div>

@@ -30,11 +30,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [percentVar, setPercentVar] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
 
-    // enum state {
-    //   alive = 'ALIVE',
-    //   dead = 'DEAD',
-    //   finish = 'FINISH',
-    // }
+    enum state {
+      alive = 'ALIVE',
+      dead = 'DEAD',
+      finish = 'FINISH',
+    }
 
     // const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
     //   name: '',
@@ -44,12 +44,12 @@ export default function RedGreen({socket}: {socket : Socket}) {
     // }]);
     const [go,setGo] = useState(false);
 
-  //   interface playerInfo {
-  //     name: string,
-  //     distance: number,
-  //     state: state,
-  //     endtime: string,
-  // }
+    interface playerInfo {
+      name: string,
+      distance: number,
+      state: state,
+      endtime: string,
+  }
 
     useEffect(() => {
         // socket.on('players_status', (res) => {
@@ -120,20 +120,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
       }
     },[isReady])
 
-
-    useEffect(() => {
-      if(isStart){
-        if(go){
-          socket.emit('resume', {
-            result : go
-          });
-        } else {
-          socket.emit('stop', {
-            result : go
-          });
-        }
-      }
-    },[go])
 
     const handleBeforeUnload = () => {
         socket.emit('end_game', {
@@ -227,8 +213,6 @@ export default function RedGreen({socket}: {socket : Socket}) {
           </div>
         )
       }
-
-      const colorArr = ['red', 'green', 'blue', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'magenta', 'cyan', 'lime'];
     
       return (
         <>
@@ -250,11 +234,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 )
               })}
             </div> */}
-            <YoungHee socket={socket as Socket} length = {gameInfo[1] as number}/>
-            {/* <div className='redGreenBtns'>
+            <YoungHee socket={socket as Socket} length = {gameInfo[1] as number} go = {go as boolean} setGo = {setGo} isStart = {isStart as boolean}/>
+            <div className='redGreenBtns'>
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
-            </div> */}
+            </div>
             <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{}} myref={null}/>
           </div>
           <style jsx>{`
