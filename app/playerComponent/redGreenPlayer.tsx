@@ -101,6 +101,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
         socket.on('game_finished', (res) => {
             setModalHeader('게임 끝!');
+            setOpen(true);
             setModalContent(<List
                 sx={{
                   width: '100%',
