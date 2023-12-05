@@ -153,22 +153,6 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             setMyRank(res.rank);
         });
 
-        socket.on("ping", (res: { server_ts: number }, callback) => {
-          /**
-           * 1. server -> player "ping": server_ts
-           * 2. player -> server "ping ack": server_ts, client_ts
-           * 3. server -> player "pong": server_ts, client_ts, server_ack_ts
-           */
-          if (!res) {
-            console.error("💀 res not found!!");
-            return;
-          }
-
-          const { server_ts } = res;
-          const client_ts = performance.now();
-          callback({ server_ts, client_ts });
-        });
-
         setInterval(() => {
           const start = performance.now();
           socket.emit("ping", {start}, (res: {start: number}) => {
