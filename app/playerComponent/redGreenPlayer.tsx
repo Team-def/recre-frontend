@@ -169,19 +169,15 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
           callback({ server_ts, client_ts });
         });
 
-        socket.on("pong", (res: { server_ts: number; client_ts: number, server_ack_ts: number }) => {
-            if (!res) {
-                console.error("💀 res not found!!");
-                return;
-            }
-            const { server_ts: serverTs, client_ts: clientTs, server_ack_ts: serverAckTs } = res;
-            const clientAckTs = performance.now();
-            const serverRoundTripTime = serverAckTs - serverTs;
-            const clientRoundTripTime = (clientAckTs - clientTs) / 2;
-            const latency = serverRoundTripTime - clientRoundTripTime;
-            console.debug(`나의 지연시간: ${latency}ms`);
+        setInterval(() => {
+          const start = performance.now();
+          socket.emit("ping", {start}, (res: {start: number}) => {
+            const end = performance.now();
+            const latency = (end - res.start) / 2;
             setLatency(latency);
-        });
+            console.log(`latency: ${latency}ms`);
+          });
+        }, 2000);
         
         return () => {
             localStorage.removeItem('nickname')
