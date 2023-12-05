@@ -3,12 +3,27 @@ import { Caesar_Dressing } from "next/font/google";
 // import dat from "dat.gui";
 import React, { useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
+import { Socket } from "socket.io-client";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import wait from "waait";
 
-const YoungHee = () => {
+interface playerInfo {
+  uuid : number,
+  name: string,
+  distance: number,
+  state: state,
+  endtime: string,
+}
+
+enum state {
+  alive = 'ALIVE',
+  dead = 'DEAD',
+  finish = 'FINISH',
+}
+
+const YoungHee = ( {socket} : {socket:Socket}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [cube, setCube] = useState<any>();
@@ -19,6 +34,13 @@ const YoungHee = () => {
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
   const [playerCount, setPlayerCount] = useState<number>(0);
   const [playerList, setPlayerList] = useState<Player[]>([]);
+  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
+    uuid : 0,
+    name: '',
+    distance: 0,
+    state: state.alive,
+    endtime: '',
+  }]);
 
   class Player {
     plyerId: number;
@@ -30,6 +52,7 @@ const YoungHee = () => {
       this.position = position;
     }
   }
+  
   useEffect(() => {
     const scene = new THREE.Scene();
     setScene(scene);
@@ -226,12 +249,43 @@ const YoungHee = () => {
     animate();
   }, [canvasRef]);
 
-  async function addPlayer() {
+  useEffect(() => { 
+    
+    socket.on('pre_player_status', (res) => {
+      if(res.pre_player_info){
+        let players = res.pre_player_info
+        setPlayerInfo(players);
+      }
+    });
+
+    // socket.on('players_status', (res) => {
+    //   console.log('POPP')
+    //   console.log(res.player_info)
+    //   if(res.player_info){
+    //     let alived = res.player_info
+    //     setPlayerInfo(alived);
+    //     alived.forEach((player : playerInfo) => {
+    //       run(player.uuid as number, player.distance as number)
+    //     })
+    //   }
+    // });
+    
+  },[]);
+
+  useEffect(() => {
+    // alert('playerInfo')
+    console.log(playerInfo)
+    playerInfo.forEach((player : playerInfo) => {
+      addPlayer(playerInfo.length,player.uuid,player.name,player.distance)
+    })
+  },[playerInfo]);
+
+  async function addPlayer(total : number,id : number, name : string, distance : number) {
     const loader = new GLTFLoader();
     loader.load("/blooper.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
       const curPlayerCnt = playerCount + 1;
-      const player = new Player(curPlayerCnt, "오징어", 40);
+      const player = new Player(id, name, distance + 40);
       // setPlayerList([...playerList, player]);
 
       setPlayerList((prevItems) => [...prevItems, player]);
@@ -329,10 +383,17 @@ const YoungHee = () => {
   }
 
   //1번 오징어가 달림
-  async function run(playerId: number) {
+  async function run(playerId: number, distance: number) {
     // alert(playerList.length);
     console.log(playerList.length);
-    playerList[playerId].position -= 1;
+    for(let i = 0; i < distance; i++){
+      playerList[playerId].position -= 1;
+    }
+  }
+
+  async function test() {
+    socket.emit('pre_player_status', {
+    })
   }
 
   // async function turnFront() {
@@ -367,10 +428,11 @@ const YoungHee = () => {
       ></canvas>
       <div>
         {/* // 버튼 가로폭 100 */}
-        <button onClick={() => addPlayer()}>오징어 생성</button>
-        <button onClick={() => run(0)}>1번</button>
+        <button onClick={() => addPlayer(1,1,'test1',0)}>오징어 생성</button>
+        {/* <button onClick={() => run(0)}>1번</button>
         <button onClick={() => run(1)}>2번</button>
-        <button onClick={() => run(2)}>3번</button>
+        <button onClick={() => run(2)}>3번</button> */}
+        <button onClick={() => test()}>test</button>
       </div>
       <style jsx>{`
         #canvas {

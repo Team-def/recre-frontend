@@ -30,67 +30,66 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [percentVar, setPercentVar] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
 
-    enum state {
-      alive = 'ALIVE',
-      dead = 'DEAD',
-      finish = 'FINISH',
-    }
+    // enum state {
+    //   alive = 'ALIVE',
+    //   dead = 'DEAD',
+    //   finish = 'FINISH',
+    // }
 
-    const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
-      name: '',
-      distance: 0,
-      state: state.alive,
-      endtime: '',
-    }]);
+    // const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
+    //   name: '',
+    //   distance: 0,
+    //   state: state.alive,
+    //   endtime: '',
+    // }]);
     const [go,setGo] = useState(false);
 
-    interface playerInfo {
-      name: string,
-      distance: number,
-      state: state,
-      endtime: string,
-  }
+  //   interface playerInfo {
+  //     name: string,
+  //     distance: number,
+  //     state: state,
+  //     endtime: string,
+  // }
 
     useEffect(() => {
-      //   socket.on('players_status', (res) => {
+        // socket.on('players_status', (res) => {
 
-      //     console.log(res.player_info)
-      //     if(res.player_info){
-      //       setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
-      //     }
-      //   });
+        //   console.log(res.player_info)
+        //   if(res.player_info){
+        //     setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
+        //   }
+        // });
 
-      //   setModalHeader('곧 게임이 시작됩니다!');
-      //   setModalContent(<CounterModal/>);
+        setModalHeader('곧 게임이 시작됩니다!');
+        setModalContent(<CounterModal/>);
 
-      //   switch(gameInfo[1]){
-      //     case 50:
-      //       setPercentVar(2);
-      //       break;
-      //     case 100:
-      //       setPercentVar(1);
-      //       break;
-      //     case 160:
-      //       setPercentVar(0.625);
-      //       break;
-      //   }
+        switch(gameInfo[1]){
+          case 50:
+            setPercentVar(2);
+            break;
+          case 100:
+            setPercentVar(1);
+            break;
+          case 160:
+            setPercentVar(0.625);
+            break;
+        }
+        
+        socket.on('game_finished', (res) => {
+          setOpenModal(true);
+          setModalHeader('우승자 목록');
+          setModalContent(<FinishedModal player_info={res.player_info as playerInfo[]}/>);
+            // setWinners(res.winners);
+            console.log(res.player_info);
+            setIsStart(false);
+        });
 
-
-      //   socket.on('game_finished', (res) => {
-      //     setOpenModal(true);
-      //     setModalHeader('우승자 목록');
-      //     setModalContent(<FinishedModal player_info={res.player_info as playerInfo[]}/>);
-      //       // setWinners(res.winners);
-      //       console.log(res.player_info);
-      //       setIsStart(false);
-      //   });
-
-      //   socket.on("start_game", (response) => {
-      //     // console.log(response)
-      //     setOpenModal(false);
-      //     setGo(true);
-      //     setIsStart(true)
-      // });
+        socket.on("start_game", (response) => {
+          // console.log(response)
+          setOpenModal(false);
+          setGo(true);
+          setIsStart(true)
+      });
 
         return () => { 
             handleBeforeUnload();
@@ -235,7 +234,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
         <>
           <div className='redGreenContainer'>
           
-            {/*<div>
+            {/* <div>
               <div className='signalDiv' style={{backgroundColor:go?'green':'red'}} onClick={()=>setGo(!go)}></div>
             </div>
             <div className='gameContainer' style={{borderLeft:`50px solid ${go?'green':'red'}`, borderRight:`50px solid ${go?'green':'red'}`
@@ -251,7 +250,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 )
               })}
             </div> */}
-            <YoungHee/>
+            <YoungHee socket={socket as Socket}/>
             {/* <div className='redGreenBtns'>
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>

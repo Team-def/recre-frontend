@@ -24,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     if(!cookies.get('refresh_token')){
-      checkIsHostPhone()
+      //checkIsHostPhone()
       return
     }
     const acc_token : string = localStorage.getItem('access_token')??''
@@ -53,12 +53,12 @@ export default function Home() {
     }).then((response) => {
       setUserInfo(response.data)
       setIsLogin(true)
-      checkIsHostPhone()
+      //checkIsHostPhone()
     })
       .catch((res) => {
         // console.log("checkLogin2 error")
         alert('로그인에 실패했습니다. 다시 로그인해주세요.\n 문제가 있을 시 캐시를 삭제해보세요.')
-        checkIsHostPhone()
+        //checkIsHostPhone()
       })
   }
 
@@ -76,7 +76,7 @@ export default function Home() {
       console.log("checkLogin")
       setUserInfo(response.data)
       setIsLogin(true)
-      checkIsHostPhone()
+      //checkIsHostPhone()
     })
       .catch((res) => {
         // console.log(res)
@@ -96,7 +96,7 @@ export default function Home() {
         cookies.remove('refresh_token')
         setIsLogin(false);
         setGame(["",null])
-        checkIsHostPhone()
+        //checkIsHostPhone()
         }
       })
   }

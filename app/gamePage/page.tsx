@@ -149,6 +149,9 @@ export default function QR() {
                 });
             } else if(gameInfo[0] === '무궁화 꽃이 피었습니다'){
                 setIsStart(true);
+                socket.current.emit('pre_player_status', {
+                })
+        
             setOpen(false);
             }
         }
