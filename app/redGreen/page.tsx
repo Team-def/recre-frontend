@@ -23,13 +23,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [openModal, setOpenModal] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
-    const [counter, setCounter] = useState<number>(3);
     const [gameInfo, setGameInfo] = useAtom(redGreenInfoAtom);
     const [isReady, setIsReady] = useAtom(redGreenStartAtom);
     const [isStart,setIsStart] = useState<boolean>(false);
     const [percentVar, setPercentVar] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
-
     enum state {
       alive = 'ALIVE',
       dead = 'DEAD',
@@ -48,7 +46,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       name: string,
       distance: number,
       state: state,
-      endtime: string,
+      elapsed_time: number,
   }
 
     useEffect(() => {
@@ -89,6 +87,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
           setOpenModal(false);
           setGo(true);
           setIsStart(true)
+          setStartTime(new Date(response.starttime));
       });
 
         return () => { 
@@ -160,20 +159,35 @@ export default function RedGreen({socket}: {socket : Socket}) {
       }
 
       const CounterModal = () => {
+        const [counter, setCounter] = useState<number>(3);
+        useEffect(() => {
+          let timer = setInterval(() => {
+            setCounter(prev => prev - 1);
+          }, 1000)
+          
+          setTimeout(() => {  
+            clearInterval(timer);
+            console.log('game start');
+          }, 3000)
+
+          return () => clearInterval(timer);
+        }, []);
+        
         return(
-          <div>{counter}</div>
+          <h1>{counter}</h1>
         )
       }
-
+      //우승자 마감 함수
       const stopGame = () => {  
         socket.emit('game_finished', {
+          result : true
         });
       }
 
       //시간 측정 함수
-    const timeCheck = (startTime: Date, endTime: Date):string | void => {
-      if (typeof startTime === 'object' && typeof endTime === 'object' && startTime !== null && endTime !== null && 'getTime' in startTime && 'getTime' in endTime) {
-          const timeDifference = endTime.getTime() - startTime.getTime();
+    const timeCheck = (elapsed_time: Date):string | void => {
+      if (elapsed_time) {
+          const timeDifference = elapsed_time.getTime();
           const minutes = Math.floor(timeDifference / (1000 * 60));
           const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
           const formattedElapsedTime = `${minutes}분 ${seconds}초`;
@@ -200,11 +214,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
       subheader={<li />}
     >
                 {player_info.map((player : playerInfo, index : number)=>{
-                const endTime = new Date(player.endtime); //게임 종료시에 시간 기록
-                const elapsedTime = timeCheck(startTime, endTime); //게임 시간 계산
+                const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
-                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"blue":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
+                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
             })}
             </List>
               </div>
@@ -239,7 +252,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
             </div>
-            <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{}} myref={null}/>
+            <MyModal open={openModal} modalHeader={modalHeader} modalContent={modalContent} closeFunc={()=>{ }} myref={null}/>
           </div>
           <style jsx>{`
             .redGreenContainer{

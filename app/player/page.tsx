@@ -18,21 +18,36 @@ import { type } from 'os';
 export default function Player() {
     const params = useSearchParams();
     const [data, setData] = useState<string[]>(params.get('data')?.split('_') ?? []);
-    const router = useRouter();
-    //query string에서 hostId를 가져옴
+    const router = useRouter(); //query string에서 hostId를 가져옴
     const [playerNickname, setPlayerNickname] = useState<string | null>(null);
     const [ready, setReady] = useState<boolean>(false);
     const [isGame, setIsGame] = useState<boolean>(false);
+    const [isGateClosed, setIsGateClosed] = useState<boolean>(false); //closeGate 여부를 관리하는 상태
+    const [isReadySent, setIsReadySent] = useState<boolean>(false); //ready 이벤트를 보냈는지 여부를 관리하는 상태
     const [shakeCount, setShakeCount] = useState(0);
+    const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
+    const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
+
     const vh = useVH();
+
     const socket = useRef(io(`${socketApi}/${data[1]}?uuId=${uuId}`, {
         withCredentials: true,
         transports: ["websocket"],
         autoConnect: false,
     }));
-    const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+    const [redGreenData, setRedGreenData] = useState<redGreenDataType>({
+        length: 0,
+        win_num: 0,
+        total_num : 0,
+    });
+
+    interface redGreenDataType {
+        length: number,
+        win_num: number,
+        total_num : number,
+    }
 
     let accelerationData: number[] = [];
     let lastAcceleration = 0;
@@ -43,6 +58,7 @@ export default function Player() {
 
     //device의 움직임을 읽어오는 함수
     const handleDeviceMotion = (event: DeviceMotionEvent) => {
+        event.preventDefault(); //shakeToUndo 기능 방지
         const acceleration= event.acceleration;
 
         if (acceleration) {
@@ -76,6 +92,7 @@ export default function Player() {
     };
     //여기까지 움직임 측정 함수
 
+    //safari 브라우저에서는 센서 권한을 허용받아야 함
     const isSafariOver13 = typeof window.DeviceOrientationEvent.requestPermission === 'function';
 
     const requestPermissionSafari = () => {
@@ -98,29 +115,13 @@ export default function Player() {
         };
     }
 
-    window.addEventListener('devicemotion', handleDeviceMotion);
-
     useEffect(() => {
         if (parseInt(data[0]) === null) {
             alert('잘못된 접근입니다.');
-            router.push("/");
+            window.close();
         }
 
-        if(data[1]){
-            switch (data[1]) {
-                case 'catch':
-                    setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
-                    break;
-                case 'redgreen':
-                    setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current}/>)
-                    break;
-            }
-        }
-        else{
-            alert('잘못된 접근입니다.');
-            router.push("/");
-        }
-
+        //catchmind 시작
         socket.current.on("start_catch_game", (res) => {
             if (res.result === true) {
                 setIsGame(true)
@@ -128,7 +129,7 @@ export default function Player() {
                 alert(res.message)
             }
         })
-
+        //redgreen 시작
         socket.current.on("start_game", (res) => {
             if (res.result === true) {
                 setIsGame(true)
@@ -136,7 +137,6 @@ export default function Player() {
                 alert(res.message)
             }
         })
-
 
         socket.current.on("end", (res) => {
             if (res.result === true) {
@@ -152,13 +152,35 @@ export default function Player() {
 
         socket.current.on("ready", (res) => {
             if (res.result === true) {
-                // alert('ready')
                 setReady(true)
                 setModalOpen(false)
+
+                if(data[1]){
+                    switch (data[1]) {
+                        case 'catch':
+                            setGameContent(<CatchPlayer roomId={data[0] as string} socket={socket.current} />)
+                            break;
+                        case 'redgreen':
+                            setGameContent(<RedGreenPlayer roomId={data[0] as string} socket={socket.current} 
+                                length={res.length as number} win_num={res.win_num as number} total_num={res.total_num as number} />)
+                            break;
+                    }
+                }
+                else{
+                    alert('잘못된 접근입니다.');
+                    window.close();
+                }
             }
             else {
+                //여기에서 레디가 중복으로 들어갔다는 에러 경고창을 띄움
                 alert(res.message)
             }
+        })
+
+        //closeGate
+        socket.current.on("close_gate", (res) => {
+            setShakeCount(0);
+            setIsGateClosed(true);
         })
 
         if (isMobile && (browserName === 'Samsung Internet')) {
@@ -183,11 +205,13 @@ export default function Player() {
             return;
         }
 
+        localStorage.setItem('nickname', playerNickname);
+
         //gametype에 따라 다른 socket 연결
         if (data[1] === null || data[1] === '') {
             alert('잘못된 접근입니다.');
             return;
-            //catchmind
+        //catchmind
         } else if (data[1] === 'catch') {
             socket.current.connect();
             socket.current.emit("ready", {
@@ -195,9 +219,9 @@ export default function Player() {
                 nickname: playerNickname
             });
             return;
-            //redgreen
+        //redgreen
         } else if (data[1] === 'redgreen') {
-            setModalOpen(true)
+            setModalOpen(true);
             requestPermissionSafari();
         }
     };
@@ -205,8 +229,9 @@ export default function Player() {
     useEffect(() => {
         if(!ready){
             //10번 흔들어서 준비 완료
-            if (shakeCount >= 10) {
+            if (shakeCount >= 10 && !isReadySent) {
                 socket.current.connect();
+                setIsReadySent(true);
                 socket.current.emit("ready", {
                     room_id: parseInt(data[0]),
                     nickname: playerNickname,
@@ -214,19 +239,6 @@ export default function Player() {
             }
         }
     }, [shakeCount])
-
-    // useEffect(() => {
-    //     if(!ready){
-    //         //10번 흔들어서 준비 완료
-    //         if (shakeCount >= 10) {
-    //             socket.current.connect();
-    //             socket.current.emit("ready", {
-    //                 room_id: parseInt(data[0]),
-    //                 nickname: playerNickname,
-    //             });
-    //         }
-    //     }
-    // }, [shakeCount])
 
     //modal창 띄우기
     const ReadyModal = () => {
@@ -241,11 +253,12 @@ export default function Player() {
         )
         }
     }
-
+    //준비 취소
     const cancleReady = () => {
         socket.current.emit("leave_game", {
         });
         setReady(false)
+        setShakeCount(0);
     }
 
     const expressEmotion = (emotion: string) => {
@@ -301,7 +314,7 @@ export default function Player() {
                             disabled={ready}
                             placeholder='닉네임을 입력해주세요.'
                         />
-                        <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay}>
+                        <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay} disabled={isGateClosed}>
                             {ready ? "준비 취소!" : "준비 완료!"}
                         </Button></div>
                         <MyModal open={modalOpen} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
