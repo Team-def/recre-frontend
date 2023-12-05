@@ -5,25 +5,39 @@ import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import { render } from "react-dom";
 import { Socket } from "socket.io-client";
 import * as THREE from "three";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import wait from "waait";
 
 interface playerInfo {
-  uuid : string,
-  name: string,
-  distance: number,
-  state: state,
-  endtime: string,
+  uuid: string;
+  name: string;
+  distance: number;
+  state: state;
+  endtime: string;
 }
 
 enum state {
-  alive = 'ALIVE',
-  dead = 'DEAD',
-  finish = 'FINISH',
+  alive = "ALIVE",
+  dead = "DEAD",
+  finish = "FINISH",
 }
 
-const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length : number, go : boolean, setGo : React.Dispatch<React.SetStateAction<boolean>>, isStart : boolean}) => {
+const YoungHee = ({
+  socket,
+  length,
+  go,
+  setGo,
+  isStart,
+}: {
+  socket: Socket;
+  length: number;
+  go: boolean;
+  setGo: React.Dispatch<React.SetStateAction<boolean>>;
+  isStart: boolean;
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [cube, setCube] = useState<any>();
@@ -34,13 +48,18 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
   const [playerCount, setPlayerCount] = useState<number>(0);
   const playerMap = useRef(new Map<string, Player>());
-  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
-    uuid : '',
-    name: '',
-    distance: 0,
-    state: state.alive,
-    endtime: '',
-  }]);
+  const myCamera = useRef<THREE.PerspectiveCamera>();
+  const [fieldColor, setFieldColor] = useState<string>("0xe0e0e0");
+  const lightList = useRef<THREE.DirectionalLight[]>([]);
+  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([
+    {
+      uuid: "",
+      name: "",
+      distance: 0,
+      state: state.alive,
+      endtime: "",
+    },
+  ]);
 
   class Player {
     plyerId: number;
@@ -52,7 +71,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       this.position = position;
     }
   }
-  
+
   useEffect(() => {
     const scene = new THREE.Scene();
     setScene(scene);
@@ -62,7 +81,9 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       0.1,
       1000
     );
-
+    camera.position.z = 70;
+    camera.position.y = 20;
+    myCamera.current = camera;
     setCamera(camera);
 
     const renderer = new THREE.WebGLRenderer({
@@ -112,29 +133,31 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     // renderer.setSize(500, 500);
 
     // 아래가 마우스 스크롤이나 클릭 후 돌리기
-    const controls = new OrbitControls(camera, renderer.domElement);
+    // const controls = new OrbitControls(camera, renderer.domElement);
 
     const loader = new GLTFLoader();
 
-    const geometry = new THREE.PlaneGeometry(1000, 700, 1, 1);
-    //material을 투명으로
-    // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
+    //================================================================================================
+    //바닥 오브잭트
+    // const geometry = new THREE.PlaneGeometry(1000, 700, 1, 1);
+    // //material을 투명으로
+    // // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
 
-    const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
-    const material = new THREE.MeshStandardMaterial({
-      map: ground,
-      side: THREE.DoubleSide,
-      roughness: 0.5,
-      metalness: 0.5,
-    });
-    material.color.setHex(0x6bff54);
-    setMyMaterial(material);
-    const plane = new THREE.Mesh(geometry, material);
-    plane.rotation.x = Math.PI * -0.499;
-    plane.position.y = -4.7;
-    plane.position.z = 0;
-    scene.add(plane);
-    plane.receiveShadow = true;
+    // const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
+    // const material = new THREE.MeshStandardMaterial({
+    //   map: ground,
+    //   side: THREE.DoubleSide,
+    //   roughness: 0.5,
+    //   metalness: 0.5,
+    // });
+    // material.color.setHex(0x6bff54);
+    // setMyMaterial(material);
+    // const plane = new THREE.Mesh(geometry, material);
+    // plane.rotation.x = Math.PI * -0.499;
+    // plane.position.y = -4.7;
+    // plane.position.z = 0;
+    // scene.add(plane);
+    // plane.receiveShadow = true;
 
     // const planeGeometry = new THREE.PlaneGeometry(20, 20, 1, 1)
     // const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.5 })
@@ -143,31 +166,46 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     // plane.rotation.x = -0.5 * Math.PI
     // plane.position.y = -0.2
     // scene.add(plane)
+    //================================================================================================
+
+    //게임 필드
+    loader.load("/playground.glb", (object) => {
+      object.scene.scale.set(1, 1, 1);
+      object.scene.rotateY(Math.PI);
+      object.scene.position.set(0, -3.8, 100);
+      scene.add(object.scene);
+
+      //그림자 생성
+      object.scene.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          child.receiveShadow = true;
+        }
+      });
+    });
 
     //================================================================================================
     //광원
     // var ambientLight = new THREE.AmbientLight(0x404040);
     // scene.add(ambientLight);
 
-    var ambientLight = new THREE.AmbientLight(0xf0f0f0); // 색상 지정
-    // ambientLight.
-    // scene.add(ambientLight);
+    var ambientLight = new THREE.AmbientLight(0xf0f0f0, 0.5); // 색상 지정
+    scene.add(ambientLight);
 
     const color = 0xe0e0e0;
-    const intensity = 3;
-    const light = new THREE.DirectionalLight(color, intensity);
+    const intensity = 2.5;
+    const light1 = new THREE.DirectionalLight(color, intensity);
     //light의 위치와 target의 위치를 지정한다
-    light.position.set(10, 10, 10);
-    light.castShadow = true;
+    light1.position.set(40, 30, 40);
+    light1.castShadow = true;
 
-    scene.add(light);
-    scene.add(light.target);
+    scene.add(light1);
+    scene.add(light1.target);
 
-    light.shadow.camera.top = 200;
-    light.shadow.camera.right = 500;
-    light.shadow.camera.bottom = -500;
-    light.shadow.camera.left = -500;
-    light.shadow.radius = 1;
+    light1.shadow.camera.top = 200;
+    light1.shadow.camera.right = 200;
+    light1.shadow.camera.bottom = -200;
+    light1.shadow.camera.left = -200;
+    light1.shadow.radius = 1;
 
     // light.shadow.mapSize.width = 256;
     // light.shadow.mapSize.height = 256;
@@ -177,6 +215,33 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     // const light = new THREE.DirectionalLight(0xffffff, 100);
     // // scene.add(cube);
     // scene.add(light);
+
+    const light2 = new THREE.DirectionalLight(color, intensity);
+    light2.position.set(-40, 30, 40);
+    // light2.castShadow = true;
+    scene.add(light2);
+    scene.add(light2.target);
+
+    // const light3 = new THREE.SpotLight(color, 100, 100, Math.PI / 10, 0);
+    // light3.position.set(90, 30, -40);
+    // light3.rotateY(Math.PI / 2);
+    // light3.castShadow = true;
+    // scene.add(light3);
+    // scene.add(light3.target);
+
+    var directionalLightHelper = new THREE.DirectionalLightHelper(light1, 5);
+
+    var directionalLightHelper2 = new THREE.DirectionalLightHelper(light2, 5);
+
+    // var directionalLightHelper3 = new THREE.SpotLightHelper(light3, 5);
+    scene.add(directionalLightHelper);
+    scene.add(directionalLightHelper2);
+    // scene.add(directionalLightHelper3);
+
+    lightList.current.push(light1);
+    lightList.current.push(light2);
+
+    //================================================================================================
 
     const bgTexture = new THREE.TextureLoader().load(
       "/youngHee/squid_game.png"
@@ -193,8 +258,6 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    camera.position.z = 70;
-    camera.position.y = 20;
     // camera.rotateX(Math.PI/2);
 
     // const myRobot;
@@ -211,10 +274,30 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     //       });
     //     }
     //   );
+    const fontLoader = new FontLoader();
+    var text;
+    fontLoader.load("fonts/helvetiker_regular.typeface.json", function (font) {
+      const geometry = new TextGeometry("Hello three.js!", {
+        font: font,
+        size: 80,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5,
+      });
+      var textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      text = new THREE.Mesh(geometry, textMaterial);
+      text.position.set(0, 0, 0);
+      scene.add(text);
+      renderer.render(scene, camera);
+    });
 
     loader.load("/youngHee/youngHee.glb", (object) => {
-      object.scene.scale.set(1, 1, 1);
-      object.scene.position.set(0, 0, -50);
+      object.scene.scale.set(1.5, 1.5, 1.5);
+      object.scene.position.set(0, 2.5, -100);
       scene.add(object.scene);
 
       // 그림자 생성
@@ -244,44 +327,56 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
 
     function animate() {
       requestAnimationFrame(animate);
+
       renderer.render(scene, camera);
     }
 
     animate();
   }, [canvasRef]);
 
-  useEffect(() => { 
-    
-    socket.on('pre_player_status', (res) => {
-      if(res.pre_player_info){
-        let players = res.pre_player_info
+  useEffect(() => {
+    socket.on("pre_player_status", (res) => {
+      if (res.pre_player_info) {
+        let players = res.pre_player_info;
         setPlayerInfo(players);
       }
     });
 
-    socket.on('players_status', (res) => {
-      if(res.player_info){
-        let alived = res.player_info.filter((player : playerInfo) => player.state === state.alive)
-        alived.forEach((player : playerInfo) => {
-          run(player.uuid as string, player.distance as number)
-        })
+    socket.on("players_status", (res) => {
+      if (res.player_info) {
+        let alived = res.player_info.filter(
+          (player: playerInfo) => player.state === state.alive
+        );
+        alived.forEach((player: playerInfo) => {
+          run(player.uuid as string, player.distance as number);
+        });
+        if (myCamera.current) {
+          const player = res.player_info[res.player_info.length - 1];
+          // console.log("aaaaaa", player.distance, myCamera.current.position.z);
+          myCamera.current.position.z = -(player.distance )+ 70;
+        }
       }
     });
-    
-  },[]);
+  }, []);
 
   useEffect(() => {
     // alert('playerInfo')
-    console.log(playerInfo)
+    console.log(playerInfo);
     let count = 0;
-    playerInfo.forEach((player : playerInfo) => {
+    playerInfo.forEach((player: playerInfo) => {
       count++;
-      addPlayer(count,player.uuid,player.name,player.distance)
-    })
-  },[playerInfo]);
+      addPlayer(count, player.uuid, player.name, player.distance);
+    });
+  }, [playerInfo]);
 
-  async function addPlayer(count : number,id : string, name : string, distance : number) {
+  async function addPlayer(
+    count: number,
+    id: string,
+    name: string,
+    distance: number
+  ) {
     const loader = new GLTFLoader();
+
     loader.load("/blooper.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
       const player = new Player(count, name, distance + 40);
@@ -290,11 +385,11 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
 
       // console.log(playerList.length);
 
-      setPlayerCount((prev)=>prev+1);
+      setPlayerCount((prev) => prev + 1);
       if (count % 2 === 0) {
-        object.scene.position.set(-count * 1, 0, 40);
+        object.scene.position.set(-count * 1, -0.5, 40);
       } else {
-        object.scene.position.set(count * 1, 0, 40);
+        object.scene.position.set(count * 1, -0.5, 40);
       }
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
@@ -320,7 +415,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
         // await wait(1000);
         const playerNum: number = requestAnimationFrame(animate);
 
-        if (object.scene.position.z < -40) {
+        if (object.scene.position.z < -90) {
           // scene?.remove(object.scene);
           cancelAnimationFrame(playerNum);
           return;
@@ -330,14 +425,20 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
           // alert(playerList.length)
           // console.log(player.position, object.scene.position.z)
           if (player.position < object.scene.position.z) {
-            object.scene.position.z -= 0.1;
-            mixer?.update(1 / 15);
+            //오징어 이동 속도 조절
+            object.scene.position.z -= 0.4;
           }
+          // 오징어 애니메이션 속도 조절
+          mixer?.update(1 / 30);
           // if(camera)
           //   camera.position.z -= 0.1;
         }
 
-        if (scene && camera && renderer) renderer?.render(scene, camera);
+        if (scene && camera && renderer) {
+          if (object.scene.position.z + 40 > camera?.position.z)
+            camera.position.z -= 0.4;
+          renderer.render(scene, camera);
+        }
       }
       animate();
     });
@@ -370,6 +471,9 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
     }
     mixers[0].setTime(0);
     myMaterial?.color.setHex(0x6bff54);
+    lightList.current.forEach((light) => {
+      light.color.setHex(0xe0e0e0);
+    });
     setGo(true);
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -379,14 +483,18 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
       await wait(3);
       mixers[0].update(1 / 30);
       myMaterial?.color.setHex(0xff545a);
+      lightList.current.forEach((light) => {
+        light.color.setHex(0xff545a);
+      });
       setGo(false);
     }
+    mixers[0].setTime(18 / 30);
   }
 
   //1번 오징어가 달림
   async function run(playerId: string, distance: number) {
     console.log(playerMap.current.size);
-    let moveDistance = 90 / length * distance;
+    let moveDistance = (120 / length) * distance;
     if (playerMap.current.has(playerId)) {
       // Add your code here
       const player = playerMap.current.get(playerId);
@@ -397,23 +505,21 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
   }
 
   useEffect(() => {
-    if(isStart){
-      if(go){
-        socket.emit('resume', {
-          result : go
+    if (isStart) {
+      if (go) {
+        socket.emit("resume", {
+          result: go,
         });
       } else {
-        socket.emit('stop', {
-          result : go
+        socket.emit("stop", {
+          result: go,
         });
       }
     }
-  },[go])
-
+  }, [go]);
 
   async function test() {
-    socket.emit('pre_player_status', {
-    })
+    socket.emit("pre_player_status", {});
   }
 
   // async function turnFront() {
@@ -446,6 +552,7 @@ const YoungHee = ( {socket, length, go, setGo, isStart} : {socket:Socket, length
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
+      {/* <button onClick={addPlayer(1,"abc","hello", 1)}>test</button> */}
       <style jsx>{`
         #canvas {
           width: 100vw;
