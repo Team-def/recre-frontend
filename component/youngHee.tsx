@@ -303,28 +303,6 @@ const YoungHee = ({
 
     //================================================================================================
     //텍스트 시도중, 아직 생성 안됨
-    const fontLoader = new FontLoader();
-    var text;
-    fontLoader.load("fonts/helvetiker_regular.typeface.json", function (font) {
-      console.log("asdfasdfasdfasdf", font);
-      const geometry = new TextGeometry("Hello three.js!", {
-        font: font,
-        size: 80,
-        height: 5,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 8,
-        bevelOffset: 0,
-        bevelSegments: 5,
-      });
-      var textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      text = new THREE.Mesh(geometry, textMaterial);
-      text.position.set(0, 0, 0);
-      scene.add(text);
-      renderer.render(scene, camera);
-    });
-
     // const text = new TextGeometry("SQUID GAME", );
     // scene.add(text);
     //================================================================================================
