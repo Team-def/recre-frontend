@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
@@ -35,6 +35,9 @@ export default function GameSelect() {
     const [isHovering, setIsHovered] = useState(false);
     const [hoverElement, setHoverElement] = useState('');
     const [redGreenInfo, setRedGreenInfo] = useAtom(redGreenInfoAtom);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const circleRef = useRef<HTMLDivElement>(null);
+    const [addClass, setAddClass] = useState(false);
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -42,13 +45,13 @@ export default function GameSelect() {
     }
     const onMouseLeave = () => setIsHovered(false);
 
-    useEffect(() => {
-        if (!isLogin) {
-            // console.log(isLogin)
-            alert('로그인이 필요합니다.')
-            router.push("/")
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (!isLogin) {
+    //         // console.log(isLogin)
+    //         alert('로그인이 필요합니다.')
+    //         router.push("/")
+    //     }
+    // }, []);
 
     useEffect(() => {
 
@@ -85,10 +88,33 @@ export default function GameSelect() {
         }
         if (gameInfo[0] === game) {
             setGameInfo(["", gameInfo[1]]);
+            if(circleRef.current && containerRef.current){
+                containerRef.current.style.setProperty('background-color', '#f8f8f8')
+                circleRef.current.style.setProperty('background-color', '#f8f8f8')
+            }
         } else {
             setGameInfo([game, gameInfo[1]]);
+            if(circleRef.current && containerRef.current){
+                if(game === '무궁화 꽃이 피었습니다'){
+                    containerRef.current.style.setProperty('background-color', 'rgb(189, 228, 255)')
+                    circleRef.current.style.setProperty('background-color', 'rgb(189, 228, 255)')
+                } else if(game === '그림 맞추기'){
+                    containerRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
+                    circleRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
+                }
+            }
         }
+        setAddClass(true)
     };
+
+    useEffect(() => {
+        if (addClass) {
+            setTimeout(() => {
+                setAddClass(false)
+            }, 500)
+        }
+    }, [addClass])
+
 
     type Game = {
         name: string,
@@ -111,18 +137,19 @@ export default function GameSelect() {
     const gameList: Game[] = [drawGame, greenLightGame, jumpRope]
 
     return (<>
-        <div className='gameSelectContainer'>
+        <div className='gameSelectContainer' ref={containerRef}>
+        <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
             <h1 className='gameSelectLogo'>게임 선택</h1>
             <div>
                 <Box sx={{ width: '100%' }}>
                     <Grid container spacing={12}>{/* xs는 12가 최대 */}
                         {gameList.map((game) => {
                             return (
-                                <Grid className='gameGrid' xs={4} onClick={() => handleGameSelect(game.name)}>
+                                <Grid className='gameGrid' xs={4} onClick={() => {handleGameSelect(game.name)}}>
                                     <div onMouseEnter={() => onMouseEnter(game.name)}
                                         onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`} id={`${game.name==='서비스 준비중'?'notService':''}`}><Item>
                                             <div className={`imageDiv ${isHovering && hoverElement === game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
-                                            <p className='gameTitle'>{game.name}</p>
+                                            <div className='gameTitle'>{game.name}</div>
                                         </Item></div>
                                 </Grid>
                             )
@@ -180,9 +207,23 @@ export default function GameSelect() {
                 display: flex;
                 flex-direction: column;
                 justify-content: space-evenly;
+                transition-delay: 0.5s;
                 align-items: center;
             }
+            .circleDiv{
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background: orange;
+                transition: clip-path 0.5s ease-out;
+                clip-path: circle(0% at 0 0);
+                z-index: 0;
+            }
+            .circleDiv.active{
+                clip-path: circle(141.4% at 0 0);
+            }
             .gameSelectLogo{
+                position: relative;
                 font-size: 50px;
                 font-weight: bold;
             }
@@ -201,6 +242,7 @@ export default function GameSelect() {
                 box-shadow: 0 0 10px rgba(0,0,0,0.5);
                 border: 5px solid transparent;
                 overflow: hidden;
+                background-color: transparent;
             }
             .gameDiv:hover{
                 scale: 1.05;
@@ -220,6 +262,7 @@ export default function GameSelect() {
                 transition: filter 0.2s ease-in-out;
                 color: white;
                 text-shadow: 0 0 12px rgba(0,0,0,0.5);
+                background-color: transparent;
             }
             .gameDiv:hover .gameTitle{
                 filter: opacity(1);
