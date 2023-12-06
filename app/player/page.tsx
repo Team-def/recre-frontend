@@ -24,7 +24,7 @@ export default function Player() {
     const [isGame, setIsGame] = useState<boolean>(false);
     const [isGateClosed, setIsGateClosed] = useState<boolean>(false); //closeGate 여부를 관리하는 상태
     const [isReadySent, setIsReadySent] = useState<boolean>(false); //ready 이벤트를 보냈는지 여부를 관리하는 상태
-    const [shakeCount, setShakeCount] = useState(0);
+    const [shakeCount, setShakeCount] = useState<number>(0);
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
@@ -238,7 +238,7 @@ export default function Player() {
                 });
                 let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
                 if (!isSafari) {
-                    navigator.vibrate([1000,500,1000]);
+                    navigator.vibrate([1000]);
                 }
             }
         }
@@ -261,8 +261,8 @@ export default function Player() {
     const cancleReady = () => {
         socket.current.emit("leave_game", {
         });
-        setReady(false)
         setShakeCount(0);
+        setReady(false);
     }
 
     const expressEmotion = (emotion: string) => {
