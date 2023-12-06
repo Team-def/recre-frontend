@@ -46,7 +46,9 @@ const YoungHee = ({
   const [mixers, setMixers] = useState<THREE.AnimationMixer[]>();
   const [scene, setScene] = useState<THREE.Scene>();
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
-  const [labelRenderer, setLabelRenderer] = useState<CSS2DRenderer>(new CSS2DRenderer());
+  const [labelRenderer, setLabelRenderer] = useState<CSS2DRenderer>(
+    new CSS2DRenderer()
+  );
   const [playerCount, setPlayerCount] = useState<number>(0);
   const playerMap = useRef(new Map<string, Player>());
   const myCamera = useRef<THREE.PerspectiveCamera>();
@@ -76,7 +78,7 @@ const YoungHee = ({
     }
   }
 
-  // 스페이바 스코를 이벤트 비활성화  
+  // 스페이바 스코를 이벤트 비활성화
   const handleSpacebarPress = (event: {
     code: string;
     preventDefault: () => void;
@@ -89,7 +91,7 @@ const YoungHee = ({
   };
 
   useEffect(() => {
-    // 스페이바 스코를 이벤트 비활성화  
+    // 스페이바 스코를 이벤트 비활성화
     window.addEventListener('keydown', handleSpacebarPress);
     const scene = new THREE.Scene();
     setScene(scene);
@@ -122,7 +124,7 @@ const YoungHee = ({
     labelRenderer.domElement.style.position = "absolute";
     labelRenderer.domElement.style.top = "0px";
     document.body.appendChild(labelRenderer.domElement);
-
+    
     //================================================================================================
     //격자, 편의 도구
 
@@ -417,6 +419,15 @@ const YoungHee = ({
         // }
       }
     });
+
+    return () => {
+      document.body.removeChild(labelRenderer.domElement)
+      if(scene)
+        scene.clear();
+      if(renderer)
+        renderer.dispose();
+
+    };
   }, []);
 
   useEffect(() => {
@@ -462,7 +473,7 @@ const YoungHee = ({
       const label = new CSS2DObject(div);
       label.position.set(0, 1, 0);
       object.scene.add(label);
-
+      
       //그림자 생성
       object.scene.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
@@ -524,7 +535,7 @@ const YoungHee = ({
         }
       }
       animate();
-    });
+          });
   }
 
   useEffect(() => {
