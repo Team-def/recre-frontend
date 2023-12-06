@@ -179,7 +179,7 @@ export default function Player() {
 
         //closeGate
         socket.current.on("close_gate", (res) => {
-            setShakeCount(0);
+            setShakeCount((prev) => prev = 0);
             setIsGateClosed(true);
         })
 
@@ -261,7 +261,7 @@ export default function Player() {
     const cancleReady = () => {
         socket.current.emit("leave_game", {
         });
-        setShakeCount(0);
+        setShakeCount((prev) => prev = 0);
         setReady(false);
     }
 
