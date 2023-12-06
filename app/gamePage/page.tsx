@@ -2,7 +2,7 @@
 import Button from '@mui/material/Button';
 import Image from 'next/image';
 import { gameAtoms } from "@/app/modules/gameAtoms";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
@@ -115,14 +115,21 @@ export default function QR() {
             setNowPeople(res.player_cnt)
         });
 
-        socket.current.on('express_emotion', (res)=>{
-            // console.log(emotions);
-            makeEmotion(res.emotion);
-        })
+        // socket.current.on('express_emotion', (res)=>{
+        //     // console.log(emotions);
+        //     makeEmotion(res.emotion);
+        // })
 
         return () => { 
             handleBeforeUnload();
         };
+    }, []);
+
+    useLayoutEffect(() => {
+        socket.current.on('express_emotion', (res)=>{
+            // console.log(emotions);
+            makeEmotion(res.emotion);
+        })
     }, []);
 
 
