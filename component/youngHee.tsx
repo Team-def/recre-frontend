@@ -76,6 +76,8 @@ const YoungHee = ({
       this.isAlive = 0;
     }
   }
+
+  // 스페이바 스코를 이벤트 비활성화  
   const handleSpacebarPress = (event: {
     code: string;
     preventDefault: () => void;
@@ -88,7 +90,7 @@ const YoungHee = ({
   };
 
   useEffect(() => {
-    // 스페이바 이벤트 비활성화  
+    // 스페이바 스코를 이벤트 비활성화  
     window.addEventListener('keydown', handleSpacebarPress);
     const scene = new THREE.Scene();
     setScene(scene);
@@ -454,7 +456,7 @@ const YoungHee = ({
     const loader = new GLTFLoader();
 
     loader.load("/blooper.glb", (object) => {
-      object.scene.scale.set(1.3, 1.3, 1.3);
+      object.scene.scale.set(1.6, 1.6, 1.6);
       const player = new Player(count, name, distance + 40);
       // setPlayerList([...playerList, player]);
       playerMap.current.set(id, player);
@@ -463,9 +465,9 @@ const YoungHee = ({
 
       setPlayerCount((prev) => prev + 1);
       if (count % 2 === 0) {
-        object.scene.position.set(-count * 1.3, -0.5, 40);
+        object.scene.position.set(-count * 2, -0.5, 40);
       } else {
-        object.scene.position.set(count * 1.3, -0.5, 40);
+        object.scene.position.set(count * 2, -0.5, 40);
       }
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
@@ -629,17 +631,12 @@ const YoungHee = ({
         case "1":
           cameraMove1();
           return;
-          break;
         case "2":
           cameraMove2();
           return;
-
-          break;
         case "3":
           cameraMove3();
           return;
-
-          break;
         case "a":
           moveVector.add(
             cameraDirection
