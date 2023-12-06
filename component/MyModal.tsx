@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { ReactNode } from 'react';
 import { useRef } from 'react';
+import React from 'react';
 
 const modalStyle = {
     position: 'absolute' as 'absolute',
@@ -24,7 +25,7 @@ export interface ModalProps {
   isOpen? : boolean,
 }
 
-export default function MyModal({open, modalHeader, modalContent ,closeFunc, myref}: {open: boolean, modalHeader:string | ReactNode, modalContent:JSX.Element | undefined, closeFunc: () => void, myref: any}) {
+function MyModal({open, modalHeader, modalContent ,closeFunc, myref}: {open: boolean, modalHeader:string | ReactNode, modalContent:JSX.Element | undefined, closeFunc: () => void, myref: any}) {
     return (<>
         <Modal
             open={open}
@@ -58,3 +59,5 @@ export default function MyModal({open, modalHeader, modalContent ,closeFunc, myr
         </>
     )
 }
+
+export default React.memo(MyModal)
