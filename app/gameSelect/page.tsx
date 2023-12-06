@@ -79,6 +79,10 @@ export default function GameSelect() {
     }, [gameInfo, redGreenInfo]);
 
     const handleGameSelect = (game: string) => {
+        if(game === '서비스 준비중') {
+            alert('현재 서비스 준비중입니다.')
+            return;
+        }
         if (gameInfo[0] === game) {
             setGameInfo(["", gameInfo[1]]);
         } else {
@@ -100,8 +104,8 @@ export default function GameSelect() {
         image: '/greenLightGame.png'
     }
     const jumpRope: Game = {
-        name: '줄넘기',
-        image: '/jumpRope.jpeg'
+        name: '서비스 준비중',
+        image: '/jumpRope.jpeg',
     }
 
     const gameList: Game[] = [drawGame, greenLightGame, jumpRope]
@@ -116,7 +120,7 @@ export default function GameSelect() {
                             return (
                                 <Grid className='gameGrid' xs={4} onClick={() => handleGameSelect(game.name)}>
                                     <div onMouseEnter={() => onMouseEnter(game.name)}
-                                        onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`}><Item>
+                                        onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`} id={`${game.name==='서비스 준비중'?'notService':''}`}><Item>
                                             <div className={`imageDiv ${isHovering && hoverElement === game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
                                             <p className='gameTitle'>{game.name}</p>
                                         </Item></div>
@@ -245,6 +249,10 @@ export default function GameSelect() {
                 align-items: center;
                 justify-content: space-evenly;
                 gap: 20px;
+            }
+            #notService{
+                filter: opacity(0.3) drop-shadow(0 0 0 rgba(0,0,0,1));
+                background-color: rgba(0,0,0,0.5);
             }
         `}</style>
     </>

@@ -2,7 +2,7 @@
 import Button from '@mui/material/Button';
 import Image from 'next/image';
 import { gameAtoms } from "@/app/modules/gameAtoms";
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { loginAtom } from "@/app/modules/loginAtoms";
 import { useRouter } from "next/navigation";
 import { useAtom } from 'jotai';
@@ -16,12 +16,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import Popover from '@mui/material/Popover';
 import { css, keyframes } from "@emotion/react";
 import React from 'react';
 import Flower from '../redGreen/page';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
 import { redGreenStartAtom } from '../modules/redGreenStartAtom';
+import MyPopover from '@/component/MyPopover';
+import { anchorElAtom } from '../modules/popoverAtom';
+import QRpage from '@/component/QRpage';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -40,20 +42,18 @@ export default function QR() {
         transports: ["websocket"],
         autoConnect: false,
     }));
-    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
-    const gamePageUrlAns = `${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`;
+    const gamePageUrlAns = useRef(`${process.env.NEXT_PUBLIC_RECRE_URL}/catchAnswer`);
     const modalRef = useRef<HTMLDivElement | null>(null);
     const [emotions, setEmotions] = useState<emotion[]>([]);
-    const popoverRef = useRef<HTMLDivElement | null>(null);
     const [redGreenInfo, ] = useAtom(redGreenInfoAtom);
     const [isStart, setIsStart] = useAtom(redGreenStartAtom);
-
     interface emotion {
         x: number;
         y: number;
         emotion: string;
     }
     const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?data=${userInfo.id}_${nameSpace}`;
+    const [anchorEl, setAnchorEl] = useAtom(anchorElAtom);
 
     useEffect(() => {
         if (!isLogin) {
@@ -166,23 +166,12 @@ export default function QR() {
         };
 
 
-        const handlePopover = (event: React.MouseEvent<HTMLDivElement>) => {
-            setAnchorEl(event.currentTarget);
-        };
-
-        const handleClose = () => {
-            setAnchorEl(null);
-        };
-
-        const openPopover = Boolean(anchorEl);
-        const id = openPopover ? 'simple-popover' : undefined;
-
         const testGame = () => {
             setIsStart(true);
             setOpen(false);
         }
 
-        const makeEmotion = async(emotion : string) => {
+        const makeEmotion = useCallback(async(emotion : string) => {
             if (modalRef.current) {
                 const { left, top, right, bottom } = modalRef.current.getBoundingClientRect() as DOMRect;
                 // console.log(left, top, right, bottom);
@@ -201,110 +190,10 @@ export default function QR() {
                     setEmotions((prevEmotions) => [...prevEmotions, { x: randomX, y: randomY, emotion: emotion }]);
                 ;
             }    
-        }
-
-
-        const QRpage = () => {
-            return (
-                <>
-                    <div className='qrPageCon'>
-                        <h2>{JSON.parse(localStorage.getItem('game') || 'null')[0]}</h2>
-                        {/* 게임 종류가 catch mind인 경우 */}
-                        {JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기' ?
-                            <div className='alertSt'><Alert severity="info" onClick={handlePopover}>
-                                <AlertTitle>정답을 입력해주세요</AlertTitle>
-                                호스트는 이 창을 클릭하여 QR을 찍고 문제의 정답을 입력해 주세요. <strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
-                            </Alert><Popover
-                                id={id}
-                                open={openPopover}
-                                anchorEl={anchorEl}
-                                ref={popoverRef}
-                                onClose={handleClose}
-                                autoFocus={true}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                            >
-                                    <div className='QR-code-ans'>
-                                        <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrlAns}`} alt="QR" layout='fill' unoptimized={true} />
-                                    </div>
-                                </Popover></div> : <></>}
-                        <div className='QR-code'>
-                            <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
-                        </div>
-                        <div className='online-number'>
-                            <label className="icon">
-                                <Image src="/pngegg.png" alt="people" width={20} height={20} />
-                            </label>
-                            <h3>{nowPeople} / {gameInfo[1]} 명</h3>
-                        </div>
-
-
-                        <div className='gameInfo-start-button'>
-                            <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                            <Button onClick={testGame}>TestPlay</Button>
-                            {/* <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button> */}
-                        </div>
-                    </div>
-                    <style jsx>{`
-            .qrPageCon{
-                display: flex;
-                justify-content: space-evenly;
-                align-items: center;
-                flex-direction: column;
-            }
-            .QR-code{
-                width: 20vw;
-                max-width: 350px;
-                max-height: 350px;
-                height: 20vw;
-                margin: 0 auto;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-                margin-bottom: 10px;
-            }
-            .headers{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-            }
-            .online-number{
-                display: flex;
-                align-items: center;
-                justify-content: space-evenly;
-                gap: 10px;
-            }
-            .alertSt{
-                cursor: pointer;
-                border: 1px solid transparent;
-                margin-bottom: 15px;
-            }
-            .alertSt:hover{
-                border: 1px solid blue;
-            }
-            .QR-code-ans{
-                width: 10vw;
-                height: 10vw;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-            }
-            .icon{
-                position: relative; 
-                top: 3px;
-            }
-        `}</style>
-                </>
-            )
-        }
+        },[]);    
 
         return (<>
-            <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage />} closeFunc={() => { }} myref={modalRef}/>
+            <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage gamePageUrlAns={gamePageUrlAns} gamePageUrl={gamePageUrl} nowPeople={nowPeople} total={gameInfo[1]??0} startGame={startGame}/>} closeFunc={() => { }} myref={modalRef}/>
             {gameContent}
             <div id='emotionPlace'>{
                 emotions.map((emotion, index) => {
