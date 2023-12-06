@@ -483,8 +483,6 @@ const YoungHee = ({
       canvasRef.current.addEventListener("mousedown", turn);
       canvasRef.current.addEventListener("mouseup", turnFront);
       // canvasRef.current.addEventListener('mouseleave', exitPaint);
-      labelRef.current.addEventListener("mousedown", turn);
-      labelRef.current.addEventListener("mouseup", turnFront);
     }
 
     return () => {
@@ -493,8 +491,6 @@ const YoungHee = ({
         canvasRef.current.removeEventListener("mousedown", turn);
         canvasRef.current.removeEventListener("mouseup", turnFront);
         // canvasRef.current.removeEventListener('mouseleave', exitPaint);
-        labelRef.current.removeEventListener("mousedown", turn);
-        labelRef.current.removeEventListener("mouseup", turnFront);
       }
     };
   }, [turn, turnFront]);
@@ -614,7 +610,6 @@ const YoungHee = ({
       </div>
       <style jsx>{`
         #canvas {
-          z-index: 50;
           width: 100vw;
           height: 100vh;
           display: block;
