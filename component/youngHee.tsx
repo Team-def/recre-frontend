@@ -50,6 +50,7 @@ const YoungHee = ({
   const [playerCount, setPlayerCount] = useState<number>(0);
   const playerMap = useRef(new Map<string, Player>());
   const myCamera = useRef<THREE.PerspectiveCamera>();
+  const isRed = useRef<boolean>(false);
   const [fieldColor, setFieldColor] = useState<string>("0xe0e0e0");
   const lightList = useRef<THREE.DirectionalLight[]>([]);
   const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([
@@ -75,7 +76,21 @@ const YoungHee = ({
     }
   }
 
+  // 스페이바 스코를 이벤트 비활성화  
+  const handleSpacebarPress = (event: {
+    code: string;
+    preventDefault: () => void;
+  }) => {
+    // 스페이스바 눌림 이벤트 처리
+    if (event.code === "Space") {
+      event.preventDefault(); // 스크롤 기본 동작 막기
+      // 추가로 필요한 로직을 여기에 추가할 수 있습니다.
+    }
+  };
+
   useEffect(() => {
+    // 스페이바 스코를 이벤트 비활성화  
+    window.addEventListener('keydown', handleSpacebarPress);
     const scene = new THREE.Scene();
     setScene(scene);
     const camera = new THREE.PerspectiveCamera(
@@ -141,9 +156,8 @@ const YoungHee = ({
     // 아래가 마우스 스크롤이나 클릭 후 돌리기
     // const controls = new OrbitControls(camera, renderer.domElement);
 
-    const loader = new GLTFLoader();
-
     //================================================================================================
+
     //바닥 오브잭트
     // const geometry = new THREE.PlaneGeometry(1000, 700, 1, 1);
     // //material을 투명으로
@@ -174,6 +188,7 @@ const YoungHee = ({
     // scene.add(plane)
     //================================================================================================
 
+    const loader = new GLTFLoader();
     //게임 필드
     loader.load("/playground.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
@@ -181,10 +196,15 @@ const YoungHee = ({
       object.scene.position.set(0, -3.8, 100);
       scene.add(object.scene);
 
-      //그림자 생성
+      //그림자 생성, 바깥에서 벽면 투명화
       object.scene.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
           child.receiveShadow = true;
+          const material = child.material;
+          if (material instanceof THREE.MeshStandardMaterial) {
+            // Set to Single Faced
+            // material.side = THREE.BackSide;
+          }
         }
       });
     });
@@ -192,11 +212,11 @@ const YoungHee = ({
     //================================================================================================
     //광원
 
-    var ambientLight = new THREE.AmbientLight(0xf0f0f0, 0.5); // 색상 지정
+    var ambientLight = new THREE.AmbientLight(0x606060, 0.1); // 색상 지정
     scene.add(ambientLight);
 
     const color = 0xe0e0e0;
-    const intensity = 2.5;
+    const intensity = 2.2;
     const light1 = new THREE.DirectionalLight(color, intensity);
     //light의 위치와 target의 위치를 지정한다
     light1.position.set(40, 30, 40);
@@ -246,10 +266,8 @@ const YoungHee = ({
 
     var directionalLightHelper3 = new THREE.DirectionalLightHelper(light3, 5);
 
-    // var directionalLightHelper3 = new THREE.SpotLightHelper(light3, 5);
-    scene.add(directionalLightHelper);
-    scene.add(directionalLightHelper2);
-    scene.add(directionalLightHelper3);
+    // scene.add(directionalLightHelper);
+    // scene.add(directionalLightHelper2);
     // scene.add(directionalLightHelper3);
 
     lightList.current.push(light1);
@@ -258,18 +276,13 @@ const YoungHee = ({
 
     //================================================================================================
 
-    const bgTexture = new THREE.Color(0x000000)
+    // const bgTexture = new THREE.TextureLoader().load(
+    //   "/youngHee/squid_game.png"
+    // );
+    const bgTexture = new THREE.Color(0x437185);
     scene.background = bgTexture;
 
     // scene.background = new THREE.Color('green');
-
-    window.addEventListener("resize", onResize, false);
-
-    function onResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
 
     // camera.rotateX(Math.PI/2);
 
@@ -289,6 +302,60 @@ const YoungHee = ({
     //   );
 
     //================================================================================================
+    //텍스트 시도중, 아직 생성 안됨
+    const fontLoader = new FontLoader();
+    var text;
+    fontLoader.load("fonts/helvetiker_regular.typeface.json", function (font) {
+      console.log("asdfasdfasdfasdf", font);
+      const geometry = new TextGeometry("Hello three.js!", {
+        font: font,
+        size: 80,
+        height: 5,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 10,
+        bevelSize: 8,
+        bevelOffset: 0,
+        bevelSegments: 5,
+      });
+      var textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      text = new THREE.Mesh(geometry, textMaterial);
+      text.position.set(0, 0, 0);
+      scene.add(text);
+      renderer.render(scene, camera);
+    });
+
+    // const text = new TextGeometry("SQUID GAME", );
+    // scene.add(text);
+    //================================================================================================
+    // 고정 오브젝트 렌더링
+
+    loader.load("/semo.glb", (object) => {
+      object.scene.scale.set(40, 40, 40);
+      object.scene.position.set(23, 2.5, -115);
+      // console.log("aaaaaaaaaaaaaaaaaaaaa", object.scene);
+      scene.add(object.scene);
+
+      // 그림자 생성
+      object.scene.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      const semo_1 = object.scene.clone();
+      semo_1.position.set(-17, 2.5, -115);
+      scene.add(semo_1);
+
+      const semo_2 = object.scene.clone();
+      semo_2.position.set(43, 2.5, -115);
+      scene.add(semo_2);
+
+      const semo_3 = object.scene.clone();
+      semo_3.position.set(-37, 2.5, -115);
+      scene.add(semo_3);
+    });
 
     loader.load("/youngHee/youngHee.glb", (object) => {
       object.scene.scale.set(1.5, 1.5, 1.5);
@@ -322,7 +389,11 @@ const YoungHee = ({
 
     function animate() {
       // wait(1000);
-      // console.log(myCamera.current?.position.x, myCamera.current?.position.y, myCamera.current?.position.z);
+      // console.log(
+      //   myCamera.current?.position.x,
+      //   myCamera.current?.position.y,
+      //   myCamera.current?.position.z
+      // );
 
       requestAnimationFrame(animate);
 
@@ -389,7 +460,7 @@ const YoungHee = ({
     const loader = new GLTFLoader();
 
     loader.load("/blooper.glb", (object) => {
-      object.scene.scale.set(1.3, 1.3, 1.3);
+      object.scene.scale.set(1.6, 1.6, 1.6);
       const player = new Player(count, name, distance + 40);
       // setPlayerList([...playerList, player]);
       playerMap.current.set(id, player);
@@ -398,9 +469,9 @@ const YoungHee = ({
 
       setPlayerCount((prev) => prev + 1);
       if (count % 2 === 0) {
-        object.scene.position.set(-count * 1.3, -0.5, 40);
+        object.scene.position.set(-count * 2, -0.5, 40);
       } else {
-        object.scene.position.set(count * 1.3, -0.5, 40);
+        object.scene.position.set(count * 2, -0.5, 40);
       }
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
@@ -480,7 +551,7 @@ const YoungHee = ({
 
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.addEventListener("mousedown", turn);
+      canvasRef.current.addEventListener("mousedown", turnBack);
       canvasRef.current.addEventListener("mouseup", turnFront);
       // canvasRef.current.addEventListener('mouseleave', exitPaint);
     }
@@ -488,12 +559,12 @@ const YoungHee = ({
     return () => {
       if (canvasRef.current) {
         // Unmount 시 이벤트 리스터 제거
-        canvasRef.current.removeEventListener("mousedown", turn);
+        canvasRef.current.removeEventListener("mousedown", turnBack);
         canvasRef.current.removeEventListener("mouseup", turnFront);
         // canvasRef.current.removeEventListener('mouseleave', exitPaint);
       }
     };
-  }, [turn, turnFront]);
+  }, [turnBack, turnFront]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   async function turnFront() {
@@ -511,7 +582,7 @@ const YoungHee = ({
     setGo(true);
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  async function turn() {
+  async function turnBack() {
     if (!mixers) return;
     for (let i = 0; i < 18; i++) {
       await wait(3);
@@ -551,6 +622,125 @@ const YoungHee = ({
       }
     }
   }, [go]);
+
+  useEffect(() => {
+    function handleKeyDown(event: { key: any }) {
+      const { key } = event;
+      // 키보드 이벤트 처리 로직 작성
+
+      var moveDistance = 2;
+
+      var orbitSpeed = Math.PI / 180; // 회전 속도 (1도)
+
+      // 현재 카메라의 전진 방향 벡터를 얻습니다.
+      var cameraDirection = new THREE.Vector3(0, 0, -1);
+      if (!myCamera.current) return;
+      myCamera.current.getWorldDirection(cameraDirection);
+
+      // 이동 벡터를 초기화합니다.
+      var moveVector = new THREE.Vector3(0, 0, 0);
+
+      console.log(key);
+      switch (key) {
+        case "1":
+          cameraMove1();
+          return;
+        case "2":
+          cameraMove2();
+          return;
+        case "3":
+          cameraMove3();
+          return;
+        case "a":
+          moveVector.add(
+            cameraDirection
+              .clone()
+              .applyAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2)
+          );
+          break;
+        case "s":
+          moveVector.add(cameraDirection.clone().negate());
+          break;
+        case "d":
+          moveVector.add(
+            cameraDirection
+              .clone()
+              .applyAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2)
+          );
+          break;
+        case "w":
+          moveVector.add(cameraDirection.clone());
+
+          break;
+        case "q":
+          // var euler = new THREE.Euler(
+          //   myCamera.current.rotation.x,
+          //   myCamera.current.rotation.y + orbitSpeed,
+          //   myCamera.current.rotation.z,
+          //   "YZX"
+          // );
+          // myCamera.current.rotation.set(euler.x, euler.y, euler.z);
+          var axis = new THREE.Vector3(0, 1, 0); // Y 축을 기준으로 회전
+          var quaternion = new THREE.Quaternion().setFromAxisAngle(
+            axis,
+            orbitSpeed
+          );
+          myCamera.current.quaternion.multiply(quaternion);
+          break;
+        case "e":
+          // var euler = new THREE.Euler(
+          //   myCamera.current.rotation.x,
+          //   myCamera.current.rotation.y - orbitSpeed,
+          //   myCamera.current.rotation.z,
+          //   "YZX"
+          // );
+          // myCamera.current.rotation.set(euler.x, euler.y, euler.z);
+          var axis = new THREE.Vector3(0, 1, 0); // Y 축을 기준으로 회전
+          var quaternion = new THREE.Quaternion().setFromAxisAngle(
+            axis,
+            -orbitSpeed
+          );
+          myCamera.current.quaternion.multiply(quaternion);
+          break;
+        case " ":
+          if (!isRed.current) {
+            turnBack();
+            isRed.current = true;
+          }
+          break;
+
+        default:
+          console.log("다른 키 눌림");
+          break;
+      }
+      // var newCameraPosition = myCamera.current.position.clone().add(moveVector);
+      // myCamera.current.lookAt(newCameraPosition);
+      moveVector.setY(0);
+      moveVector.normalize().multiplyScalar(moveDistance);
+      myCamera.current.position.add(moveVector);
+    }
+
+    function handleKeyUp(event: { key: any }) {
+      const { key } = event;
+      switch (key) {
+        case " ":
+          isRed.current = false;
+          turnFront();
+          break;
+        default:
+          break;
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거합니다.
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [turnBack, turnFront]); // 의존성 배열이 비어있으므로 컴포넌트가 로드될 때에만 실행됩니다.
 
   async function test() {
     socket.emit("pre_player_status", {});
@@ -613,7 +803,7 @@ const YoungHee = ({
           width: 100vw;
           height: 100vh;
           display: block;
-          background-color: transparent;
+          background-color: #437185;
         }
       `}</style>
     </>
