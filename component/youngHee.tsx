@@ -1,17 +1,15 @@
 "use client";
-import { Caesar_Dressing } from "next/font/google";
 // import dat from "dat.gui";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
-import { render } from "react-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import * as THREE from "three";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import {
+  CSS2DObject,
+  CSS2DRenderer,
+} from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
 import wait from "waait";
-import { isAbsolute } from "path";
 
 interface playerInfo {
   uuid: string;
@@ -48,6 +46,7 @@ const YoungHee = ({
   const [mixers, setMixers] = useState<THREE.AnimationMixer[]>();
   const [scene, setScene] = useState<THREE.Scene>();
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
+  const [labelRenderer, setLabelRenderer] = useState<CSS2DRenderer>(new CSS2DRenderer());
   const [playerCount, setPlayerCount] = useState<number>(0);
   const playerMap = useRef(new Map<string, Player>());
   const myCamera = useRef<THREE.PerspectiveCamera>();
@@ -103,7 +102,11 @@ const YoungHee = ({
     renderer.toneMappingExposure = 1;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.setClearColor(0xffffff, 1);
-    // renderer.setSize(500, 500);
+    // document.body.appendChild(renderer.domElement);
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = "absolute";
+    labelRenderer.domElement.style.top = "0px";
+    document.body.appendChild(labelRenderer.domElement);
 
     //================================================================================================
     //격자, 편의 도구
@@ -255,14 +258,12 @@ const YoungHee = ({
 
     //================================================================================================
 
-    const bgTexture = new THREE.TextureLoader().load(
-      "/youngHee/squid_game.png"
-    );
+    const bgTexture = new THREE.Color(0x000000)
     scene.background = bgTexture;
 
     // scene.background = new THREE.Color('green');
 
-    // window.addEventListener("resize", onResize, false);
+    window.addEventListener("resize", onResize, false);
 
     function onResize() {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -286,33 +287,7 @@ const YoungHee = ({
     //       });
     //     }
     //   );
-    
-    //================================================================================================
-    //텍스트 시도중, 아직 생성 안됨
-    const fontLoader = new FontLoader();
-    var text;
-    fontLoader.load("fonts/helvetiker_regular.typeface.json", function (font) {
-      console.log("asdfasdfasdfasdf",font);
-      const geometry = new TextGeometry("Hello three.js!", {
-        font: font,
-        size: 80,
-        height: 5,
-        curveSegments: 12,
-        bevelEnabled: true,
-        bevelThickness: 10,
-        bevelSize: 8,
-        bevelOffset: 0,
-        bevelSegments: 5,
-      });
-      var textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      text = new THREE.Mesh(geometry, textMaterial);
-      text.position.set(0, 0, 0);
-      scene.add(text);
-      renderer.render(scene, camera);
-    });
 
-    // const text = new TextGeometry("SQUID GAME", );
-    // scene.add(text);
     //================================================================================================
 
     loader.load("/youngHee/youngHee.glb", (object) => {
@@ -352,6 +327,7 @@ const YoungHee = ({
       requestAnimationFrame(animate);
 
       renderer.render(scene, camera);
+      labelRenderer.render(scene, camera);
     }
 
     animate();
@@ -429,6 +405,15 @@ const YoungHee = ({
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
 
+      // 플레이어 이름
+      const div = document.createElement("div");
+      div.className = "label";
+      div.textContent = name;
+      div.setAttribute("ref", "labelRef");
+      const label = new CSS2DObject(div);
+      label.position.set(0, 1, 0);
+      object.scene.add(label);
+
       //그림자 생성
       object.scene.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
@@ -473,8 +458,8 @@ const YoungHee = ({
             if (deadCnt === 30) {
               player.isAlive = 2;
             } else {
-                object.scene.rotateX(Math.PI / 2 / 30);
-                object.scene.position.y -= 0.1;
+              object.scene.rotateX(Math.PI / 2 / 30);
+              object.scene.position.y -= 0.1;
             }
           } else {
           }
@@ -486,6 +471,7 @@ const YoungHee = ({
           if (object.scene.position.z + 40 > camera?.position.z)
             camera.position.z -= 0.4;
           renderer.render(scene, camera);
+          labelRenderer.render(scene, camera);
         }
       }
       animate();
@@ -497,6 +483,8 @@ const YoungHee = ({
       canvasRef.current.addEventListener("mousedown", turn);
       canvasRef.current.addEventListener("mouseup", turnFront);
       // canvasRef.current.addEventListener('mouseleave', exitPaint);
+      labelRef.current.addEventListener("mousedown", turn);
+      labelRef.current.addEventListener("mouseup", turnFront);
     }
 
     return () => {
@@ -505,6 +493,8 @@ const YoungHee = ({
         canvasRef.current.removeEventListener("mousedown", turn);
         canvasRef.current.removeEventListener("mouseup", turnFront);
         // canvasRef.current.removeEventListener('mouseleave', exitPaint);
+        labelRef.current.removeEventListener("mousedown", turn);
+        labelRef.current.removeEventListener("mouseup", turnFront);
       }
     };
   }, [turn, turnFront]);
@@ -624,11 +614,11 @@ const YoungHee = ({
       </div>
       <style jsx>{`
         #canvas {
+          z-index: 50;
           width: 100vw;
           height: 100vh;
           display: block;
-          background: url("/youngHee/squid_game.png") no-repeat center center;
-          background-size: cover;
+          background-color: transparent;
         }
       `}</style>
     </>
