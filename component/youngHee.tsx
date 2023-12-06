@@ -200,7 +200,7 @@ const YoungHee = ({
           const material = child.material;
           if (material instanceof THREE.MeshStandardMaterial) {
             // Set to Single Faced
-            // material.side = THREE.BaaaaackSide;
+            // material.side = THREE.BackSide;
           }
         }
       });
@@ -330,7 +330,7 @@ const YoungHee = ({
     loader.load("/semo.glb", (object) => {
       object.scene.scale.set(40, 40, 40);
       object.scene.position.set(23, 2.5, -115);
-      console.log("aaaaaaaaaaaaaaaaaaaaa", object.scene);
+      // console.log("aaaaaaaaaaaaaaaaaaaaa", object.scene);
       scene.add(object.scene);
 
       // 그림자 생성
@@ -537,7 +537,7 @@ const YoungHee = ({
 
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.addEventListener("mousedown", turn);
+      canvasRef.current.addEventListener("mousedown", turnBack);
       canvasRef.current.addEventListener("mouseup", turnFront);
       // canvasRef.current.addEventListener('mouseleave', exitPaint);
     }
@@ -545,12 +545,12 @@ const YoungHee = ({
     return () => {
       if (canvasRef.current) {
         // Unmount 시 이벤트 리스터 제거
-        canvasRef.current.removeEventListener("mousedown", turn);
+        canvasRef.current.removeEventListener("mousedown", turnBack);
         canvasRef.current.removeEventListener("mouseup", turnFront);
         // canvasRef.current.removeEventListener('mouseleave', exitPaint);
       }
     };
-  }, [turn, turnFront]);
+  }, [turnBack, turnFront]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   async function turnFront() {
@@ -568,7 +568,7 @@ const YoungHee = ({
     setGo(true);
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  async function turn() {
+  async function turnBack() {
     if (!mixers) return;
     for (let i = 0; i < 18; i++) {
       await wait(3);
@@ -690,7 +690,7 @@ const YoungHee = ({
           break;
         case " ":
           if (!isRed.current) {
-            turn();
+            turnBack();
             isRed.current = true;
           }
           break;
@@ -726,7 +726,7 @@ const YoungHee = ({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [turn, turnFront]); // 의존성 배열이 비어있으므로 컴포넌트가 로드될 때에만 실행됩니다.
+  }, [turnBack, turnFront]); // 의존성 배열이 비어있으므로 컴포넌트가 로드될 때에만 실행됩니다.
 
   async function test() {
     socket.emit("pre_player_status", {});
