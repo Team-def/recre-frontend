@@ -1,17 +1,15 @@
 "use client";
-import { Caesar_Dressing } from "next/font/google";
 // import dat from "dat.gui";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
-import { render } from "react-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import * as THREE from "three";
-import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import {
+  CSS2DObject,
+  CSS2DRenderer,
+} from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
 import wait from "waait";
-import { isAbsolute } from "path";
 
 interface playerInfo {
   uuid: string;
@@ -48,6 +46,7 @@ const YoungHee = ({
   const [mixers, setMixers] = useState<THREE.AnimationMixer[]>();
   const [scene, setScene] = useState<THREE.Scene>();
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
+  const [labelRenderer, setLabelRenderer] = useState<CSS2DRenderer>(new CSS2DRenderer());
   const [playerCount, setPlayerCount] = useState<number>(0);
   const playerMap = useRef(new Map<string, Player>());
   const myCamera = useRef<THREE.PerspectiveCamera>();
@@ -118,7 +117,11 @@ const YoungHee = ({
     renderer.toneMappingExposure = 1;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.setClearColor(0xffffff, 1);
-    // renderer.setSize(500, 500);
+    // document.body.appendChild(renderer.domElement);
+    labelRenderer.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.domElement.style.position = "absolute";
+    labelRenderer.domElement.style.top = "0px";
+    document.body.appendChild(labelRenderer.domElement);
 
     //================================================================================================
     //격자, 편의 도구
@@ -395,6 +398,7 @@ const YoungHee = ({
       requestAnimationFrame(animate);
 
       renderer.render(scene, camera);
+      labelRenderer.render(scene, camera);
     }
 
     animate();
@@ -472,6 +476,15 @@ const YoungHee = ({
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
 
+      // 플레이어 이름
+      const div = document.createElement("div");
+      div.className = "label";
+      div.textContent = name;
+      div.setAttribute("ref", "labelRef");
+      const label = new CSS2DObject(div);
+      label.position.set(0, 1, 0);
+      object.scene.add(label);
+
       //그림자 생성
       object.scene.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
@@ -529,6 +542,7 @@ const YoungHee = ({
           if (object.scene.position.z + 40 > camera?.position.z)
             camera.position.z -= 0.4;
           renderer.render(scene, camera);
+          labelRenderer.render(scene, camera);
         }
       }
       animate();
