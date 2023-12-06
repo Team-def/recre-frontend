@@ -12,6 +12,7 @@ import { useCookies } from 'next-client-cookies';
 import { myApi } from './modules/backApi';
 import { gameAtoms } from './modules/gameAtoms';
 import {isMobile, isTablet} from 'react-device-detect';
+import Image from 'next/image';
 
 
 export default function Home() {
@@ -151,30 +152,81 @@ export default function Home() {
   return (<>
     <div className='container'>
       {/* <div> */}
-        <p className='middleLogo' onClick={selectGame}>시작하기</p>
-        <div className="sketchfab-embed-wrapper"> <iframe title="GAME ROOM | Pixel Art" frameBorder="0" allowFullScreen allow="autoplay, fullscreen, xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/d02c6808cbd34259be5ae86650afef1b/embed?autostart=1"> </iframe> <p style={{fontSize: '13px', fontWeight: 'normal', margin: '5px', color: '#4A4A4A'}}> </p></div>
+        <p className='middleLogo' onClick={selectGame}>Recre</p>
+        <div onClick={selectGame} className='knight'>
+        <div className='dialog'><Image src={'/dialog.png'} alt='dialog' width={200} height={100}></Image></div>
+        <Image src={'/knight.gif'} alt='knight' width={300} height={300}></Image>
+        </div>
         
       {/* </div> */}
     </div>
     <style jsx>{`
             .container{
+              width: 100%;
                 display: flex;
-                justify-content: center;
+                justify-content: flex-end;
                 align-items: center;
                 flex-direction: column;
                 height: 100vh;
+                background: url('/BG1.jpg') center / 100% repeat-x;
+                background-size: 50% 100%;
+                animation: movebg 2s linear infinite;
             }
             .middleLogo{
-              font-size: 10vw;
-              background: #f1f1f1;
-              padding: 50px;
+              position: absolute;
+              top: 0vh;
+              font-size: 7em;
+              text-align: center;
+              background-color: rgba(255,255,255,0.9);
+              padding: 20px 50px;
+              border-radius: 30px;
               box-shadow: 0 0 10px rgba(0,0,0,0.5);
+              animation: shake 1.5s linear infinite;
             }
-            .middleLogo:hover{
-              scale: 1.1;
-              rotate: 10deg;
+            .knight{
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              z-index: 55;
+            }
+            .knight:hover{
+              width: 500px;
+              height: 400px;
+              scale: 1.2;
               cursor: pointer;
-              color: gray;
+            }
+            .dialog{
+              position : relative;
+              left: 25px;
+              top: 30px;
+            }
+
+            @keyframes movebg{
+              0%{
+                background-position: 0 center;
+              }
+              100%{
+                background-position: -100% center;
+              }
+            }
+
+            @keyframes shake{
+              0%{
+                rotate: 0deg;
+              }
+              25%{
+                rotate: 10deg;
+              }
+              50%{
+                rotate: 0deg;
+              }
+              75%{
+                rotate: -10deg;
+              }
+              100%{
+                rotate: 0deg;
+              }
             }
         `}</style>
   </>
