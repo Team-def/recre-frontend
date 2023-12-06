@@ -10,6 +10,14 @@ import {
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
 import wait from "waait";
+import Box from '@mui/material/Box';
+import Backdrop from '@mui/material/Backdrop';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
 
 interface playerInfo {
   uuid: string;
@@ -31,12 +39,16 @@ const YoungHee = ({
   go,
   setGo,
   isStart,
+  leaveGame,
+  stopGame
 }: {
   socket: Socket;
   length: number;
   go: boolean;
   setGo: React.Dispatch<React.SetStateAction<boolean>>;
   isStart: boolean;
+  leaveGame: () => void;
+  stopGame: () => void;
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -64,6 +76,19 @@ const YoungHee = ({
       endtime: "",
     },
   ]);
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const actions = [
+    { icon: <ExitToAppIcon />, name: '게임 나가기', onclick: leaveGame},
+    { icon: <CancelIcon />, name: '우승자 마감', onclick: stopGame},
+    { icon: <CameraAltIcon />, name: '카메라-항공', onclick: cameraMove4},
+    { icon: <CameraAltIcon />, name: '카메라-측면', onclick: cameraMove3},
+    { icon: <CameraAltIcon />, name: '카메라-후면', onclick: cameraMove2},
+    { icon: <CameraAltIcon />, name: '카메라-정면', onclick: cameraMove1 },
+  ];
 
   class Player {
     plyerId: number;
@@ -466,7 +491,6 @@ const YoungHee = ({
       const div = document.createElement("div");
       div.className = "label";
       div.textContent = name;
-      div.setAttribute("ref", "labelRef");
       const label = new CSS2DObject(div);
       label.position.set(0, 1, 0);
       object.scene.add(label);
@@ -786,17 +810,44 @@ const YoungHee = ({
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      <div>
-        <button onClick={cameraMove1}>camera1</button>
-        <button onClick={cameraMove2}>camera2</button>
-        <button onClick={cameraMove3}>camera3</button>
-      </div>
+      <Box sx={{ height: 330, flexGrow: 1, zIndex:100 }}>
+      <Backdrop open={open} />
+      <SpeedDial
+        ariaLabel="SpeedDial tooltip example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<SpeedDialIcon />}
+        onClose={handleClose}
+        onOpen={handleOpen}
+        open={open}
+      >
+        {actions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={action.name}
+            tooltipOpen
+            onClick={()=>action.onclick()}
+          />
+        ))}
+      </SpeedDial>
+    </Box>
       <style jsx>{`
         #canvas {
           width: 100vw;
           height: 100vh;
           display: block;
           background-color: #437185;
+        }
+        .label{
+          width: 100px;
+          height: 30px;
+          background-color: rgba(255,255,255,0.7);
+          border-radius: 5px;
+          padding: 5px;
+          text-align: center;
+          color: black;
+          font-size: 20px;
+          font-weight: bold;
         }
       `}</style>
     </>
