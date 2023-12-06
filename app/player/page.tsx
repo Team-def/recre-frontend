@@ -236,6 +236,10 @@ export default function Player() {
                     room_id: parseInt(data[0]),
                     nickname: playerNickname,
                 });
+                let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+                if (!isSafari) {
+                    navigator.vibrate([1000,500,1000]);
+                }
             }
         }
     }, [shakeCount])

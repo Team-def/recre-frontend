@@ -135,7 +135,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             const elapsedTime = timeCheck(new Date(res.elapsed_time)); //게임 시간 계산
             setIsAlive(false);
             setModalHeader('죽었습니다!');
-            setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance>length?length:res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} <br></br> 등수 : {myrank} / {total_num}</div> );
+            setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance>length?length:res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} </div> );
             setOpen(true);
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
