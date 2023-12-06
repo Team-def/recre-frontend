@@ -81,8 +81,7 @@ const YoungHee = ({
       0.1,
       1000
     );
-    camera.position.z = 70;
-    camera.position.y = 20;
+    camera.position.set(0, 20, 70);
     myCamera.current = camera;
     setCamera(camera);
 
@@ -146,7 +145,7 @@ const YoungHee = ({
     // const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
     // const material = new THREE.MeshStandardMaterial({
     //   map: ground,
-    //   side: THREE.DoubleSide,
+    //   side: THREE.DoubleSide, 
     //   roughness: 0.5,
     //   metalness: 0.5,
     // });
@@ -185,8 +184,6 @@ const YoungHee = ({
 
     //================================================================================================
     //광원
-    // var ambientLight = new THREE.AmbientLight(0x404040);
-    // scene.add(ambientLight);
 
     var ambientLight = new THREE.AmbientLight(0xf0f0f0, 0.5); // 색상 지정
     scene.add(ambientLight);
@@ -222,6 +219,13 @@ const YoungHee = ({
     scene.add(light2);
     scene.add(light2.target);
 
+    const light3 = new THREE.DirectionalLight(color, intensity);
+    light3.position.set(0, 30, 100);
+    light3.rotateY(Math.PI);
+    scene.add(light3);
+    light3.target.position.set(0, 0, 140);
+    scene.add(light3.target);
+
     // const light3 = new THREE.SpotLight(color, 100, 100, Math.PI / 10, 0);
     // light3.position.set(90, 30, -40);
     // light3.rotateY(Math.PI / 2);
@@ -233,13 +237,18 @@ const YoungHee = ({
 
     var directionalLightHelper2 = new THREE.DirectionalLightHelper(light2, 5);
 
+    var directionalLightHelper3 = new THREE.DirectionalLightHelper(light3, 5);
+
+
     // var directionalLightHelper3 = new THREE.SpotLightHelper(light3, 5);
     scene.add(directionalLightHelper);
     scene.add(directionalLightHelper2);
+    scene.add(directionalLightHelper3);
     // scene.add(directionalLightHelper3);
 
     lightList.current.push(light1);
     lightList.current.push(light2);
+    lightList.current.push(light3);
 
     //================================================================================================
 
@@ -326,6 +335,9 @@ const YoungHee = ({
     });
 
     function animate() {
+      // wait(1000);
+      // console.log(myCamera.current?.position.x, myCamera.current?.position.y, myCamera.current?.position.z);
+
       requestAnimationFrame(animate);
 
       renderer.render(scene, camera);
@@ -352,8 +364,8 @@ const YoungHee = ({
         });
         if (myCamera.current) {
           const player = res.player_info[res.player_info.length - 1];
+          // if (player) myCamera.current.position.z = -player.distance + 70;
           // console.log("aaaaaa", player.distance, myCamera.current.position.z);
-          myCamera.current.position.z = -(player.distance )+ 70;
         }
       }
     });
@@ -361,7 +373,7 @@ const YoungHee = ({
 
   useEffect(() => {
     // alert('playerInfo')
-    console.log(playerInfo);
+    // console.log(playerInfo);
     let count = 0;
     playerInfo.forEach((player: playerInfo) => {
       count++;
@@ -378,7 +390,7 @@ const YoungHee = ({
     const loader = new GLTFLoader();
 
     loader.load("/blooper.glb", (object) => {
-      object.scene.scale.set(1, 1, 1);
+      object.scene.scale.set(1.5, 1.5, 1.5);
       const player = new Player(count, name, distance + 40);
       // setPlayerList([...playerList, player]);
       playerMap.current.set(id, player);
@@ -493,7 +505,7 @@ const YoungHee = ({
 
   //1번 오징어가 달림
   async function run(playerId: string, distance: number) {
-    console.log(playerMap.current.size);
+    // console.log(playerMap.current.size);
     let moveDistance = (120 / length) * distance;
     if (playerMap.current.has(playerId)) {
       // Add your code here
@@ -521,6 +533,24 @@ const YoungHee = ({
   async function test() {
     socket.emit("pre_player_status", {});
   }
+
+  async function cameraMove1() {
+    myCamera.current?.position.set(0, 20, 70);
+    myCamera.current?.lookAt(0, 20, 0)
+  }
+
+  async function cameraMove2() {
+    myCamera.current?.position.set(7.4, 18.4, -107.12);
+    myCamera.current?.lookAt(0, 0, 0)
+
+  }
+
+  async function cameraMove3() {
+    myCamera.current?.position.set(-112, 35, -3);
+    myCamera.current?.lookAt(0, 0, 0)
+  }
+
+  async function cameraMove4() {}
 
   // async function turnFront() {
   //   console.log("turnFront");
@@ -552,7 +582,11 @@ const YoungHee = ({
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      {/* <button onClick={addPlayer(1,"abc","hello", 1)}>test</button> */}
+      <div>
+        <button onClick={cameraMove1}>camera1</button>
+        <button onClick={cameraMove2}>camera2</button>
+        <button onClick={cameraMove3}>camera3</button>
+      </div>
       <style jsx>{`
         #canvas {
           width: 100vw;
