@@ -9,7 +9,9 @@ import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 import wait from "waait";
+import { isAbsolute } from "path";
 
 interface playerInfo {
   uuid: string;
@@ -65,10 +67,12 @@ const YoungHee = ({
     plyerId: number;
     name: string;
     position: number;
+    isAlive: number;
     constructor(plyerId: number, name: string, position: number) {
       this.plyerId = plyerId;
       this.name = name;
       this.position = position;
+      this.isAlive = 0;
     }
   }
 
@@ -145,7 +149,7 @@ const YoungHee = ({
     // const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
     // const material = new THREE.MeshStandardMaterial({
     //   map: ground,
-    //   side: THREE.DoubleSide, 
+    //   side: THREE.DoubleSide,
     //   roughness: 0.5,
     //   metalness: 0.5,
     // });
@@ -239,7 +243,6 @@ const YoungHee = ({
 
     var directionalLightHelper3 = new THREE.DirectionalLightHelper(light3, 5);
 
-
     // var directionalLightHelper3 = new THREE.SpotLightHelper(light3, 5);
     scene.add(directionalLightHelper);
     scene.add(directionalLightHelper2);
@@ -283,9 +286,13 @@ const YoungHee = ({
     //       });
     //     }
     //   );
+    
+    //================================================================================================
+    //텍스트 시도중, 아직 생성 안됨
     const fontLoader = new FontLoader();
     var text;
     fontLoader.load("fonts/helvetiker_regular.typeface.json", function (font) {
+      console.log("asdfasdfasdfasdf",font);
       const geometry = new TextGeometry("Hello three.js!", {
         font: font,
         size: 80,
@@ -303,6 +310,10 @@ const YoungHee = ({
       scene.add(text);
       renderer.render(scene, camera);
     });
+
+    // const text = new TextGeometry("SQUID GAME", );
+    // scene.add(text);
+    //================================================================================================
 
     loader.load("/youngHee/youngHee.glb", (object) => {
       object.scene.scale.set(1.5, 1.5, 1.5);
@@ -362,11 +373,23 @@ const YoungHee = ({
         alived.forEach((player: playerInfo) => {
           run(player.uuid as string, player.distance as number);
         });
-        if (myCamera.current) {
-          const player = res.player_info[res.player_info.length - 1];
-          // if (player) myCamera.current.position.z = -player.distance + 70;
-          // console.log("aaaaaa", player.distance, myCamera.current.position.z);
-        }
+
+        let dead = res.player_info.filter(
+          (player: playerInfo) => player.state === state.dead
+        );
+        dead.forEach((player: playerInfo) => {
+          if (playerMap.current.has(player.uuid)) {
+            const curPlayer = playerMap.current.get(player.uuid);
+            if (player) {
+              if (curPlayer && curPlayer.isAlive === 0) curPlayer.isAlive = 1;
+            }
+          }
+        });
+        // if (myCamera.current) {
+        //   // const player = res.player_info[res.player_info.length - 1];
+        //   // if (player) myCamera.current.position.z = -player.distance + 70;
+        //   // console.log("aaaaaa", player.distance, myCamera.current.position.z);
+        // }
       }
     });
   }, []);
@@ -390,7 +413,7 @@ const YoungHee = ({
     const loader = new GLTFLoader();
 
     loader.load("/blooper.glb", (object) => {
-      object.scene.scale.set(1.5, 1.5, 1.5);
+      object.scene.scale.set(1.3, 1.3, 1.3);
       const player = new Player(count, name, distance + 40);
       // setPlayerList([...playerList, player]);
       playerMap.current.set(id, player);
@@ -399,9 +422,9 @@ const YoungHee = ({
 
       setPlayerCount((prev) => prev + 1);
       if (count % 2 === 0) {
-        object.scene.position.set(-count * 1, -0.5, 40);
+        object.scene.position.set(-count * 1.3, -0.5, 40);
       } else {
-        object.scene.position.set(count * 1, -0.5, 40);
+        object.scene.position.set(count * 1.3, -0.5, 40);
       }
       scene?.add(object.scene);
       object.scene.rotateY(Math.PI);
@@ -422,6 +445,7 @@ const YoungHee = ({
       const clip = THREE.AnimationClip.findByName(clips, "BlooperAction");
       const action = mixer.clipAction(clip);
       action.play();
+      let deadCnt = 0;
 
       async function animate() {
         // await wait(1000);
@@ -438,10 +462,22 @@ const YoungHee = ({
           // console.log(player.position, object.scene.position.z)
           if (player.position < object.scene.position.z) {
             //오징어 이동 속도 조절
-            object.scene.position.z -= 0.4;
+            object.scene.position.z -= 0.6;
           }
           // 오징어 애니메이션 속도 조절
-          mixer?.update(1 / 30);
+          if (player.isAlive === 0) {
+            mixer.update(1 / 30);
+          } else if (player.isAlive === 1) {
+            mixer.setTime(0);
+            deadCnt++;
+            if (deadCnt === 30) {
+              player.isAlive = 2;
+            } else {
+                object.scene.rotateX(Math.PI / 2 / 30);
+                object.scene.position.y -= 0.1;
+            }
+          } else {
+          }
           // if(camera)
           //   camera.position.z -= 0.1;
         }
@@ -536,18 +572,17 @@ const YoungHee = ({
 
   async function cameraMove1() {
     myCamera.current?.position.set(0, 20, 70);
-    myCamera.current?.lookAt(0, 20, 0)
+    myCamera.current?.lookAt(0, 20, 0);
   }
 
   async function cameraMove2() {
     myCamera.current?.position.set(7.4, 18.4, -107.12);
-    myCamera.current?.lookAt(0, 0, 0)
-
+    myCamera.current?.lookAt(0, 0, 0);
   }
 
   async function cameraMove3() {
     myCamera.current?.position.set(-112, 35, -3);
-    myCamera.current?.lookAt(0, 0, 0)
+    myCamera.current?.lookAt(0, 0, 0);
   }
 
   async function cameraMove4() {}
