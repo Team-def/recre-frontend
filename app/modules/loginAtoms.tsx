@@ -1,7 +1,7 @@
 import { atom } from "jotai"
 import { atomWithStorage } from "jotai/utils"
 
-export const loginAtom = atomWithStorage("login", true);
+export const loginAtom = atomWithStorage("login", false);
 
 export const setLoginAtom = atom(
     null,
