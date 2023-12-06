@@ -92,7 +92,7 @@ const YoungHee = ({
 
   useEffect(() => {
     // 스페이바 스코를 이벤트 비활성화
-    window.addEventListener('keydown', handleSpacebarPress);
+    window.addEventListener("keydown", handleSpacebarPress);
     const scene = new THREE.Scene();
     setScene(scene);
     const camera = new THREE.PerspectiveCamera(
@@ -124,7 +124,7 @@ const YoungHee = ({
     labelRenderer.domElement.style.position = "absolute";
     labelRenderer.domElement.style.top = "0px";
     document.body.appendChild(labelRenderer.domElement);
-    
+
     //================================================================================================
     //격자, 편의 도구
 
@@ -421,12 +421,9 @@ const YoungHee = ({
     });
 
     return () => {
-      document.body.removeChild(labelRenderer.domElement)
-      if(scene)
-        scene.clear();
-      if(renderer)
-        renderer.dispose();
-
+      document.body.removeChild(labelRenderer.domElement);
+      if (scene) scene.clear();
+      if (renderer) renderer.dispose();
     };
   }, []);
 
@@ -473,7 +470,7 @@ const YoungHee = ({
       const label = new CSS2DObject(div);
       label.position.set(0, 1, 0);
       object.scene.add(label);
-      
+
       //그림자 생성
       object.scene.traverse(function (child) {
         if (child instanceof THREE.Mesh) {
@@ -535,7 +532,7 @@ const YoungHee = ({
         }
       }
       animate();
-          });
+    });
   }
 
   useEffect(() => {
@@ -639,6 +636,9 @@ const YoungHee = ({
           return;
         case "3":
           cameraMove3();
+          return;
+        case "4":
+          cameraMove4();
           return;
         case "a":
           moveVector.add(
@@ -750,7 +750,11 @@ const YoungHee = ({
     myCamera.current?.lookAt(0, 0, 0);
   }
 
-  async function cameraMove4() {}
+  async function cameraMove4() {
+    myCamera.current?.position.set(0, 173, 0);
+    myCamera.current?.rotation.set(0, 0, 0);
+    myCamera.current?.lookAt(0, 0, 0);
+  }
 
   // async function turnFront() {
   //   console.log("turnFront");
