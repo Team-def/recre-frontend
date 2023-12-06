@@ -258,10 +258,11 @@ export default function Player() {
         }
     }
     //준비 취소
-    const cancleReady = () => {
+    const cancelReady = () => {
         socket.current.emit("leave_game", {
         });
         setShakeCount((prev) => prev = 0);
+        setIsReadySent(false);
         setReady(false);
     }
 
@@ -318,7 +319,7 @@ export default function Player() {
                             disabled={ready}
                             placeholder='닉네임을 입력해주세요.'
                         />
-                        <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancleReady : readyToPlay} disabled={isGateClosed}>
+                        <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancelReady : readyToPlay} disabled={isGateClosed}>
                             {ready ? "준비 취소!" : "준비 완료!"}
                         </Button></div>
                         <MyModal open={modalOpen} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
