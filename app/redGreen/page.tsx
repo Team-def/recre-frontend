@@ -14,6 +14,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import YoungHee from '@/component/youngHee';
 
 export default function RedGreen({socket}: {socket : Socket}) {
     const [userInfo,] = useAtom(userInfoAtoms)
@@ -27,21 +28,19 @@ export default function RedGreen({socket}: {socket : Socket}) {
     const [isStart,setIsStart] = useState<boolean>(false);
     const [percentVar, setPercentVar] = useState<number>(0);
     const [startTime, setStartTime] = useState<Date>(new Date()); //게임 시작시에 시간 기록
-    const [go,setGo] = useState(false);
-    //플레이어의 상태를 나타내는 열거형
     enum state {
       alive = 'ALIVE',
       dead = 'DEAD',
       finish = 'FINISH',
     }
 
-    const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
-      name: '',
-      distance: 0,
-      state: state.alive,
-      elapsed_time: 0,
-    }]);
-    
+    // const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([{
+    //   name: '',
+    //   distance: 0,
+    //   state: state.alive,
+    //   endtime: '',
+    // }]);
+    const [go,setGo] = useState(false);
 
     interface playerInfo {
       name: string,
@@ -51,13 +50,13 @@ export default function RedGreen({socket}: {socket : Socket}) {
   }
 
     useEffect(() => {
-        socket.on('players_status', (res) => {
+        // socket.on('players_status', (res) => {
 
-          console.log(res.player_info)
-          if(res.player_info){
-            setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
-          }
-        });
+        //   console.log(res.player_info)
+        //   if(res.player_info){
+        //     setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
+        //   }
+        // });
 
         setModalHeader('곧 게임이 시작됩니다!');
         setModalContent(<CounterModal/>);
@@ -73,8 +72,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
             setPercentVar(0.625);
             break;
         }
-
-
+        
         socket.on('game_finished', (res) => {
           setOpenModal(true);
           setModalHeader('우승자 목록');
@@ -116,24 +114,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
           })
           setIsReady(false)
           console.log('game start')
+          setStartTime(new Date());
         }, 3000)
       }
     },[isReady])
 
-
-    useEffect(() => {
-      if(isStart){
-        if(go){
-          socket.emit('resume', {
-            result : go
-          });
-        } else {
-          socket.emit('stop', {
-            result : go
-          });
-        }
-      }
-    },[go])
 
     const handleBeforeUnload = () => {
         socket.emit('end_game', {
@@ -241,13 +226,12 @@ export default function RedGreen({socket}: {socket : Socket}) {
           </div>
         )
       }
-
-      const colorArr = ['red', 'green', 'blue', 'yellow', 'purple', 'orange', 'pink', 'brown', 'black', 'magenta', 'cyan', 'lime'];
     
       return (
         <>
           <div className='redGreenContainer'>
-            <div>
+          
+            {/* <div>
               <div className='signalDiv' style={{backgroundColor:go?'green':'red'}} onClick={()=>setGo(!go)}></div>
             </div>
             <div className='gameContainer' style={{borderLeft:`50px solid ${go?'green':'red'}`, borderRight:`50px solid ${go?'green':'red'}`
@@ -262,7 +246,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
                   </div>
                 )
               })}
-            </div>
+            </div> */}
+            <YoungHee socket={socket as Socket} length = {gameInfo[1] as number} go = {go as boolean} setGo = {setGo} isStart = {isStart as boolean}/>
             <div className='redGreenBtns'>
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
