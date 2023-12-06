@@ -56,11 +56,11 @@ export default function QR() {
     const [anchorEl, setAnchorEl] = useAtom(anchorElAtom);
 
     useEffect(() => {
-        if (!isLogin) {
-            // console.log(isLogin)
-            alert('로그인이 필요합니다.')
-            router.push("/")
-        }
+        // if (!isLogin) {
+        //     // console.log(isLogin)
+        //     alert('로그인이 필요합니다.')
+        //     router.push("/")
+        // }
 
         switch (JSON.parse(localStorage.getItem('game') || 'null')[0]) {
             case '그림 맞추기':
