@@ -247,7 +247,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 )
               })}
             </div> */}
-            <YoungHee socket={socket as Socket} length = {gameInfo[1] as number} go = {go as boolean} setGo = {setGo} isStart = {isStart as boolean}/>
+            <YoungHee socket={socket as Socket} length = {gameInfo[1] as number} go = {go as boolean} setGo = {setGo} isStart = {isStart as boolean} leaveGame={leaveGame} stopGame={stopGame}/>
             <div className='redGreenBtns'>
             <Button onClick={()=>{leaveGame()}}>게임 나가기</Button>
             <Button onClick={()=>{stopGame()}}>우승자 마감</Button>
