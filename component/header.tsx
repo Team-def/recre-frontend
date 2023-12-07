@@ -35,7 +35,8 @@ export default function Header() {
     const router = useRouter();
     const cookies = useCookies();
     const currentPath = usePathname()
-    const hideHeader = currentPath === '/player' ? true : false
+    const notNow = ['/player', '/gamePage']
+    const hideHeader = notNow.includes(currentPath) ? true : false
     const isAnswer = currentPath === '/catchAnswer' ? true : false
 
     useEffect(() => {
