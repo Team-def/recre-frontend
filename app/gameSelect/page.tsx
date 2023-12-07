@@ -242,7 +242,7 @@ export default function GameSelect() {
 </FormControlField></>:''}
                 </div>
             </div>
-            <Button variant='outlined' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+            <Button variant='contained' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
         </div>
         <style jsx>{`
             .gameSelectContainer{
