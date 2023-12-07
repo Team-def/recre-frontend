@@ -127,6 +127,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             setModalHeader('통과!');
             setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
             setOpen(true);
+            navigator.vibrate([1000]);
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
@@ -192,7 +193,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                     <Image src="/walker.png" alt="walker" width={100} height={100} />
                 </div>
             </div>
-          <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
+          <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => {}} myref={null}/>
         </div>
         <style jsx>{`
             .outline-player-page-green {
