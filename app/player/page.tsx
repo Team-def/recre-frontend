@@ -252,7 +252,7 @@ export default function Player() {
                 <div className='readyModalHeader'>흔들어서 준비하기! </div>
                 <div className='readyModalContent'>호스트가 준비를 완료하면 게임이 시작됩니다.</div>
                 <div className='readyModalCount'> {shakeCount} / 10 </div>
-                <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button>
+                {/* <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button> */}
             </div>
         )
         }
