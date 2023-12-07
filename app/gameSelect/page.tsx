@@ -38,6 +38,7 @@ export default function GameSelect() {
     const containerRef = useRef<HTMLDivElement>(null);
     const circleRef = useRef<HTMLDivElement>(null);
     const [addClass, setAddClass] = useState(false);
+    const titleRef = useRef<HTMLHeadingElement>(null);
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -88,19 +89,22 @@ export default function GameSelect() {
         }
         if (gameInfo[0] === game) {
             setGameInfo(["", gameInfo[1]]);
-            if(circleRef.current && containerRef.current){
+            if(circleRef.current && containerRef.current && titleRef.current){
                 containerRef.current.style.setProperty('background-color', '#f8f8f8')
                 circleRef.current.style.setProperty('background-color', '#f8f8f8')
+                titleRef.current.style.setProperty('color', 'black')
             }
         } else {
             setGameInfo([game, gameInfo[1]]);
-            if(circleRef.current && containerRef.current){
+            if(circleRef.current && containerRef.current  && titleRef.current){
                 if(game === '무궁화 꽃이 피었습니다'){
-                    containerRef.current.style.setProperty('background-color', 'rgb(189, 228, 255)')
-                    circleRef.current.style.setProperty('background-color', 'rgb(189, 228, 255)')
+                    containerRef.current.style.setProperty('background-color', 'orange')
+                    circleRef.current.style.setProperty('background-color', 'orange')
+                    titleRef.current.style.setProperty('color', 'white')
                 } else if(game === '그림 맞추기'){
                     containerRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
                     circleRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
+                    titleRef.current.style.setProperty('color', 'white')
                 }
             }
         }
@@ -139,7 +143,7 @@ export default function GameSelect() {
     return (<>
         <div className='gameSelectContainer' ref={containerRef}>
         <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
-            <h1 className='gameSelectLogo'>게임 선택</h1>
+            <h1 className='gameSelectLogo' ref={titleRef}>게임 선택</h1>
             <div>
                 <Box sx={{ width: '100%' }}>
                     <Grid container spacing={12}>{/* xs는 12가 최대 */}
@@ -242,7 +246,7 @@ export default function GameSelect() {
                 box-shadow: 0 0 10px rgba(0,0,0,0.5);
                 border: 5px solid transparent;
                 overflow: hidden;
-                background-color: transparent;
+                background-color: white;
             }
             .gameDiv:hover{
                 scale: 1.05;
