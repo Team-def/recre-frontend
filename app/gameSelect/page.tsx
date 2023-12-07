@@ -18,6 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
+import { grey } from '@mui/material/colors';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -140,6 +141,42 @@ export default function GameSelect() {
 
     const gameList: Game[] = [drawGame, greenLightGame, jumpRope]
 
+    const ValidationTextField = styled(TextField)({
+        '& input:valid + fieldset': {
+          borderColor: '#E0E3E7',
+          borderWidth: 3,
+        },
+        '& input:invalid + fieldset': {
+          borderColor: 'red',
+          borderWidth: 3,
+        },
+        '& input:valid:hover + fieldset': {
+            borderColor: '#4073ff',
+            },
+        '& input:valid:focus + fieldset': {
+            borderWidth: 3,
+          padding: '4px !important', // override inline-style
+        },
+      });
+
+      const FormControlField = styled(FormControl)({
+        '& input:valid + fieldset': {
+          borderColor: '#E0E3E7',
+          borderWidth: 3,
+        },
+        '& input:invalid + fieldset': {
+          borderColor: 'red',
+          borderWidth: 3,
+        },
+        '& input:valid:hover + fieldset': {
+            borderColor: '#4073ff',
+            },
+        '& input:valid:focus + fieldset': {
+            borderWidth: 3,
+          padding: '4px !important', // override inline-style
+        },
+      });
+
     return (<>
         <div className='gameSelectContainer' ref={containerRef}>
         <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
@@ -165,7 +202,7 @@ export default function GameSelect() {
             <div className='gameInfoDiv'>
                 <div className='input_alert'>
                     {(gameInfo[0] === '' || gameInfo[0] === null)?'':
-                    <TextField
+                    <ValidationTextField
                         id="outlined-number"
                         label="인원 수"
                         placeholder='인원 수를 입력해주세요'
@@ -175,8 +212,9 @@ export default function GameSelect() {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        color='primary'
                     />}{gameInfo[0] === '무궁화 꽃이 피었습니다'?<>
-                    <TextField
+                    <ValidationTextField
                         id="outlined-number"
                         label="우승자"
                         placeholder='우승자 수를 입력해주세요'
@@ -186,8 +224,9 @@ export default function GameSelect() {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        color='primary'
                     />
-                    <FormControl >
+                    <FormControlField >
   <InputLabel id="demo-simple-select-label">거리</InputLabel>
   <Select
     labelId="demo-simple-select-label"
@@ -200,7 +239,7 @@ export default function GameSelect() {
     <MenuItem value={100}>중간</MenuItem>
     <MenuItem value={160}>길게</MenuItem>
   </Select>
-</FormControl></>:''}
+</FormControlField></>:''}
                 </div>
             </div>
             <Button variant='outlined' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
