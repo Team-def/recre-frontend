@@ -102,8 +102,8 @@ export default function GameSelect() {
                     circleRef.current.style.setProperty('background-color', 'orange')
                     titleRef.current.style.setProperty('color', 'white')
                 } else if(game === '그림 맞추기'){
-                    containerRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
-                    circleRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
+                    containerRef.current.style.setProperty('background-color', 'rgb(189, 149, 230)')
+                    circleRef.current.style.setProperty('background-color', 'rgb(189, 149, 230)')
                     titleRef.current.style.setProperty('color', 'white')
                 }
             }
