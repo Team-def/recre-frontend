@@ -487,10 +487,22 @@ const YoungHee = ({
 
       // 플레이어 이름
       const div = document.createElement("div");
-      div.className = "label";
+
+      div.className = "squidlabel";
+      div.style.color = "black";
+      div.style.width= "100px";
+      div.style.height = "30px";
+      div.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+      div.style.borderRadius = "5px";
+      div.style.padding = "5px";
+      div.style.textAlign = "center";
+      div.style.color = "black";
+      div.style.fontSize = "20px";
+      div.style.textShadow = "1px 1px 1px rgb(0,0,0,0.5)";
       div.textContent = name;
+
       const label = new CSS2DObject(div);
-      label.position.set(0, 1, 0);
+      label.position.set(0, 4.5, 0);
       object.scene.add(label);
 
       //그림자 생성
@@ -767,17 +779,6 @@ const YoungHee = ({
           height: 100vh;
           display: block;
           background-color: #437185;
-        }
-        .label {
-          width: 100px;
-          height: 30px;
-          background-color: rgba(255, 255, 255, 0.7);
-          border-radius: 5px;
-          padding: 5px;
-          text-align: center;
-          color: black;
-          font-size: 20px;
-          font-weight: bold;
         }
       `}</style>
     </>
