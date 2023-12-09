@@ -107,7 +107,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 sx={{
                   width: '100%',
                   maxWidth: 360,
-                  bgcolor: 'background.paper',
+                  bgcolor: '#f2f2f2',
                   position: 'relative',
                   overflow: 'auto',
                   maxHeight: 300,
@@ -117,7 +117,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
               >{res.player_info.map((player : all_player, index : number)=>{
                 const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance>length?length:player.distance;
-                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
+                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'#f2f2f2'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
             })}</List>);
         });
         
