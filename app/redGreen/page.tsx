@@ -202,22 +202,30 @@ export default function RedGreen({socket}: {socket : Socket}) {
             <div className="winnerInfo">
               <div className="modalText">
               <List
-      sx={{
-        width: '100%',
-        maxWidth: 360,
-        bgcolor: 'background.paper',
-        position: 'relative',
-        overflow: 'auto',
-        maxHeight: 300,
-        '& ul': { padding: 0 },
-      }}
-      subheader={<li />}
-    >
+                sx={{
+                  width: '100%',
+                  maxWidth: 360,
+                  bgcolor: '#f2f2f2',
+                  position: 'relative',
+                  overflow: 'auto',
+                  maxHeight: 300,
+                  '& ul': { padding: 0 },
+                }}
+                subheader={<li />}
+              >
                 {player_info.map((player : playerInfo, index : number)=>{
                 const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
-                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
+                <ListItem key={`item-${index}`}>
+                  <div style={{
+                  backgroundColor: index+1<=gameInfo[0]?'#ffd400':'#f2f2f2',
+                  borderRadius: "5px",
+                  fontWeight: index+1<=gameInfo[0]?900:400,
+                  color: index+1<=gameInfo[0]?"black":"gray"
+                  }}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}
+                  </div>
+                </ListItem>)
             })}
             </List>
               </div>

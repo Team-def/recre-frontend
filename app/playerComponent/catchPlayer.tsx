@@ -89,6 +89,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             setModalHeader('오답입니다!');
             setModalContent(<div>정답이 아닙니다.</div>);
             setOpen(true);
+            setTimeout(()=>setOpen(false), 2000);
         })
 
 

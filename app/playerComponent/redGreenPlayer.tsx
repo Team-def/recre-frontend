@@ -107,7 +107,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 sx={{
                   width: '100%',
                   maxWidth: 360,
-                  bgcolor: 'background.paper',
+                  bgcolor: '#f2f2f2',
                   position: 'relative',
                   overflow: 'auto',
                   maxHeight: 300,
@@ -117,7 +117,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
               >{res.player_info.map((player : all_player, index : number)=>{
                 const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance>length?length:player.distance;
-                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
+                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'#f2f2f2'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
             })}</List>);
         });
         
@@ -127,6 +127,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             setModalHeader('통과!');
             setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
             setOpen(true);
+            let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (!isSafari) {
+                navigator.vibrate([1000]);
+            }
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
@@ -137,6 +141,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             setModalHeader('죽었습니다!');
             setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance>length?length:res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} </div> );
             setOpen(true);
+            let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (!isSafari) {
+                navigator.vibrate([1000]);
+            }
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
 
@@ -185,14 +193,14 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             <div className="speech-bubble-player">
                 <h1>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
                 <h1>나의 등수 : {myrank} / {total_num} 등</h1>
-                {/* <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button> */}
+                <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
                 <div className="icon" style={{left: `${progress * 0.8}%`}}>
                     <Image src="/walker.png" alt="walker" width={100} height={100} />
                 </div>
             </div>
-          <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => { }} myref={null}/>
+          <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={() => {}} myref={null}/>
         </div>
         <style jsx>{`
             .outline-player-page-green {
@@ -230,6 +238,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 border-bottom: 20px solid black;
                 justify-content: space-evenly;
                 align-items: center;
+                background-color: #faf9f6;
             }
             .minimap-player {
                 width: 100%;
@@ -240,7 +249,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 justify-content: space-evenly;
                 align-items: center;
                 border-bottom: 5px solid #5C4033;
-
+                background-color: #faf9f6;
             }
             .minimap-player-dead {
                 width: 100%;
