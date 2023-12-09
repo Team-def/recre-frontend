@@ -245,7 +245,7 @@ const YoungHee = ({
       opacity: 0.5,
     });
     const touchdown = new THREE.Mesh(touchdownGeometry, touchdownMaterial);
-    touchdown.position.set(0, -3.8, -85);
+    touchdown.position.set(0, -3.8, -80);
     scene.add(touchdown);
 
 
