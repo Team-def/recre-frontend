@@ -107,9 +107,31 @@ const YoungHee = ({
     }
   };
 
+
+  function onWindowResize(this: Window, ev: UIEvent) {
+    if (myCamera.current) {
+      myCamera.current.aspect = window.innerWidth / window.innerHeight;
+      myCamera.current.updateProjectionMatrix();
+    }
+    if (rendererRef.current) {
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+      rendererRef.current.render(
+        useRefScene.current as THREE.Scene,
+        myCamera.current as THREE.Camera
+      );
+    }
+    labelRenderer.current.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.current.render(
+      useRefScene.current as THREE.Scene,
+      myCamera.current as THREE.Camera
+    );
+  }
+
+
   useEffect(() => {
     // 스페이바 스코를 이벤트 비활성화
     window.addEventListener("keydown", handleSpacebarPress);
+    window.addEventListener("resize", onWindowResize);
     const scene = new THREE.Scene();
     // setScene(scene);
     useRefScene.current = scene;
@@ -478,10 +500,22 @@ const YoungHee = ({
 
       // 플레이어 이름
       const div = document.createElement("div");
-      div.className = "label";
+
+      div.className = "squidlabel";
+      div.style.color = "black";
+      div.style.width= "100px";
+      div.style.height = "30px";
+      div.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+      div.style.borderRadius = "5px";
+      div.style.padding = "5px";
+      div.style.textAlign = "center";
+      div.style.color = "black";
+      div.style.fontSize = "20px";
+      div.style.textShadow = "1px 1px 1px rgb(0,0,0,0.5)";
       div.textContent = name;
+
       const label = new CSS2DObject(div);
-      label.position.set(0, 1, 0);
+      label.position.set(0, 4.5, 0);
       object.scene.add(label);
 
       //그림자 생성
@@ -505,19 +539,13 @@ const YoungHee = ({
   }
 
   useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener("mousedown", turnBack);
-      canvasRef.current.addEventListener("mouseup", turnFront);
-      // canvasRef.current.addEventListener('mouseleave', exitPaint);
-    }
+    labelRenderer.current.domElement.addEventListener("mousedown", turnBack);
+    labelRenderer.current.domElement.addEventListener("mouseup", turnFront);
 
     return () => {
-      if (canvasRef.current) {
         // Unmount 시 이벤트 리스터 제거
-        canvasRef.current.removeEventListener("mousedown", turnBack);
-        canvasRef.current.removeEventListener("mouseup", turnFront);
-        // canvasRef.current.removeEventListener('mouseleave', exitPaint);
-      }
+        labelRenderer.current.domElement.removeEventListener("mousedown", turnBack);
+        labelRenderer.current.domElement.removeEventListener("mouseup", turnFront);
     };
   }, [turnBack, turnFront]);
 
@@ -764,17 +792,6 @@ const YoungHee = ({
           height: 100vh;
           display: block;
           background-color: #437185;
-        }
-        .label {
-          width: 100px;
-          height: 30px;
-          background-color: rgba(255, 255, 255, 0.7);
-          border-radius: 5px;
-          padding: 5px;
-          text-align: center;
-          color: black;
-          font-size: 20px;
-          font-weight: bold;
         }
       `}</style>
     </>
