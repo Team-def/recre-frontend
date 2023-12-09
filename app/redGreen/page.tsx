@@ -201,7 +201,52 @@ export default function RedGreen({socket}: {socket : Socket}) {
           <div>
             <div className="winnerInfo">
               <div className="modalText">
-              <List
+              <table
+                style={{
+                  width: '100%',
+                  maxWidth: 360,
+                  borderCollapse: 'collapse',
+                  backgroundColor: '#f2f2f2',
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th>순위</th>
+                    <th>이름</th>
+                    <th>거리</th>
+                    <th>시간</th>
+                    <th>상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {player_info.map((player: playerInfo, index: number) => {
+                    const elapsedTime = timeCheck(new Date(player.elapsed_time));
+                    const playerFixedDistance =
+                      player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
+
+                    return (
+                      <tr key={`item-${index}`}>
+                        <td
+                          style={{
+                            backgroundColor:
+                              index + 1 <= gameInfo[0] ? '#ffd400' : '#f2f2f2',
+                            borderRadius: '5px',
+                            fontWeight: index + 1 <= gameInfo[0] ? 900 : 400,
+                            color: index + 1 <= gameInfo[0] ? 'black' : 'gray',
+                          }}
+                        >
+                          {index + 1}등
+                        </td>
+                        <td>{player.name}</td>
+                        <td>{playerFixedDistance}</td>
+                        <td>{elapsedTime ?? ''}</td>
+                        <td>{player.state}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {/* <List
                 sx={{
                   width: '100%',
                   maxWidth: 360,
@@ -227,7 +272,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
                   </div>
                 </ListItem>)
             })}
-            </List>
+            </List> */}
               </div>
             </div>
             <Button onClick={leaveGame}>게임 끝내기</Button>
