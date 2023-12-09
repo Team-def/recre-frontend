@@ -236,6 +236,19 @@ const YoungHee = ({
       });
     });
 
+    // 결승선 
+    const touchdownGeometry = new THREE.BoxGeometry(250, 10, 5);
+    const touchdownMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const touchdown = new THREE.Mesh(touchdownGeometry, touchdownMaterial);
+    touchdown.position.set(0, -3.8, -80);
+    scene.add(touchdown);
+
+
     //================================================================================================
     //광원
 
