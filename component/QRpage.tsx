@@ -34,7 +34,7 @@ const QRpage = ({gamePageUrlAns, gamePageUrl, nowPeople, total, startGame}:{game
 
                 <div className='gameInfo-start-button'>
                     <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
-                    <Button onClick={startGame}>test</Button>
+                    {/* <Button onClick={startGame}>test</Button> */}
                     {/* <Button onClick={testGame}>TestPlay</Button> */}
                     {/* <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button> */}
                 </div>
