@@ -103,22 +103,68 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         socket.on('game_finished', (res) => {
             setModalHeader('게임 끝!');
             setOpen(true);
-            setModalContent(<List
-                sx={{
-                  width: '100%',
-                  maxWidth: 360,
-                  bgcolor: '#f2f2f2',
-                  position: 'relative',
-                  overflow: 'auto',
-                  maxHeight: 300,
-                  '& ul': { padding: 0 },
-                }}
-                subheader={<li />}
-              >{res.player_info.map((player : all_player, index : number)=>{
-                const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
-                const playerFixedDistance = player.distance>length?length:player.distance;
-                return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'#f2f2f2'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
-            })}</List>);
+            setModalContent(
+                <table
+                    style={{
+                        width: '100%',
+                        maxWidth: 360,
+                        borderCollapse: 'collapse',
+                        backgroundColor: '#f2f2f2',
+                    }}
+                    >
+                    <thead>
+                        <tr>
+                        <th>순위</th>
+                        <th>이름</th>
+                        <th>거리</th>
+                        <th>시간</th>
+                        <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {res.player_info.map((player: all_player, index: number) => {
+                        const elapsedTime = timeCheck(new Date(player.elapsed_time));
+                        const playerFixedDistance =
+                            player.distance > length ? length : player.distance;
+
+                        return (
+                            <tr key={`item-${index}`}>
+                            <td
+                                style={{
+                                backgroundColor:
+                                    player.name === localStorage.getItem('nickname')
+                                    ? '#ffd400'
+                                    : '#f2f2f2',
+                                }}
+                            >
+                                {index + 1}등
+                            </td>
+                            <td>{player.name}</td>
+                            <td>{playerFixedDistance}</td>
+                            <td>{elapsedTime ?? ''}</td>
+                            <td>{player.state}</td>
+                            </tr>
+                        );
+                        })}
+                    </tbody>
+                    </table>
+            // <List
+            //     sx={{
+            //       width: '100%',
+            //       maxWidth: 360,
+            //       bgcolor: '#f2f2f2',
+            //       position: 'relative',
+            //       overflow: 'auto',
+            //       maxHeight: 300,
+            //       '& ul': { padding: 0 },
+            //     }}
+            //     subheader={<li />}
+            //   >{res.player_info.map((player : all_player, index : number)=>{
+            //     const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
+            //     const playerFixedDistance = player.distance>length?length:player.distance;
+            //     return <ListItem key={`item-${index}`}><div style={{backgroundColor: player.name === localStorage.getItem('nickname')?"#ffd400":'#f2f2f2'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>
+            // })}</List>
+            );
         });
         
         //통과

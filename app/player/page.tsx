@@ -200,8 +200,8 @@ export default function Player() {
         if (playerNickname === null || playerNickname === '') {
             alert('닉네임을 입력해주세요.');
             return;
-        } else if (playerNickname.length > 10) {
-            alert('닉네임은 10자 미만으로 입력해주세요.');
+        } else if (playerNickname.length > 5) {
+            alert('닉네임은 5글자 이하로 입력해주세요.');
             return;
         }
 
