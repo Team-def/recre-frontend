@@ -10,7 +10,7 @@ import { answerAtom } from '../modules/answerAtom';
 import { Socket } from 'socket.io-client';
 import { tokenAtoms } from '../modules/tokenAtoms';
 import Popover from '@mui/material/Popover';
-import { createTheme } from '@mui/material/styles';
+import Particle from '@/component/Particle';
 
 interface recievedAns {
   ans: string;
@@ -22,6 +22,7 @@ interface Coordinate {
   x: number;
   y: number;
 };
+
 
 export default function Catch({ socket }: { socket: Socket }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -44,6 +45,7 @@ export default function Catch({ socket }: { socket: Socket }) {
   });
   const [, setAnsAtom] = useAtom(answerAtom);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const particleRef = useRef<any>(null);
 
   useEffect(() => {
     socket.on('correct', (res) => {
@@ -290,6 +292,7 @@ export default function Catch({ socket }: { socket: Socket }) {
 
   return (
     <>
+      <Particle particleRef={particleRef.current}/>
       <div className="canvasContainer">
         <div className="ButtonContainer">
             <Button size='small' variant="contained" onClick={() => setIsEraser(!isEraser)}>
@@ -341,7 +344,7 @@ export default function Catch({ socket }: { socket: Socket }) {
         <div className='canvasDiv'>
           <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas" />
         </div>
-        <Button onClick={() => { leaveGame() }}>나가기</Button>
+        <Button variant='contained' color='error' onClick={() => { leaveGame() }}>나가기</Button>
       </div>
       <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick} />
       <MyModal open={isFinished} modalHeader={`게임 종료`} modalContent={<FinishedModal />} closeFunc={() => { }} myref={null} />
@@ -354,6 +357,26 @@ export default function Catch({ socket }: { socket: Socket }) {
           flex-direction: column;
           white-space: nowrap;
           text-overflow: ellipsis;
+          // animation: animateBg 20s ease infinite;
+          gap: 20px;
+          position: relative;
+        }
+        @keyframes animateBg {
+          0% {
+            background-color: #9b59b6;
+          }
+          25% {
+            background-color: #3498db;
+          }
+          50% {
+            background-color: #16a085;
+          }
+          75% {
+            background-color: #3498db;
+          }
+          100% {
+            background-color: #9b59b6;
+          }
         }
         .canvasDiv {
           width: 500px;
@@ -402,6 +425,7 @@ export default function Catch({ socket }: { socket: Socket }) {
         }
         canvas {
           background-color: white;
+          z-index: 1;
         }
         .ButtonContainer {
           width: 500px;
@@ -410,7 +434,6 @@ export default function Catch({ socket }: { socket: Socket }) {
           flex-direction: row;
           align-items: center;
           justify-content: space-around;
-          margin-bottom: 20px;
           border: 1px solid gray;
           border-radius: 10px;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -442,6 +465,9 @@ export default function Catch({ socket }: { socket: Socket }) {
         .snack-bar {
           width: 200%;
           height: 200%;
+        }
+        #tsparticles{
+          z-index: -5;
         }
       `}</style>
     </>
