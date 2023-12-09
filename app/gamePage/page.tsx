@@ -62,6 +62,8 @@ export default function QR() {
         //     router.push("/")
         // }
 
+        setIsStart(false)
+
         switch (JSON.parse(localStorage.getItem('game') || 'null')[0]) {
             case '그림 맞추기':
                 setNameSpace('catch')
