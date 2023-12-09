@@ -19,7 +19,7 @@ export interface ModalProps {
 export default function Footer() {
     const [open, setOpen] = useState<ModalProps['isOpen']>(false);
     const currentPath = usePathname()
-    const notNow = ['/player','/catchAnswer', '/gamePage' ]
+    const notNow = ['/gameSelect','/player','/catchAnswer', '/gamePage' ]
     const hideHeader = notNow.includes(currentPath) ? true : false
 
     const handleClose = () => { setOpen(false); }
