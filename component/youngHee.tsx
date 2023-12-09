@@ -67,15 +67,7 @@ const YoungHee = ({
   const isRed = useRef<boolean>(false);
   const [fieldColor, setFieldColor] = useState<string>("0xe0e0e0");
   const lightList = useRef<THREE.DirectionalLight[]>([]);
-  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([
-    {
-      uuid: "",
-      name: "",
-      distance: 0,
-      state: state.alive,
-      endtime: "",
-    },
-  ]);
+  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -456,6 +448,7 @@ const YoungHee = ({
     // alert('playerInfo')
     // console.log(playerInfo);
     let count = 0;
+    if (!playerInfo) return;
     playerInfo.forEach((player: playerInfo) => {
       count++;
       addPlayer(count, player.uuid, player.name, player.distance);
@@ -512,14 +505,17 @@ const YoungHee = ({
       const action = mixer.clipAction(clip);
       action.play();
       let deadCnt = 0;
-
+      let playerNum = 0;
       async function animate() {
-        // await wait(1000);
-        const playerNum: number = requestAnimationFrame(animate);
+        playerNum = requestAnimationFrame(animate);
+        console.log("실행중");
 
         if (object.scene.position.z < -90) {
           // scene?.remove(object.scene);
+          console.log("제거");
           cancelAnimationFrame(playerNum);
+          object.scene.remove(label);
+          scene?.remove(object.scene);
           return;
         } else {
           // console.log(playerList.length);
@@ -538,6 +534,7 @@ const YoungHee = ({
             deadCnt++;
             if (deadCnt === 30) {
               player.isAlive = 2;
+              cancelAnimationFrame(playerNum);
             } else {
               object.scene.rotateX(Math.PI / 2 / 30);
               object.scene.position.y -= 0.1;
@@ -666,6 +663,12 @@ const YoungHee = ({
           return;
         case "0":
           stopGame();
+          return;
+        case "m":
+          addPlayer(1, "1234", "park", 0);
+          return;
+        case "n":
+          run("1234", 200);
           return;
         case "a":
           moveVector.add(
