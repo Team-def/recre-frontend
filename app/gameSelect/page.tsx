@@ -16,9 +16,10 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { InputLabel, MenuItem, Select } from '@mui/material';
+import { InputLabel, MenuItem, Select, Tooltip } from '@mui/material';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
 import { grey } from '@mui/material/colors';
+import { makeStyles } from '@mui/styles';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -27,6 +28,7 @@ const Item = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
 }));
+
 
 export default function GameSelect() {
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
@@ -40,6 +42,70 @@ export default function GameSelect() {
     const circleRef = useRef<HTMLDivElement>(null);
     const [addClass, setAddClass] = useState(false);
     const titleRef = useRef<HTMLHeadingElement>(null);
+    const [colorStyle, setColorStyle] = useState<string>('#525051');
+    
+    const useStyles : any = makeStyles({
+        root: {
+            width: 170,
+            textAlign: 'center',
+            "& .MuiOutlinedInput-input": {
+                color: colorStyle,
+            },
+            
+          "&:hover .MuiOutlinedInput-input": {
+              color: colorStyle
+          },
+          "&:hover .MuiInputLabel-root": {
+              color: colorStyle
+            },
+            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+            borderColor: colorStyle
+        },
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+            color: colorStyle
+        },
+          "& .MuiInputLabel-root.Mui-focused": {
+            color: colorStyle
+          },
+          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: colorStyle
+          },
+          "& .MuiInputLabel-root":{
+              color: colorStyle,
+            },
+            "& .MuiOutlinedInput-notchedOutline":{
+            borderColor: colorStyle,
+            borderWidth: 2,
+          },
+          
+          "&:hover .MuiOutlinedInput-notchedOutline":{
+            borderColor: colorStyle,
+          },
+        }
+    });
+    
+    const classes = useStyles();
+
+    const BootstrapButton = styled(Button)({
+        boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+        textTransform: 'none',
+        fontSize: 19,
+        fontWeight: 'bold',
+        backgroundColor: colorStyle,
+        color: gameInfo[0] === '무궁화 꽃이 피었습니다'? 'orange' : 'rgb(48,67,143)',
+        '&:hover': {
+          backgroundColor: colorStyle,
+          boxShadow: '0 0 12px rgba(0,0,0,0.7)',
+        },
+        '&:active': {
+          boxShadow: 'none',
+          backgroundColor: colorStyle,
+          borderColor: '#005cbf',
+        },
+        '&:focus': {
+          boxShadow: '0 0 12px rgba(0,0,0,0.7)',
+        },
+      });
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -91,21 +157,31 @@ export default function GameSelect() {
         if (gameInfo[0] === game) {
             setGameInfo(["", gameInfo[1]]);
             if(circleRef.current && containerRef.current && titleRef.current){
+                setTimeout(() => {
+                    setColorStyle('#525051')
+                }, 250)
                 containerRef.current.style.setProperty('background-color', '#f8f8f8')
                 circleRef.current.style.setProperty('background-color', '#f8f8f8')
-                titleRef.current.style.setProperty('color', 'black')
+                titleRef.current.style.setProperty('color', '#525051')
+                
             }
         } else {
             setGameInfo([game, gameInfo[1]]);
             if(circleRef.current && containerRef.current  && titleRef.current){
                 if(game === '무궁화 꽃이 피었습니다'){
+                    setTimeout(() => {
+                        setColorStyle('rgb(48,67,143)')
+                    }, 250)
                     containerRef.current.style.setProperty('background-color', 'orange')
                     circleRef.current.style.setProperty('background-color', 'orange')
-                    titleRef.current.style.setProperty('color', 'white')
+                    titleRef.current.style.setProperty('color', 'rgb(48,67,143)')
                 } else if(game === '그림 맞추기'){
-                    containerRef.current.style.setProperty('background-color', 'rgb(189, 149, 230)')
-                    circleRef.current.style.setProperty('background-color', 'rgb(189, 149, 230)')
-                    titleRef.current.style.setProperty('color', 'white')
+                    setTimeout(() => {
+                        setColorStyle('orange')
+                    }, 250)
+                    containerRef.current.style.setProperty('background-color', 'rgb(48,67,143)')
+                    circleRef.current.style.setProperty('background-color', 'rgb(48,67,143)')
+                    titleRef.current.style.setProperty('color', 'orange')
                 }
             }
         }
@@ -119,6 +195,10 @@ export default function GameSelect() {
             }, 500)
         }
     }, [addClass])
+
+    useEffect(() => {
+        handleGameSelect(gameInfo[0])
+    },[])
 
 
     type Game = {
@@ -141,44 +221,10 @@ export default function GameSelect() {
 
     const gameList: Game[] = [drawGame, greenLightGame, jumpRope]
 
-    const ValidationTextField = styled(TextField)({
-        '& input:valid + fieldset': {
-          borderColor: '#E0E3E7',
-          borderWidth: 3,
-        },
-        '& input:invalid + fieldset': {
-          borderColor: 'red',
-          borderWidth: 3,
-        },
-        '& input:valid:hover + fieldset': {
-            borderColor: '#4073ff',
-            },
-        '& input:valid:focus + fieldset': {
-            borderWidth: 3,
-          padding: '4px !important', // override inline-style
-        },
-      });
-
-      const FormControlField = styled(FormControl)({
-        '& input:valid + fieldset': {
-          borderColor: '#E0E3E7',
-          borderWidth: 3,
-        },
-        '& input:invalid + fieldset': {
-          borderColor: 'red',
-          borderWidth: 3,
-        },
-        '& input:valid:hover + fieldset': {
-            borderColor: '#4073ff',
-            },
-        '& input:valid:focus + fieldset': {
-            borderWidth: 3,
-          padding: '4px !important', // override inline-style
-        },
-      });
 
     return (<>
         <div className='gameSelectContainer' ref={containerRef}>
+        <div className='backBtn' onClick={()=>router.push('/')}></div>
         <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
             <h1 className='gameSelectLogo' ref={titleRef}>게임 선택</h1>
             <div>
@@ -202,7 +248,8 @@ export default function GameSelect() {
             <div className='gameInfoDiv'>
                 <div className='input_alert'>
                     {(gameInfo[0] === '' || gameInfo[0] === null)?'':
-                    <ValidationTextField
+                    <TextField
+                        className={classes.root}
                         id="outlined-number"
                         label="인원 수"
                         placeholder='인원 수를 입력해주세요'
@@ -214,7 +261,8 @@ export default function GameSelect() {
                         }}
                         color='primary'
                     />}{gameInfo[0] === '무궁화 꽃이 피었습니다'?<>
-                    <ValidationTextField
+                    <TextField
+                    className={classes.root}
                         id="outlined-number"
                         label="우승자"
                         placeholder='우승자 수를 입력해주세요'
@@ -226,9 +274,10 @@ export default function GameSelect() {
                         }}
                         color='primary'
                     />
-                    <FormControlField >
-  <InputLabel id="demo-simple-select-label">거리</InputLabel>
+                    <FormControl >
+  <InputLabel id="demo-simple-select-label" sx={{color:colorStyle}}>거리</InputLabel>
   <Select
+    className={classes.root}
     labelId="demo-simple-select-label"
     id="demo-simple-select"
     value={redGreenInfo[1]}
@@ -239,10 +288,10 @@ export default function GameSelect() {
     <MenuItem value={100}>중간</MenuItem>
     <MenuItem value={160}>길게</MenuItem>
   </Select>
-</FormControlField></>:''}
+</FormControl></>:''}
                 </div>
             </div>
-            <Button variant='outlined' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
+            <BootstrapButton variant='contained' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
         </div>
         <style jsx>{`
             .gameSelectContainer{
@@ -269,6 +318,8 @@ export default function GameSelect() {
                 position: relative;
                 font-size: 50px;
                 font-weight: bold;
+                color: #525051;
+                // text-shadow: 0 0 8px rgba(0,0,0,0.4);
             }
             .gameGrid{
                 width:20vw;
@@ -289,12 +340,12 @@ export default function GameSelect() {
             }
             .gameDiv:hover{
                 scale: 1.05;
-                border: 5px solid #ff7878;
+                border: 5px solid ${colorStyle};
                 z-index: 6;
             }
             .gameDivClicked{
                 scale: 1.05;
-                border: 5px solid #ff7878;
+                border: 5px solid ${colorStyle};
             }
             .gameTitle{
                 z-index: 3;
@@ -339,6 +390,26 @@ export default function GameSelect() {
             #notService{
                 filter: opacity(0.3) drop-shadow(0 0 0 rgba(0,0,0,1));
                 background-color: rgba(0,0,0,0.5);
+            }
+            .backBtn{
+                width: 20px;
+                height: 20px;
+                border: 10px solid gray;
+                border-right: 0px;
+                border-top-radius: 10px;
+                border-bottom: 0px;
+                position: absolute;
+                top: 40px;
+                left: 40px;
+                rotate: -45deg;
+                cursor: pointer;
+                border-color: ${colorStyle};
+            }
+            .backBtn:hover{
+                scale: 1.3;
+            }
+            .ToolTip.Mui-selected{
+                font-size: 20px;
             }
         `}</style>
     </>
