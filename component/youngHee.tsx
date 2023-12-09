@@ -107,9 +107,31 @@ const YoungHee = ({
     }
   };
 
+
+  function onWindowResize(this: Window, ev: UIEvent) {
+    if (myCamera.current) {
+      myCamera.current.aspect = window.innerWidth / window.innerHeight;
+      myCamera.current.updateProjectionMatrix();
+    }
+    if (rendererRef.current) {
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+      rendererRef.current.render(
+        useRefScene.current as THREE.Scene,
+        myCamera.current as THREE.Camera
+      );
+    }
+    labelRenderer.current.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.current.render(
+      useRefScene.current as THREE.Scene,
+      myCamera.current as THREE.Camera
+    );
+  }
+
+
   useEffect(() => {
     // 스페이바 스코를 이벤트 비활성화
     window.addEventListener("keydown", handleSpacebarPress);
+    window.addEventListener("resize", onWindowResize);
     const scene = new THREE.Scene();
     // setScene(scene);
     useRefScene.current = scene;
@@ -492,19 +514,13 @@ const YoungHee = ({
   }
 
   useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener("mousedown", turnBack);
-      canvasRef.current.addEventListener("mouseup", turnFront);
-      // canvasRef.current.addEventListener('mouseleave', exitPaint);
-    }
+    labelRenderer.current.domElement.addEventListener("mousedown", turnBack);
+    labelRenderer.current.domElement.addEventListener("mouseup", turnFront);
 
     return () => {
-      if (canvasRef.current) {
         // Unmount 시 이벤트 리스터 제거
-        canvasRef.current.removeEventListener("mousedown", turnBack);
-        canvasRef.current.removeEventListener("mouseup", turnFront);
-        // canvasRef.current.removeEventListener('mouseleave', exitPaint);
-      }
+        labelRenderer.current.domElement.removeEventListener("mousedown", turnBack);
+        labelRenderer.current.domElement.removeEventListener("mouseup", turnFront);
     };
   }, [turnBack, turnFront]);
 
