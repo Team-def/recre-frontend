@@ -29,4 +29,4 @@ const Particle = ({particleRef}:{particleRef : React.MutableRefObject<any>}) => 
           />)
 }
 
-export default React.memo(Particle);
+export default React.memo(Particle); 
