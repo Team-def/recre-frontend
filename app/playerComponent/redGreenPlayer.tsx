@@ -232,6 +232,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 border-bottom: 20px solid black;
                 justify-content: space-evenly;
                 align-items: center;
+                background-color: #faf9f6;
             }
             .minimap-player {
                 width: 100%;
@@ -242,7 +243,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 justify-content: space-evenly;
                 align-items: center;
                 border-bottom: 5px solid #5C4033;
-
+                background-color: #faf9f6;
             }
             .minimap-player-dead {
                 width: 100%;

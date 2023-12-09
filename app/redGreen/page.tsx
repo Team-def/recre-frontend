@@ -217,7 +217,14 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
-                <ListItem key={`item-${index}`}><div style={{backgroundColor: index+1<=gameInfo[0]?"#ffd400":'white'}}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
+                <ListItem key={`item-${index}`}><div style={{
+                  backgroundColor: index+1<=gameInfo[0]?"linear-gradient(to bottom, #ffd400, #ff9900)":'white',
+                  transform: index+1<=gameInfo[0]?"scale(1.1)":"scale(1)",
+                  transition: "all 0.5s ease",
+                  borderRadius: "5px",
+                  fontWeight: index+1<=gameInfo[0]?900:400,
+                  color: index+1<=gameInfo[0]?"black":"gray"
+                }}>{index+1}등: {player.name} / {playerFixedDistance} / {elapsedTime??''} / {player.state}</div></ListItem>)
             })}
             </List>
               </div>
