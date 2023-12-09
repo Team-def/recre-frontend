@@ -202,25 +202,25 @@ export default function RedGreen({socket}: {socket : Socket}) {
             <div className="winnerInfo">
               <div className="modalText">
               <List
-      sx={{
-        width: '100%',
-        maxWidth: 360,
-        bgcolor: 'background.paper',
-        position: 'relative',
-        overflow: 'auto',
-        maxHeight: 300,
-        '& ul': { padding: 0 },
-      }}
-      subheader={<li />}
-    >
+                sx={{
+                  width: '100%',
+                  maxWidth: 360,
+                  bgcolor: 'background.paper',
+                  position: 'relative',
+                  overflow: 'auto',
+                  maxHeight: 300,
+                  '& ul': { padding: 0 },
+                }}
+                subheader={<li />}
+              >
                 {player_info.map((player : playerInfo, index : number)=>{
                 const elapsedTime = timeCheck(new Date(player.elapsed_time)); //게임 시간 계산
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
                 <ListItem key={`item-${index}`}><div style={{
                   backgroundColor: index+1<=gameInfo[0]?'linear-gradient(to bottom, #ffd400, #ff9900)':'#f2f2f2',
-                  // transform: index+1<=gameInfo[0]?"scale(1.1)":"scale(1)",
-                  // transition: "all 0.5s ease",
+                  transform: index+1<=gameInfo[0]?"scale(1.1)":"scale(1)",
+                  transition: "transform 0.5s ease",
                   borderRadius: "5px",
                   fontWeight: index+1<=gameInfo[0]?900:400,
                   color: index+1<=gameInfo[0]?"black":"gray"
