@@ -832,6 +832,9 @@ const YoungHee = ({
       </SpeedDial>
     </Box>
       <style jsx>{`
+        body{
+          overflow: hidden;
+        }
         #canvas {
           width: 100vw;
           height: 100vh;
