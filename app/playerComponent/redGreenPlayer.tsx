@@ -127,7 +127,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             setModalHeader('통과!');
             setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
             setOpen(true);
-            navigator.vibrate([1000]);
+            let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (!isSafari) {
+                navigator.vibrate([1000]);
+            }
             //이겼을 때 화면에 표시되어야 할 것들
         });
     
@@ -138,7 +141,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             setModalHeader('죽었습니다!');
             setModalContent(<div>{res.name}님께서는 탈락하셨습니다!<br></br> 이동 거리: {res.distance>length?length:res.distance} / {length}<br></br> 생존 시간 : {elapsedTime} </div> );
             setOpen(true);
-            navigator.vibrate([1000]);
+            let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (!isSafari) {
+                navigator.vibrate([1000]);
+            }
             //기타 죽었을 때 화면에 표시되어야 할 것들
         });
 
