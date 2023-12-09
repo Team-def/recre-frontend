@@ -218,9 +218,9 @@ export default function RedGreen({socket}: {socket : Socket}) {
                 const playerFixedDistance = player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
                 return (
                 <ListItem key={`item-${index}`}><div style={{
-                  backgroundColor: index+1<=gameInfo[0]?"linear-gradient(to bottom, #ffd400, #ff9900)":'#f2f2f2',
-                  transform: index+1<=gameInfo[0]?"scale(1.1)":"scale(1)",
-                  transition: "all 0.5s ease",
+                  backgroundColor: index+1<=gameInfo[0]?'linear-gradient(to bottom, #ffd400, #ff9900)':'#f2f2f2',
+                  // transform: index+1<=gameInfo[0]?"scale(1.1)":"scale(1)",
+                  // transition: "all 0.5s ease",
                   borderRadius: "5px",
                   fontWeight: index+1<=gameInfo[0]?900:400,
                   color: index+1<=gameInfo[0]?"black":"gray"
