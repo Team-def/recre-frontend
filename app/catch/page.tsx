@@ -45,7 +45,6 @@ export default function Catch({ socket }: { socket: Socket }) {
   });
   const [, setAnsAtom] = useAtom(answerAtom);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
-  const particleRef = useRef<any>(null);
 
   useEffect(() => {
     socket.on('correct', (res) => {
@@ -292,7 +291,7 @@ export default function Catch({ socket }: { socket: Socket }) {
 
   return (
     <>
-      <Particle particleRef={particleRef.current}/>
+      <Particle/>
       <div className="canvasContainer">
         <div className="ButtonContainer">
             <Button size='small' variant="contained" onClick={() => setIsEraser(!isEraser)}>
