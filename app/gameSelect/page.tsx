@@ -18,6 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
+import { grey } from '@mui/material/colors';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -38,6 +39,7 @@ export default function GameSelect() {
     const containerRef = useRef<HTMLDivElement>(null);
     const circleRef = useRef<HTMLDivElement>(null);
     const [addClass, setAddClass] = useState(false);
+    const titleRef = useRef<HTMLHeadingElement>(null);
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -88,19 +90,22 @@ export default function GameSelect() {
         }
         if (gameInfo[0] === game) {
             setGameInfo(["", gameInfo[1]]);
-            if(circleRef.current && containerRef.current){
+            if(circleRef.current && containerRef.current && titleRef.current){
                 containerRef.current.style.setProperty('background-color', '#f8f8f8')
                 circleRef.current.style.setProperty('background-color', '#f8f8f8')
+                titleRef.current.style.setProperty('color', 'black')
             }
         } else {
             setGameInfo([game, gameInfo[1]]);
-            if(circleRef.current && containerRef.current){
+            if(circleRef.current && containerRef.current  && titleRef.current){
                 if(game === '무궁화 꽃이 피었습니다'){
-                    containerRef.current.style.setProperty('background-color', 'rgb(189, 228, 255)')
-                    circleRef.current.style.setProperty('background-color', 'rgb(189, 228, 255)')
+                    containerRef.current.style.setProperty('background-color', 'orange')
+                    circleRef.current.style.setProperty('background-color', 'orange')
+                    titleRef.current.style.setProperty('color', 'white')
                 } else if(game === '그림 맞추기'){
-                    containerRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
-                    circleRef.current.style.setProperty('background-color', 'rgb(255, 227, 227)')
+                    containerRef.current.style.setProperty('background-color', 'rgb(189, 149, 230)')
+                    circleRef.current.style.setProperty('background-color', 'rgb(189, 149, 230)')
+                    titleRef.current.style.setProperty('color', 'white')
                 }
             }
         }
@@ -136,10 +141,46 @@ export default function GameSelect() {
 
     const gameList: Game[] = [drawGame, greenLightGame, jumpRope]
 
+    const ValidationTextField = styled(TextField)({
+        '& input:valid + fieldset': {
+          borderColor: '#E0E3E7',
+          borderWidth: 3,
+        },
+        '& input:invalid + fieldset': {
+          borderColor: 'red',
+          borderWidth: 3,
+        },
+        '& input:valid:hover + fieldset': {
+            borderColor: '#4073ff',
+            },
+        '& input:valid:focus + fieldset': {
+            borderWidth: 3,
+          padding: '4px !important', // override inline-style
+        },
+      });
+
+      const FormControlField = styled(FormControl)({
+        '& input:valid + fieldset': {
+          borderColor: '#E0E3E7',
+          borderWidth: 3,
+        },
+        '& input:invalid + fieldset': {
+          borderColor: 'red',
+          borderWidth: 3,
+        },
+        '& input:valid:hover + fieldset': {
+            borderColor: '#4073ff',
+            },
+        '& input:valid:focus + fieldset': {
+            borderWidth: 3,
+          padding: '4px !important', // override inline-style
+        },
+      });
+
     return (<>
         <div className='gameSelectContainer' ref={containerRef}>
         <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
-            <h1 className='gameSelectLogo'>게임 선택</h1>
+            <h1 className='gameSelectLogo' ref={titleRef}>게임 선택</h1>
             <div>
                 <Box sx={{ width: '100%' }}>
                     <Grid container spacing={12}>{/* xs는 12가 최대 */}
@@ -161,7 +202,7 @@ export default function GameSelect() {
             <div className='gameInfoDiv'>
                 <div className='input_alert'>
                     {(gameInfo[0] === '' || gameInfo[0] === null)?'':
-                    <TextField
+                    <ValidationTextField
                         id="outlined-number"
                         label="인원 수"
                         placeholder='인원 수를 입력해주세요'
@@ -171,8 +212,9 @@ export default function GameSelect() {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        color='primary'
                     />}{gameInfo[0] === '무궁화 꽃이 피었습니다'?<>
-                    <TextField
+                    <ValidationTextField
                         id="outlined-number"
                         label="우승자"
                         placeholder='우승자 수를 입력해주세요'
@@ -182,8 +224,9 @@ export default function GameSelect() {
                         InputLabelProps={{
                             shrink: true,
                         }}
+                        color='primary'
                     />
-                    <FormControl >
+                    <FormControlField >
   <InputLabel id="demo-simple-select-label">거리</InputLabel>
   <Select
     labelId="demo-simple-select-label"
@@ -196,7 +239,7 @@ export default function GameSelect() {
     <MenuItem value={100}>중간</MenuItem>
     <MenuItem value={160}>길게</MenuItem>
   </Select>
-</FormControl></>:''}
+</FormControlField></>:''}
                 </div>
             </div>
             <Button variant='outlined' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</Button>
@@ -242,7 +285,7 @@ export default function GameSelect() {
                 box-shadow: 0 0 10px rgba(0,0,0,0.5);
                 border: 5px solid transparent;
                 overflow: hidden;
-                background-color: transparent;
+                background-color: white;
             }
             .gameDiv:hover{
                 scale: 1.05;
