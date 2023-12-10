@@ -219,12 +219,25 @@ export default function RedGreen({socket}: {socket : Socket}) {
                   </tr>
                 </thead>
                 <tbody>
+                  <List
+            sx={{
+              width: '100%',
+              maxWidth: 360,
+              bgcolor: '#f2f2f2',
+              position: 'relative',
+              overflow: 'auto',
+              maxHeight: 300,
+              '& ul': { padding: 0 },
+            }}
+            subheader={<li />}
+          >
                   {player_info.map((player: playerInfo, index: number) => {
                     const elapsedTime = timeCheck(new Date(player.elapsed_time));
                     const playerFixedDistance =
                       player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
 
                     return (
+                      <ListItem key={`item-${index}`}>
                       <tr key={`item-${index}`}>
                         <td
                           style={{
@@ -242,8 +255,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
                         <td>{elapsedTime ?? ''}</td>
                         <td>{player.state}</td>
                       </tr>
+                      </ListItem>
                     );
                   })}
+                  </List>
                 </tbody>
               </table>
               {/* <List
