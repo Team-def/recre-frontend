@@ -152,10 +152,12 @@ export default function Home() {
   return (<>
     <div className='container'>
       {/* <div> */}
-        <p className='middleLogo' onClick={selectGame}>Recre</p>
+        <div className='middleLogo' onClick={selectGame}>
+          <Image src={'/yellow_!.png'} alt='logo' width={100} height={100}></Image>
+        </div>
         <div onClick={selectGame} className='knight'>
-        <div className='dialog'><Image src={'/dialog.png'} alt='dialog' width={200} height={100}></Image></div>
-        <Image src={'/knight.gif'} alt='knight' width={300} height={300}></Image>
+          <div className='dialog'><Image src={'/dialog.png'} alt='dialog' width={200} height={100}></Image></div>
+          <Image src={'/knight.gif'} alt='knight' width={300} height={300}></Image>
         </div>
         
       {/* </div> */}
