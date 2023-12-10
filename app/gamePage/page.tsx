@@ -24,6 +24,7 @@ import { redGreenStartAtom } from '../modules/redGreenStartAtom';
 import MyPopover from '@/component/MyPopover';
 import { anchorElAtom } from '../modules/popoverAtom';
 import QRpage from '@/component/QRpage';
+import { catchStartAtom } from '../modules/catchStartAtom';
 
 export default function QR() {
     const [nowPeople, setNowPeople] = useState(0);
@@ -54,6 +55,7 @@ export default function QR() {
     }
     const gamePageUrl = `${process.env.NEXT_PUBLIC_RECRE_URL}/player?data=${userInfo.id}_${nameSpace}`;
     const [anchorEl, setAnchorEl] = useAtom(anchorElAtom);
+    const [, setCatchStart] = useAtom(catchStartAtom);
 
     useEffect(() => {
         // if (!isLogin) {
@@ -61,6 +63,8 @@ export default function QR() {
         //     alert('로그인이 필요합니다.')
         //     router.push("/")
         // }
+
+        setIsStart(false)
 
         switch (JSON.parse(localStorage.getItem('game') || 'null')[0]) {
             case '그림 맞추기':
@@ -120,6 +124,8 @@ export default function QR() {
             makeEmotion(res.emotion);
         })
 
+        setCatchStart(false)
+
         return () => { 
             handleBeforeUnload();
         };
@@ -147,6 +153,7 @@ export default function QR() {
                 socket.current.emit('start_catch_game', {
                     access_token: token
                 });
+                setCatchStart(true);
             } else if(gameInfo[0] === '무궁화 꽃이 피었습니다'){
                 setIsStart(true);
                 socket.current.emit('pre_player_status', {
