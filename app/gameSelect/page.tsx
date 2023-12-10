@@ -19,7 +19,7 @@ import FormLabel from '@mui/material/FormLabel';
 import { InputLabel, MenuItem, Select, Tooltip } from '@mui/material';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
 import { grey } from '@mui/material/colors';
-import { makeStyles } from '@mui/styles';
+
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -43,48 +43,87 @@ export default function GameSelect() {
     const [addClass, setAddClass] = useState(false);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const [colorStyle, setColorStyle] = useState<string>('#525051');
-    
-    const useStyles : any = makeStyles({
-        root: {
-            width: 170,
+
+
+    const TextInfoCustom = styled(TextField)({
+        width: 170,
+        textAlign: 'center',
+        "& .MuiOutlinedInput-input": {
+            color: colorStyle,
             textAlign: 'center',
-            "& .MuiOutlinedInput-input": {
-                color: colorStyle,
-            },
-            
-          "&:hover .MuiOutlinedInput-input": {
-              color: colorStyle
-          },
-          "&:hover .MuiInputLabel-root": {
-              color: colorStyle
-            },
-            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        },
+
+        "&:hover .MuiOutlinedInput-input": {
+            color: colorStyle
+        },
+        "&:hover .MuiInputLabel-root": {
+            color: colorStyle
+        },
+        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
             borderColor: colorStyle
         },
         "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
             color: colorStyle
         },
-          "& .MuiInputLabel-root.Mui-focused": {
+        "& .MuiInputLabel-root.Mui-focused": {
             color: colorStyle
-          },
-          "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        },
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
             borderColor: colorStyle
-          },
-          "& .MuiInputLabel-root":{
-              color: colorStyle,
-            },
-            "& .MuiOutlinedInput-notchedOutline":{
+        },
+        "& .MuiInputLabel-root": {
+            color: colorStyle,
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
             borderColor: colorStyle,
             borderWidth: 2,
-          },
-          
-          "&:hover .MuiOutlinedInput-notchedOutline":{
+        },
+
+        "&:hover .MuiOutlinedInput-notchedOutline": {
             borderColor: colorStyle,
-          },
-        }
+        },
     });
-    
-    const classes = useStyles();
+
+    const CustomSelect = styled(Select)({
+        width: 170,
+        textAlign: 'center',
+        "& .MuiOutlinedInput-input": {
+            color: colorStyle,
+        },
+
+        "&:hover .MuiOutlinedInput-input": {
+            color: colorStyle
+        },
+        "&:hover .MuiInputLabel-root": {
+            color: colorStyle
+        },
+        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+            borderColor: colorStyle
+        },
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+            color: colorStyle
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+            color: colorStyle
+        },
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            borderColor: colorStyle
+        },
+        "& .MuiInputLabel-root": {
+            color: colorStyle,
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+            borderColor: colorStyle,
+            borderWidth: 2,
+        },
+
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: colorStyle,
+        },
+        '&:focus': {
+            borderColor: colorStyle,
+        },
+    });
 
     const BootstrapButton = styled(Button)({
         boxShadow: '0 0 10px rgba(0,0,0,0.3)',
@@ -92,20 +131,20 @@ export default function GameSelect() {
         fontSize: 19,
         fontWeight: 'bold',
         backgroundColor: colorStyle,
-        color: gameInfo[0] === '무궁화 꽃이 피었습니다'? 'orange' : 'rgb(48,67,143)',
+        color: gameInfo[0] === '무궁화 꽃이 피었습니다' ? 'orange' : 'rgb(48,67,143)',
         '&:hover': {
-          backgroundColor: colorStyle,
-          boxShadow: '0 0 12px rgba(0,0,0,0.7)',
+            backgroundColor: colorStyle,
+            boxShadow: '0 0 12px rgba(0,0,0,0.7)',
         },
         '&:active': {
-          boxShadow: 'none',
-          backgroundColor: colorStyle,
-          borderColor: '#005cbf',
+            boxShadow: 'none',
+            backgroundColor: colorStyle,
+            borderColor: '#005cbf',
         },
         '&:focus': {
-          boxShadow: '0 0 12px rgba(0,0,0,0.7)',
+            boxShadow: '0 0 12px rgba(0,0,0,0.7)',
         },
-      });
+    });
 
     const onMouseEnter = (gameName: string) => {
         setIsHovered(true);
@@ -129,13 +168,13 @@ export default function GameSelect() {
                 setGameInfo([gameInfo[0], 0])
             }
             else {
-                if(gameInfo[0] === '무궁화 꽃이 피었습니다'){
-                    if(redGreenInfo[0] && redGreenInfo[0] > 0){
-                        if(redGreenInfo[0] > gameInfo[1]){
+                if (gameInfo[0] === '무궁화 꽃이 피었습니다') {
+                    if (redGreenInfo[0] && redGreenInfo[0] > 0) {
+                        if (redGreenInfo[0] > gameInfo[1]) {
                             alert('우승자 수가 참여 인원보다 많습니다.')
-                            setRedGreenInfo([gameInfo[1],redGreenInfo[1]])
+                            setRedGreenInfo([gameInfo[1], redGreenInfo[1]])
                         }
-                        else{
+                        else {
                             setIsReady(true);
                         }
                     }
@@ -150,32 +189,32 @@ export default function GameSelect() {
     }, [gameInfo, redGreenInfo]);
 
     const handleGameSelect = (game: string) => {
-        if(game === '서비스 준비중') {
+        if (game === '서비스 준비중') {
             alert('현재 서비스 준비중입니다.')
             return;
         }
         if (gameInfo[0] === game) {
             setGameInfo(["", gameInfo[1]]);
-            if(circleRef.current && containerRef.current && titleRef.current){
+            if (circleRef.current && containerRef.current && titleRef.current) {
                 setTimeout(() => {
                     setColorStyle('#525051')
                 }, 250)
                 containerRef.current.style.setProperty('background-color', '#f8f8f8')
                 circleRef.current.style.setProperty('background-color', '#f8f8f8')
                 titleRef.current.style.setProperty('color', '#525051')
-                
+
             }
         } else {
             setGameInfo([game, gameInfo[1]]);
-            if(circleRef.current && containerRef.current  && titleRef.current){
-                if(game === '무궁화 꽃이 피었습니다'){
+            if (circleRef.current && containerRef.current && titleRef.current) {
+                if (game === '무궁화 꽃이 피었습니다') {
                     setTimeout(() => {
                         setColorStyle('rgb(48,67,143)')
                     }, 250)
                     containerRef.current.style.setProperty('background-color', 'orange')
                     circleRef.current.style.setProperty('background-color', 'orange')
                     titleRef.current.style.setProperty('color', 'rgb(48,67,143)')
-                } else if(game === '그림 맞추기'){
+                } else if (game === '그림 맞추기') {
                     setTimeout(() => {
                         setColorStyle('orange')
                     }, 250)
@@ -198,7 +237,7 @@ export default function GameSelect() {
 
     useEffect(() => {
         handleGameSelect(gameInfo[0])
-    },[])
+    }, [])
 
 
     type Game = {
@@ -224,17 +263,17 @@ export default function GameSelect() {
 
     return (<>
         <div className='gameSelectContainer' ref={containerRef}>
-        <div className='backBtn' onClick={()=>router.push('/')}></div>
-        <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
+            <div className='backBtn' onClick={() => router.push('/')}></div>
+            <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
             <h1 className='gameSelectLogo' ref={titleRef}>게임 선택</h1>
             <div>
                 <Box sx={{ width: '100%' }}>
                     <Grid container spacing={12}>{/* xs는 12가 최대 */}
                         {gameList.map((game) => {
                             return (
-                                <Grid className='gameGrid' xs={4} onClick={() => {handleGameSelect(game.name)}}>
+                                <Grid className='gameGrid' xs={4} onClick={() => { handleGameSelect(game.name) }}>
                                     <div onMouseEnter={() => onMouseEnter(game.name)}
-                                        onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`} id={`${game.name==='서비스 준비중'?'notService':''}`}><Item>
+                                        onMouseLeave={onMouseLeave} className={`gameDiv ${gameInfo[0] === game.name ? "gameDivClicked" : ""}`} id={`${game.name === '서비스 준비중' ? 'notService' : ''}`}><Item>
                                             <div className={`imageDiv ${isHovering && hoverElement === game.name ? 'imgBlur' : ''}`}><Image src={game.image} alt={game.name} layout='fill' width={0} height={0} /></div>
                                             <div className='gameTitle'>{game.name}</div>
                                         </Item></div>
@@ -247,48 +286,45 @@ export default function GameSelect() {
             </div>
             <div className='gameInfoDiv'>
                 <div className='input_alert'>
-                    {(gameInfo[0] === '' || gameInfo[0] === null)?'':
-                    <TextField
-                        className={classes.root}
-                        id="outlined-number"
-                        label="인원 수"
-                        placeholder='인원 수를 입력해주세요'
-                        type="number"
-                        value={gameInfo[1]}
-                        onChange={(e) => setGameInfo([gameInfo[0], parseInt(e.target.value)])}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        color='primary'
-                    />}{gameInfo[0] === '무궁화 꽃이 피었습니다'?<>
-                    <TextField
-                    className={classes.root}
-                        id="outlined-number"
-                        label="우승자"
-                        placeholder='우승자 수를 입력해주세요'
-                        type="number"
-                        value={redGreenInfo[0]}
-                        onChange={(e) => setRedGreenInfo([parseInt(e.target.value),redGreenInfo[1]])}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        color='primary'
-                    />
-                    <FormControl >
-  <InputLabel id="demo-simple-select-label" sx={{color:colorStyle}}>거리</InputLabel>
-  <Select
-    className={classes.root}
-    labelId="demo-simple-select-label"
-    id="demo-simple-select"
-    value={redGreenInfo[1]}
-    label="Age"
-    onChange={(e)=>setRedGreenInfo([redGreenInfo[0],parseInt(e.target.value as string)])}
-  >
-    <MenuItem value={50}>짧게</MenuItem>
-    <MenuItem value={100}>중간</MenuItem>
-    <MenuItem value={160}>길게</MenuItem>
-  </Select>
-</FormControl></>:''}
+                    {(gameInfo[0] === '' || gameInfo[0] === null) ? '' :
+                        <TextInfoCustom
+                            id="outlined-number"
+                            label="인원 수"
+                            placeholder='인원 수를 입력해주세요'
+                            type="number"
+                            value={gameInfo[1]}
+                            onChange={(e) => setGameInfo([gameInfo[0], parseInt(e.target.value)])}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            color='primary'
+                        />}{gameInfo[0] === '무궁화 꽃이 피었습니다' ? <>
+                            <TextInfoCustom
+                                id="outlined-number"
+                                label="우승자"
+                                placeholder='우승자 수를 입력해주세요'
+                                type="number"
+                                value={redGreenInfo[0]}
+                                onChange={(e) => setRedGreenInfo([parseInt(e.target.value), redGreenInfo[1]])}
+                                InputLabelProps={{
+                                    shrink: true,
+                                }}
+                                color='primary'
+                            />
+                            <FormControl >
+                                <InputLabel id="demo-simple-select-label" sx={{ color: colorStyle }}>거리</InputLabel>
+                                <CustomSelect
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    value={redGreenInfo[1]}
+                                    label="Age"
+                                    onChange={(e) => setRedGreenInfo([redGreenInfo[0], parseInt(e.target.value as string)])}
+                                >
+                                    <MenuItem value={50}>짧게</MenuItem>
+                                    <MenuItem value={100}>중간</MenuItem>
+                                    <MenuItem value={160}>길게</MenuItem>
+                                </CustomSelect>
+                            </FormControl></> : ''}
                 </div>
             </div>
             <BootstrapButton variant='contained' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>

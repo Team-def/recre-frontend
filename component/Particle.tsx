@@ -2024,7 +2024,8 @@ const Particle = () => {
               }
     ]
 
-    const optionsRef = useRef<any>(particleOptions[Math.floor((Math.random()*6)+0)])
+    const optionsRef = useRef<any>(particleOptions[Math.floor((Math.random()*(particleOptions.length))+0)])
+    // const optionsRef = useRef<any>(particleOptions[4])
 
     const particlesInit = useCallback(async (engine: Engine) => {
         console.log(engine);
@@ -2040,23 +2041,15 @@ const Particle = () => {
         await console.log(container);
         if(catchStart){
             container?.play()
-
         }
     }, [catchStart]);
-
-    //setStart 가 true 이면 particles 를 재생한다
-    // useEffect(()=>{
-    //   if(catchStart){
-    //     container.plugins.get("emitters").array[0].play();
-    //   }
-    // },[catchStart])
 
     return(<Particles
       ref={particleRef}
   id="tsparticles"
   init={particlesInit}
   loaded={particlesLoaded}
-  options={optionsRef.current}
+  options={catchStart?optionsRef.current:null}
           />)
 }
 
