@@ -96,7 +96,9 @@ export default function Header() {
     return (<>{hideHeader ? '' : <>
     <div className="headerContainer">
         {isAnswer ? null : <div className="logo">
-            <h1 onClick={() => router.push("/")}>RecRe</h1>
+            <div onClick={() => router.push("/")}>
+                <Image src={"/black.png"} alt={'recre'} width={120} height={35}></Image>
+            </div>
         </div>}
         <div className="userInfoBtn">
             {/* 로그인시에만 보이는 문구 */}

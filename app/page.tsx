@@ -63,7 +63,6 @@ export default function Home() {
       })
   }
 
-
   const checkLogin = (acc_token : string) => {
     axios.get(`${myApi}/user`, {
       headers: {
@@ -140,20 +139,17 @@ export default function Home() {
       })
   }
 
-
-
   const checkIsHostPhone = () => {
     if(isMobile){
       router.push("/catchAnswer");
     }
   }
 
-
   return (<>
     <div className='container'>
       {/* <div> */}
         <div className='middleLogo' onClick={selectGame}>
-          <Image src={'/yellow_!.png'} alt='logo' width={100} height={100}></Image>
+          <Image src={'/yellow_!.png'} alt='logo' width={500} height={200}></Image>
         </div>
         <div onClick={selectGame} className='knight'>
           <div className='dialog'><Image src={'/dialog.png'} alt='dialog' width={200} height={100}></Image></div>
@@ -165,25 +161,25 @@ export default function Home() {
     <style jsx>{`
             .container{
               width: 100%;
-                display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                flex-direction: column;
-                height: 100vh;
-                background: url('/BG1.jpg') center / 100% repeat-x;
-                background-size: 50% 100%;
-                animation: movebg 2s linear infinite;
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              flex-direction: column;
+              height: 100vh;
+              background: url('/BG1.jpg') center / 100% repeat-x;
+              background-size: 50% 100%;
+              animation: movebg 2s linear infinite;
             }
             .middleLogo{
               position: absolute;
-              top: 0vh;
-              font-size: 7em;
+              top: 10vh;
               text-align: center;
-              background-color: rgba(255,255,255,0.9);
-              padding: 20px 50px;
-              border-radius: 30px;
-              box-shadow: 0 0 10px rgba(0,0,0,0.5);
+              background-color: transparent;
+              transition: transform 0.3s ease;
               animation: shake 1.5s linear infinite;
+            }
+            .middleLogo:hover{
+              transform: scale(1.2);
             }
             .knight{
               display: flex;
@@ -218,13 +214,13 @@ export default function Home() {
                 rotate: 0deg;
               }
               25%{
-                rotate: 10deg;
+                rotate: 5deg;
               }
               50%{
                 rotate: 0deg;
               }
               75%{
-                rotate: -10deg;
+                rotate: -5deg;
               }
               100%{
                 rotate: 0deg;
