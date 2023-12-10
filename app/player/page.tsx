@@ -200,8 +200,8 @@ export default function Player() {
         if (playerNickname === null || playerNickname === '') {
             alert('닉네임을 입력해주세요.');
             return;
-        } else if (playerNickname.length > 10) {
-            alert('닉네임은 10자 미만으로 입력해주세요.');
+        } else if (playerNickname.length > 5) {
+            alert('닉네임은 5글자 이하로 입력해주세요.');
             return;
         }
 
@@ -247,14 +247,14 @@ export default function Player() {
     //modal창 띄우기
     const ReadyModal = () => {
         if (data[1] === 'redgreen') {
-        return (
-            <div className='readyModalDiv'>
-                <div className='readyModalHeader'>흔들어서 준비하기! </div>
-                <div className='readyModalContent'>호스트가 준비를 완료하면 게임이 시작됩니다.</div>
-                <div className='readyModalCount'> {shakeCount} / 10 </div>
-                {/* <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button> */}
-            </div>
-        )
+            return (
+                <div className='readyModalDiv'>
+                    <div className='readyModalHeader'>흔들어서 준비하기! </div>
+                    <div className='readyModalContent'>호스트가 준비를 완료하면 게임이 시작됩니다.</div>
+                    <div className='readyModalCount'> {shakeCount} / 10 </div>
+                    <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button>
+                </div>
+            )
         }
     }
     //준비 취소

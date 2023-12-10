@@ -1,23 +1,24 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 // import dat from "dat.gui";
 import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
   CSS2DObject,
   CSS2DRenderer,
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
 import wait from "waait";
-import Box from '@mui/material/Box';
-import Backdrop from '@mui/material/Backdrop';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
-import CancelIcon from '@mui/icons-material/Cancel';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import Box from "@mui/material/Box";
+import Backdrop from "@mui/material/Backdrop";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+import CancelIcon from "@mui/icons-material/Cancel";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 interface playerInfo {
   uuid: string;
@@ -40,7 +41,7 @@ const YoungHee = ({
   setGo,
   isStart,
   leaveGame,
-  stopGame
+  stopGame,
 }: {
   socket: Socket;
   length: number;
@@ -52,42 +53,28 @@ const YoungHee = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [cube, setCube] = useState<any>();
-  const [camera, setCamera] = useState<THREE.PerspectiveCamera>();
-  const [myMaterial, setMyMaterial] = useState<any>();
   const [mixers, setMixers] = useState<THREE.AnimationMixer[]>();
-  const [scene, setScene] = useState<THREE.Scene>();
-  const [renderer, setRenderer] = useState<THREE.WebGLRenderer>();
-  const [labelRenderer, setLabelRenderer] = useState<CSS2DRenderer>(
-    new CSS2DRenderer()
-  );
-  const [playerCount, setPlayerCount] = useState<number>(0);
+  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>();
+  const rendererRef = useRef<THREE.WebGLRenderer>();
+  const labelRenderer = useRef<CSS2DRenderer>(new CSS2DRenderer());
   const playerMap = useRef(new Map<string, Player>());
   const myCamera = useRef<THREE.PerspectiveCamera>();
+  const animationId = useRef<number>(0);
   const isRed = useRef<boolean>(false);
-  const [fieldColor, setFieldColor] = useState<string>("0xe0e0e0");
   const lightList = useRef<THREE.DirectionalLight[]>([]);
-  const [playerInfo, setPlayerInfo] = useState<playerInfo[]>([
-    {
-      uuid: "",
-      name: "",
-      distance: 0,
-      state: state.alive,
-      endtime: "",
-    },
-  ]);
+  const useRefScene = useRef<THREE.Scene>();
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const actions = [
-    { icon: <ExitToAppIcon />, name: '게임 나가기', onclick: leaveGame},
-    { icon: <CancelIcon />, name: '우승자 마감', onclick: stopGame},
-    { icon: <CameraAltIcon />, name: '카메라-항공', onclick: cameraMove4},
-    { icon: <CameraAltIcon />, name: '카메라-측면', onclick: cameraMove3},
-    { icon: <CameraAltIcon />, name: '카메라-후면', onclick: cameraMove2},
-    { icon: <CameraAltIcon />, name: '카메라-정면', onclick: cameraMove1 },
+    { icon: <CancelIcon />, name: "우승자 마감", onclick: stopGame },
+    { icon: <ExitToAppIcon />, name: "게임 나가기", onclick: leaveGame },
+    { icon: <CameraAltIcon />, name: "카메라-항공", onclick: cameraMove4 },
+    { icon: <CameraAltIcon />, name: "카메라-측면", onclick: cameraMove3 },
+    { icon: <CameraAltIcon />, name: "카메라-후면", onclick: cameraMove2 },
+    { icon: <CameraAltIcon />, name: "카메라-정면", onclick: cameraMove1 },
   ];
 
   class Player {
@@ -95,11 +82,16 @@ const YoungHee = ({
     name: string;
     position: number;
     isAlive: number;
+    mixer: THREE.AnimationMixer;
+    object: GLTF;
+    deadCnt: number = 0;
     constructor(plyerId: number, name: string, position: number) {
       this.plyerId = plyerId;
       this.name = name;
       this.position = position;
       this.isAlive = 0;
+      this.mixer = undefined as any;
+      this.object = undefined as any;
     }
   }
 
@@ -115,11 +107,34 @@ const YoungHee = ({
     }
   };
 
+
+  function onWindowResize(this: Window, ev: UIEvent) {
+    if (myCamera.current) {
+      myCamera.current.aspect = window.innerWidth / window.innerHeight;
+      myCamera.current.updateProjectionMatrix();
+    }
+    if (rendererRef.current) {
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+      rendererRef.current.render(
+        useRefScene.current as THREE.Scene,
+        myCamera.current as THREE.Camera
+      );
+    }
+    labelRenderer.current.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.current.render(
+      useRefScene.current as THREE.Scene,
+      myCamera.current as THREE.Camera
+    );
+  }
+
+
   useEffect(() => {
     // 스페이바 스코를 이벤트 비활성화
     window.addEventListener("keydown", handleSpacebarPress);
+    window.addEventListener("resize", onWindowResize);
     const scene = new THREE.Scene();
-    setScene(scene);
+    // setScene(scene);
+    useRefScene.current = scene;
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -128,13 +143,13 @@ const YoungHee = ({
     );
     camera.position.set(0, 20, 70);
     myCamera.current = camera;
-    setCamera(camera);
 
     const renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current ?? new HTMLCanvasElement(),
       antialias: true,
       alpha: true,
     });
+    rendererRef.current = renderer;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ReinhardToneMapping;
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -145,13 +160,13 @@ const YoungHee = ({
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.setClearColor(0xffffff, 1);
     // document.body.appendChild(renderer.domElement);
-    labelRenderer.setSize(window.innerWidth, window.innerHeight);
-    labelRenderer.domElement.style.position = "absolute";
-    labelRenderer.domElement.style.top = "0px";
-    document.body.appendChild(labelRenderer.domElement);
+    labelRenderer.current.setSize(window.innerWidth, window.innerHeight);
+    labelRenderer.current.domElement.style.position = "absolute";
+    labelRenderer.current.domElement.style.top = "0px";
+    document.body.appendChild(labelRenderer.current.domElement);
 
     //================================================================================================
-    //격자, 편의 도구
+    // 격자, 편의 도구
 
     // const axesHelper = new THREE.AxesHelper(5);
     // scene.add(axesHelper);
@@ -176,47 +191,14 @@ const YoungHee = ({
 
     //================================================================================================
 
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-
-    // renderer.setSize(500, 500);
 
     // 아래가 마우스 스크롤이나 클릭 후 돌리기
     // const controls = new OrbitControls(camera, renderer.domElement);
 
+
     //================================================================================================
-
-    //바닥 오브잭트
-    // const geometry = new THREE.PlaneGeometry(1000, 700, 1, 1);
-    // //material을 투명으로
-    // // const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide, transparent: true, opacity: 0.5 });
-
-    // const ground = new THREE.TextureLoader().load("/youngHee/ground.jpg");
-    // const material = new THREE.MeshStandardMaterial({
-    //   map: ground,
-    //   side: THREE.DoubleSide,
-    //   roughness: 0.5,
-    //   metalness: 0.5,
-    // });
-    // material.color.setHex(0x6bff54);
-    // setMyMaterial(material);
-    // const plane = new THREE.Mesh(geometry, material);
-    // plane.rotation.x = Math.PI * -0.499;
-    // plane.position.y = -4.7;
-    // plane.position.z = 0;
-    // scene.add(plane);
-    // plane.receiveShadow = true;
-
-    // const planeGeometry = new THREE.PlaneGeometry(20, 20, 1, 1)
-    // const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.5 })
-    // const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-    // plane.receiveShadow = true
-    // plane.rotation.x = -0.5 * Math.PI
-    // plane.position.y = -0.2
-    // scene.add(plane)
-    //================================================================================================
-
+    // 게임 필드 오브잭트 생성
     const loader = new GLTFLoader();
-    //게임 필드
     loader.load("/playground.glb", (object) => {
       object.scene.scale.set(1, 1, 1);
       object.scene.rotateY(Math.PI);
@@ -235,6 +217,19 @@ const YoungHee = ({
         }
       });
     });
+
+    // 결승선 
+    const touchdownGeometry = new THREE.BoxGeometry(250, 10, 5);
+    const touchdownMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.5,
+    });
+    const touchdown = new THREE.Mesh(touchdownGeometry, touchdownMaterial);
+    touchdown.position.set(0, -3.8, -80);
+    scene.add(touchdown);
+
 
     //================================================================================================
     //광원
@@ -263,10 +258,6 @@ const YoungHee = ({
     // light.shadow.camera.near = 1;
     // light.shadow.camera.far = 500;
 
-    // const light = new THREE.DirectionalLight(0xffffff, 100);
-    // // scene.add(cube);
-    // scene.add(light);
-
     const light2 = new THREE.DirectionalLight(color, intensity);
     light2.position.set(-40, 30, 40);
     // light2.castShadow = true;
@@ -280,18 +271,12 @@ const YoungHee = ({
     light3.target.position.set(0, 0, 140);
     scene.add(light3.target);
 
-    // const light3 = new THREE.SpotLight(color, 100, 100, Math.PI / 10, 0);
-    // light3.position.set(90, 30, -40);
-    // light3.rotateY(Math.PI / 2);
-    // light3.castShadow = true;
-    // scene.add(light3);
-    // scene.add(light3.target);
+    // 광원 방향표시 헬퍼
+    // var directionalLightHelper = new THREE.DirectionalLightHelper(light1, 5);
 
-    var directionalLightHelper = new THREE.DirectionalLightHelper(light1, 5);
+    // var directionalLightHelper2 = new THREE.DirectionalLightHelper(light2, 5);
 
-    var directionalLightHelper2 = new THREE.DirectionalLightHelper(light2, 5);
-
-    var directionalLightHelper3 = new THREE.DirectionalLightHelper(light3, 5);
+    // var directionalLightHelper3 = new THREE.DirectionalLightHelper(light3, 5);
 
     // scene.add(directionalLightHelper);
     // scene.add(directionalLightHelper2);
@@ -302,43 +287,16 @@ const YoungHee = ({
     lightList.current.push(light3);
 
     //================================================================================================
-
-    // const bgTexture = new THREE.TextureLoader().load(
-    //   "/youngHee/squid_game.png"
-    // );
+    // 배경색
     const bgTexture = new THREE.Color(0x437185);
     scene.background = bgTexture;
 
-    // scene.background = new THREE.Color('green');
-
-    // camera.rotateX(Math.PI/2);
-
-    // const myRobot;
-
-    // loader.load("/penguin.gltf", (object) => {
-    //   var texture = new THREE.TextureLoader().load(
-    //     "./02_TEXTURE_MAP_penguin/Penguin_Albedo.png",
-    //     function (texture) {
-    //       // 텍스처를 모델에 적용
-    //       object.scene.traverse(function (child) {
-    //         if (child instanceof THREE.Mesh) {
-    //           child.material.map = texture;
-    //         }
-    //       });
-    //     }
-    //   );
-
-    //================================================================================================
-    //텍스트 시도중, 아직 생성 안됨
-    // const text = new TextGeometry("SQUID GAME", );
-    // scene.add(text);
     //================================================================================================
     // 고정 오브젝트 렌더링
 
     loader.load("/semo.glb", (object) => {
       object.scene.scale.set(40, 40, 40);
       object.scene.position.set(23, 2.5, -115);
-      // console.log("aaaaaaaaaaaaaaaaaaaaa", object.scene);
       scene.add(object.scene);
 
       // 그림자 생성
@@ -375,13 +333,9 @@ const YoungHee = ({
         }
       });
 
-      // renderer.render(scene, camera);
-      setCube(object.scene);
-
       //애니메이션
       const mixer = new THREE.AnimationMixer(object.scene);
       const clips = object.animations;
-      // alert(JSON.stringify(clips));
       const clip = THREE.AnimationClip.findByName(
         clips,
         "squidGameDoll_01_rambut_squidGameDoll_01_MAT_0Action"
@@ -399,11 +353,40 @@ const YoungHee = ({
       //   myCamera.current?.position.y,
       //   myCamera.current?.position.z
       // );
+      // console.log("실행중");
 
-      requestAnimationFrame(animate);
+      animationId.current = requestAnimationFrame(animate);
+
+      playerMap.current.forEach((player: Player) => {
+        const object: GLTF = player.object;
+        const mixer: THREE.AnimationMixer = player.mixer;
+        if (!object || !mixer) return;
+        if (object.scene.position.z < -90) {
+          return;
+        } else {
+          if (player.position < object.scene.position.z) {
+            //오징어 이동 속도 조절
+            object.scene.position.z -= 0.6;
+          }
+          if (player.isAlive === 0) {
+            // 오징어 애니메이션 속도 조절
+            mixer.update(1 / 30);
+          } else if (player.isAlive === 1) {
+            mixer.setTime(0);
+            player.deadCnt++;
+            if (player.deadCnt === 30) {
+              player.isAlive = 2;
+            } else {
+              object.scene.rotateX(Math.PI / 2 / 30);
+              object.scene.position.y -= 0.1;
+            }
+          } else {
+          }
+        }
+      });
 
       renderer.render(scene, camera);
-      labelRenderer.render(scene, camera);
+      labelRenderer.current.render(scene, camera);
     }
 
     animate();
@@ -432,30 +415,59 @@ const YoungHee = ({
         dead.forEach((player: playerInfo) => {
           if (playerMap.current.has(player.uuid)) {
             const curPlayer = playerMap.current.get(player.uuid);
-            if (player) {
+            if (player)
               if (curPlayer && curPlayer.isAlive === 0) curPlayer.isAlive = 1;
-            }
           }
         });
-        // if (myCamera.current) {
-        //   // const player = res.player_info[res.player_info.length - 1];
-        //   // if (player) myCamera.current.position.z = -player.distance + 70;
-        //   // console.log("aaaaaa", player.distance, myCamera.current.position.z);
-        // }
       }
     });
 
     return () => {
-      document.body.removeChild(labelRenderer.domElement);
-      if (scene) scene.clear();
-      if (renderer) renderer.dispose();
+      //애니메이션 프레임 제거
+      cancelAnimationFrame(animationId.current);
+
+      //애니메이션 제거
+      mixers?.forEach((mixer) => {
+        mixer.stopAllAction();
+      });
+      setMixers([]);
+
+      //플레이어 제거
+      playerMap.current.forEach((player: Player) => {
+        player.object.scene.clear();
+        if (useRefScene.current) {
+          useRefScene.current.remove(player.object.scene);
+        }
+      });
+      playerMap.current.clear();
+      setPlayerInfo([]);
+
+      //빛 제거
+      lightList.current.forEach((light) => {
+        if (useRefScene.current) {
+          useRefScene.current.remove(light);
+        }
+      });
+      lightList.current = [];
+
+      //카메라 제거
+      myCamera.current = undefined as any;
+
+      //3D 렌더러 제거
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+
+      //씬 제거
+      useRefScene.current?.clear();
+      useRefScene.current = undefined as any;
+      window.location.reload();
     };
   }, []);
 
   useEffect(() => {
-    // alert('playerInfo')
-    // console.log(playerInfo);
     let count = 0;
+    if (!playerInfo) return;
     playerInfo.forEach((player: playerInfo) => {
       count++;
       addPlayer(count, player.uuid, player.name, player.distance);
@@ -476,23 +488,34 @@ const YoungHee = ({
       // setPlayerList([...playerList, player]);
       playerMap.current.set(id, player);
 
-      // console.log(playerList.length);
-
-      setPlayerCount((prev) => prev + 1);
       if (count % 2 === 0) {
         object.scene.position.set(-count * 2, -0.5, 40);
       } else {
         object.scene.position.set(count * 2, -0.5, 40);
       }
-      scene?.add(object.scene);
+      if (useRefScene.current) {
+        useRefScene.current.add(object.scene);
+      }
       object.scene.rotateY(Math.PI);
 
       // 플레이어 이름
       const div = document.createElement("div");
-      div.className = "label";
+
+      div.className = "squidlabel";
+      div.style.color = "black";
+      div.style.width= "100px";
+      div.style.height = "30px";
+      div.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+      div.style.borderRadius = "5px";
+      div.style.padding = "5px";
+      div.style.textAlign = "center";
+      div.style.color = "black";
+      div.style.fontSize = "20px";
+      div.style.textShadow = "1px 1px 1px rgb(0,0,0,0.5)";
       div.textContent = name;
+
       const label = new CSS2DObject(div);
-      label.position.set(0, 1, 0);
+      label.position.set(0, 4.5, 0);
       object.scene.add(label);
 
       //그림자 생성
@@ -503,76 +526,26 @@ const YoungHee = ({
         }
       });
 
-      setCube(object.scene);
-
       //애니메이션
       const mixer = new THREE.AnimationMixer(object.scene);
       const clips = object.animations;
       const clip = THREE.AnimationClip.findByName(clips, "BlooperAction");
       const action = mixer.clipAction(clip);
       action.play();
-      let deadCnt = 0;
 
-      async function animate() {
-        // await wait(1000);
-        const playerNum: number = requestAnimationFrame(animate);
-
-        if (object.scene.position.z < -90) {
-          // scene?.remove(object.scene);
-          cancelAnimationFrame(playerNum);
-          return;
-        } else {
-          // console.log(playerList.length);
-          // if (playerList.length === 0) return;
-          // alert(playerList.length)
-          // console.log(player.position, object.scene.position.z)
-          if (player.position < object.scene.position.z) {
-            //오징어 이동 속도 조절
-            object.scene.position.z -= 0.6;
-          }
-          // 오징어 애니메이션 속도 조절
-          if (player.isAlive === 0) {
-            mixer.update(1 / 30);
-          } else if (player.isAlive === 1) {
-            mixer.setTime(0);
-            deadCnt++;
-            if (deadCnt === 30) {
-              player.isAlive = 2;
-            } else {
-              object.scene.rotateX(Math.PI / 2 / 30);
-              object.scene.position.y -= 0.1;
-            }
-          } else {
-          }
-          // if(camera)
-          //   camera.position.z -= 0.1;
-        }
-
-        if (scene && camera && renderer) {
-          if (object.scene.position.z + 40 > camera?.position.z)
-            camera.position.z -= 0.4;
-          renderer.render(scene, camera);
-          labelRenderer.render(scene, camera);
-        }
-      }
-      animate();
+      player.mixer = mixer;
+      player.object = object;
     });
   }
 
   useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.addEventListener("mousedown", turnBack);
-      canvasRef.current.addEventListener("mouseup", turnFront);
-      // canvasRef.current.addEventListener('mouseleave', exitPaint);
-    }
+    labelRenderer.current.domElement.addEventListener("mousedown", turnBack);
+    labelRenderer.current.domElement.addEventListener("mouseup", turnFront);
 
     return () => {
-      if (canvasRef.current) {
         // Unmount 시 이벤트 리스터 제거
-        canvasRef.current.removeEventListener("mousedown", turnBack);
-        canvasRef.current.removeEventListener("mouseup", turnFront);
-        // canvasRef.current.removeEventListener('mouseleave', exitPaint);
-      }
+        labelRenderer.current.domElement.removeEventListener("mousedown", turnBack);
+        labelRenderer.current.domElement.removeEventListener("mouseup", turnFront);
     };
   }, [turnBack, turnFront]);
 
@@ -585,7 +558,6 @@ const YoungHee = ({
       mixers[0].update(1 / 30);
     }
     mixers[0].setTime(0);
-    myMaterial?.color.setHex(0x6bff54);
     lightList.current.forEach((light) => {
       light.color.setHex(0xe0e0e0);
     });
@@ -597,7 +569,6 @@ const YoungHee = ({
     for (let i = 0; i < 18; i++) {
       await wait(3);
       mixers[0].update(1 / 30);
-      myMaterial?.color.setHex(0xff545a);
       lightList.current.forEach((light) => {
         light.color.setHex(0xff545a);
       });
@@ -606,7 +577,7 @@ const YoungHee = ({
     mixers[0].setTime(18 / 30);
   }
 
-  //1번 오징어가 달림
+  //오징어가 달림
   async function run(playerId: string, distance: number) {
     // console.log(playerMap.current.size);
     let moveDistance = (120 / length) * distance;
@@ -650,7 +621,7 @@ const YoungHee = ({
       // 이동 벡터를 초기화합니다.
       var moveVector = new THREE.Vector3(0, 0, 0);
 
-      console.log(key);
+      // console.log(key);
       switch (key) {
         case "1":
           cameraMove1();
@@ -663,6 +634,9 @@ const YoungHee = ({
           return;
         case "4":
           cameraMove4();
+          return;
+        case "0":
+          stopGame();
           return;
         case "a":
           moveVector.add(
@@ -780,28 +754,6 @@ const YoungHee = ({
     myCamera.current?.lookAt(0, 0, 0);
   }
 
-  // async function turnFront() {
-  //   console.log("turnFront");
-  //   for (let i = 0; i < 32; i++) {
-  //     await wait(3);
-  //     setCube(cube?.rotateY(Math.PI / 32));
-
-  //     //   setCamera(camera?.rotateY(Math.PI / 10));
-  //   }
-  //   // myScene.background = new THREE.Color('green');
-  // }
-
-  // async function turn() {
-  //   console.log('turn')
-  //   for (let i = 0; i < 32; i++) {
-  //     await wait(3);
-  //     setCube(cube?.rotateY(Math.PI / 32));
-
-  //     //   setCamera(camera?.rotateY(Math.PI / 10));
-  //   }
-  //   // myScene.background = new THREE.Color('red');
-  // }
-
   return (
     <>
       <canvas
@@ -810,29 +762,29 @@ const YoungHee = ({
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      <Box sx={{ height: 330, flexGrow: 1, zIndex:100 }}>
-      <Backdrop open={open} />
-      <SpeedDial
-        ariaLabel="SpeedDial tooltip example"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
-        icon={<SpeedDialIcon />}
-        onClose={handleClose}
-        onOpen={handleOpen}
-        open={open}
-      >
-        {actions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            tooltipOpen
-            onClick={()=>action.onclick()}
-          />
-        ))}
-      </SpeedDial>
-    </Box>
+      <Box sx={{ height: 330, flexGrow: 1, zIndex: 100 }}>
+        <Backdrop open={open} />
+        <SpeedDial
+          ariaLabel="SpeedDial tooltip example"
+          sx={{ position: "absolute", bottom: 16, right: 16 }}
+          icon={<SpeedDialIcon />}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          open={open}
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              tooltipOpen
+              onClick={() => action.onclick()}
+            />
+          ))}
+        </SpeedDial>
+      </Box>
       <style jsx>{`
-        body{
+        body {
           overflow: hidden;
         }
         #canvas {
@@ -840,17 +792,6 @@ const YoungHee = ({
           height: 100vh;
           display: block;
           background-color: #437185;
-        }
-        .label{
-          width: 100px;
-          height: 30px;
-          background-color: rgba(255,255,255,0.7);
-          border-radius: 5px;
-          padding: 5px;
-          text-align: center;
-          color: black;
-          font-size: 20px;
-          font-weight: bold;
         }
       `}</style>
     </>
