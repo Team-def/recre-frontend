@@ -10,11 +10,32 @@ import { green } from '@mui/material/colors';
 import MyModal from '@/component/MyModal';
 import { redGreenStartAtom } from '../modules/redGreenStartAtom';
 import { redGreenInfoAtom } from '../modules/redGreenAtoms';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 import YoungHee from '@/component/youngHee';
+
+interface Data {
+  calories: number;
+  carbs: number;
+  dessert: string;
+  fat: number;
+  id: number;
+  protein: number;
+}
+
+interface ColumnData {
+  dataKey: keyof Data;
+  label: string;
+  numeric?: boolean;
+  width: number;
+}
+
+type Sample = [string, number, number, number, number];
 
 export default function RedGreen({socket}: {socket : Socket}) {
     const [userInfo,] = useAtom(userInfoAtoms)
@@ -198,69 +219,52 @@ export default function RedGreen({socket}: {socket : Socket}) {
 
       const FinishedModal = ({player_info}:{player_info : playerInfo[]}) => {
         return (
-          <div>
+          <><div className='modalContainer'>
             <div className="winnerInfo">
               <div className="modalText">
-              <table
-                style={{
-                  width: '100%',
-                  maxWidth: 360,
-                  borderCollapse: 'collapse',
-                  backgroundColor: '#f2f2f2',
-                }}
-              >
-                <thead>
-                  <tr>
-                    <th>순위</th>
-                    <th>이름</th>
-                    <th>거리</th>
-                    <th>시간</th>
-                    <th>상태</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <List
-            sx={{
-              width: '100%',
-              maxWidth: 360,
-              bgcolor: '#f2f2f2',
-              position: 'relative',
-              overflow: 'auto',
-              maxHeight: 300,
-              '& ul': { padding: 0 },
-            }}
-            subheader={<li />}
-          >
+              <TableContainer component={Paper}>
+                <Table sx={{  }} aria-label="simple table">
+                <TableHead sx={{ backgroundColor:'antiquewhite' }}>
+                  <TableRow>
+                    <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>순위</TableCell>
+                    <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>이름</TableCell>
+                    <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>거리</TableCell>
+                    <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>시간</TableCell>
+                    <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>상태</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
                   {player_info.map((player: playerInfo, index: number) => {
                     const elapsedTime = timeCheck(new Date(player.elapsed_time));
                     const playerFixedDistance =
                       player.distance > gameInfo[1] ? gameInfo[1] : player.distance;
 
                     return (
-                      <ListItem key={`item-${index}`}>
-                      <tr key={`item-${index}`}>
-                        <td
+                      <TableRow
+                      key={`item-${index}`}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+                        <TableCell
                           style={{
                             backgroundColor:
                               index + 1 <= gameInfo[0] ? '#ffd400' : '#f2f2f2',
-                            borderRadius: '5px',
                             fontWeight: index + 1 <= gameInfo[0] ? 900 : 400,
                             color: index + 1 <= gameInfo[0] ? 'black' : 'gray',
+                            textAlign: 'center',
                           }}
                         >
                           {index + 1}등
-                        </td>
-                        <td>{player.name}</td>
-                        <td>{playerFixedDistance}</td>
-                        <td>{elapsedTime ?? ''}</td>
-                        <td>{player.state}</td>
-                      </tr>
-                      </ListItem>
+                        </TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{player.name}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{playerFixedDistance}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{elapsedTime ?? ''}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{player.state}</TableCell>
+                        </TableRow>
                     );
                   })}
-                  </List>
-                </tbody>
-              </table>
+                </TableBody>
+                </Table>
+                </TableContainer>
               {/* <List
                 sx={{
                   width: '100%',
@@ -290,8 +294,32 @@ export default function RedGreen({socket}: {socket : Socket}) {
             </List> */}
               </div>
             </div>
-            <Button onClick={leaveGame}>게임 끝내기</Button>
+            <div className='leaveBtn'><Button onClick={leaveGame}>게임 끝내기</Button></div>
           </div>
+          <style jsx>{`
+            .modalContainer{
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-direction: column;
+            }
+            .modalText{
+              font-size: 20px;
+              font-weight: bold;
+            }
+            .winnerInfo{
+              max-height: 70vh;
+              overflow: scroll;
+              overflow-x: hidden;
+              padding: 10px;
+              background-color: white;
+              border-radius: 10px;
+            }
+            .leaveBtn{
+              margin-top: 10px;
+            }
+          `}</style>
+          </>
         )
       }
     
