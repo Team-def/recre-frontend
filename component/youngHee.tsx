@@ -212,7 +212,7 @@ const YoungHee = ({
           const material = child.material;
           if (material instanceof THREE.MeshStandardMaterial) {
             // Set to Single Faced
-            // material.side = THREE.BackSide;
+            material.side = THREE.BackSide;
           }
         }
       });
