@@ -36,6 +36,7 @@ export default function RankingBoard(
     const [playerInfo, setPlayerInfo] = useState<playerInfo[]>();
 
     socket.on("players_status", (res: { player_info: playerInfo[] }) => {
+        const sortedFilteredPlayerInfo = 
         res.player_info.sort((a:playerInfo, b:playerInfo) => {
             if (a.distance !== b.distance) {
                 return b.distance - a.distance;
@@ -44,7 +45,7 @@ export default function RankingBoard(
         }).filter((value, index, arr) => {
             return index < 5;
         });
-        setPlayerInfo(res.player_info);
+        setPlayerInfo(sortedFilteredPlayerInfo);
     });
 
     
