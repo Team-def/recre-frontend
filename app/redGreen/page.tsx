@@ -18,6 +18,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import YoungHee from '@/component/youngHee';
+import RankingBoard from '@/component/rankingBoard';
 
 interface Data {
   calories: number;
@@ -73,8 +74,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
     useEffect(() => {
         socket.on('players_status', (res) => {
 
-          console.log(res.player_info)
-          console.log('redGreenPage')
+          // console.log(res.player_info)
         //   if(res.player_info){
         //     setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
           // }
@@ -327,6 +327,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
       return (
         <>
           <div className='redGreenContainer'>
+            <div className="ranking">
+              <RankingBoard socket={socket as Socket} length = {gameInfo[1] as number}></RankingBoard>
+            </div>
+            
           
             {/* <div>
               <div className='signalDiv' style={{backgroundColor:go?'green':'red'}} onClick={()=>setGo(!go)}></div>
@@ -367,6 +371,10 @@ export default function RedGreen({socket}: {socket : Socket}) {
               justify-content: center;
               align-items: center;
               flex-direction: column;
+            }
+            .ranking{
+              top: 10%,
+              left: 10%
             }
 
             .playerDiv{

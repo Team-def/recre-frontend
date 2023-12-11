@@ -401,7 +401,6 @@ const YoungHee = ({
     });
 
     socket.on("players_status", (res) => {
-      console.log("youngheePage");
       if (res.player_info) {
         let alived = res.player_info.filter(
           (player: playerInfo) => player.state === state.alive
