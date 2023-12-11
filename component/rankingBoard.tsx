@@ -53,9 +53,9 @@ export default function RankingBoard(
     return (
         <>
         <div className="ranking">
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{ backgroundColor: 'transparent'}}>
                 <Table sx={{  }} aria-label="simple table">
-                <TableHead sx={{ backgroundColor:'antiquewhite' }}>
+                <TableHead sx={{ backgroundColor:'#fffaebd7' }}>
                   <TableRow>
                     <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>순위</TableCell>
                     <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>이름</TableCell>
@@ -69,10 +69,10 @@ export default function RankingBoard(
                       player.distance > length ? length : player.distance;
 
                     return (
-                      <TableRow key={`item-${index}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                      <TableRow key={`item-${index}`} sx={{ '&:last-child td, &:last-child th': { border: 0 }, backgroundColor: 'rgb(250, 249, 246, 0.8)'}}>
                         <TableCell
                           style={{
-                            backgroundColor: index + 1 <= length ? '#ffd400' : '#f2f2f2',
+                            backgroundColor: index + 1 <= length ? 'rgba(245, 233, 86, 0.8)' : 'rgba(250, 249, 246, 0.8)',
                             fontWeight: index + 1 <= length ? 900 : 400,
                             color: index + 1 <= length ? 'black' : 'gray',
                             textAlign: 'center',
@@ -80,9 +80,9 @@ export default function RankingBoard(
                         >
                           {index + 1}등
                         </TableCell>
-                        <TableCell align="right" sx={{textAlign:'center', backgroundColor: 'rgba(250, 249, 246, 0.5)'}}>{player.name}</TableCell>
-                        <TableCell align="right" sx={{textAlign:'center', backgroundColor: 'rgba(250, 249, 246, 0.5)'}}>{playerFixedDistance}</TableCell>
-                        <TableCell align="right" sx={{textAlign:'center', backgroundColor: 'rgba(250, 249, 246, 0.5)'}}>{player.state}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{player.name}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{playerFixedDistance}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center'}}>{player.state}</TableCell>
                         </TableRow>
                     );
                   })}
