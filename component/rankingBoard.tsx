@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Socket } from "socket.io-client";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -35,16 +35,18 @@ export default function RankingBoard(
 
     const [playerInfo, setPlayerInfo] = useState<playerInfo[]>();
     
-
-    socket.on("players_status", (res) => {
-        res.player_info.sort((a:playerInfo, b:playerInfo) => {
-            if (a.distance !== b.distance) {
-                return a.distance - b.distance;
-            }
-            return (a.distance);
+    useEffect(()=> {
+        socket.on("players_status", (res) => {
+            res.player_info.sort((a:playerInfo, b:playerInfo) => {
+                if (a.distance !== b.distance) {
+                    return a.distance - b.distance;
+                }
+                return (a.distance);
+            });
+            setPlayerInfo(res.playerInfo);
         });
-        setPlayerInfo(res.playerInfo);
-    });
+    }, [playerInfo])
+    
 
     return (
         <>
