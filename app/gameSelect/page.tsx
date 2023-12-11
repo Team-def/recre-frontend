@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
@@ -30,6 +30,88 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
+
+const TextInfoCustom = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
+    width: 170,
+    textAlign: 'center',
+    "& .MuiOutlinedInput-input": {
+        color: colorStyle,
+        textAlign: 'center',
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "&:hover .MuiInputLabel-root": {
+        color: colorStyle
+    },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+        color: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiInputLabel-root": {
+        color: colorStyle,
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+        borderWidth: 2,
+    },
+
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+    },
+}));
+
+const CustomSelect = styled(Select)(({colorStyle}:{colorStyle:string})=>({
+    width: 170,
+    textAlign: 'center',
+    "& .MuiOutlinedInput-input": {
+        color: colorStyle,
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "&:hover .MuiInputLabel-root": {
+        color: colorStyle
+    },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+        color: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiInputLabel-root": {
+        color: colorStyle,
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+        borderWidth: 2,
+    },
+
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+    },
+    "&:focus": {
+        borderColor: colorStyle,
+    }
+}));
+
+
 export default function GameSelect() {
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [isLogin,] = useAtom(loginAtom);
@@ -43,87 +125,6 @@ export default function GameSelect() {
     const [addClass, setAddClass] = useState(false);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const [colorStyle, setColorStyle] = useState<string>('#525051');
-
-
-    const TextInfoCustom = styled(TextField)({
-        width: 170,
-        textAlign: 'center',
-        "& .MuiOutlinedInput-input": {
-            color: colorStyle,
-            textAlign: 'center',
-        },
-
-        "&:hover .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "&:hover .MuiInputLabel-root": {
-            color: colorStyle
-        },
-        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "& .MuiInputLabel-root.Mui-focused": {
-            color: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiInputLabel-root": {
-            color: colorStyle,
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-            borderWidth: 2,
-        },
-
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-        },
-    });
-
-    const CustomSelect = styled(Select)({
-        width: 170,
-        textAlign: 'center',
-        "& .MuiOutlinedInput-input": {
-            color: colorStyle,
-        },
-
-        "&:hover .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "&:hover .MuiInputLabel-root": {
-            color: colorStyle
-        },
-        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "& .MuiInputLabel-root.Mui-focused": {
-            color: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiInputLabel-root": {
-            color: colorStyle,
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-            borderWidth: 2,
-        },
-
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-        },
-        '&:focus': {
-            borderColor: colorStyle,
-        },
-    });
 
     const BootstrapButton = styled(Button)({
         boxShadow: '0 0 10px rgba(0,0,0,0.3)',
@@ -163,23 +164,17 @@ export default function GameSelect() {
     useEffect(() => {
 
         if (gameInfo[1] && gameInfo[1] > 0 && gameInfo[0]) {
-            if (gameInfo[1] > 1000) {
-                alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
-                setGameInfo([gameInfo[0], 0])
+            if (gameInfo[1] > 100) {
+                alert('한 게임 당 참여가능한 인원은 100명 이하입니다.')
+                setGameInfo([gameInfo[0], 100])
             }
             else {
                 if (gameInfo[0] === '무궁화 꽃이 피었습니다') {
-                    if (redGreenInfo[0] && redGreenInfo[0] > 0) {
-                        if (redGreenInfo[0] > gameInfo[1]) {
-                            alert('우승자 수가 참여 인원보다 많습니다.')
-                            setRedGreenInfo([gameInfo[1], redGreenInfo[1]])
+                    if (!redGreenInfo[0] || redGreenInfo[0] <= 0) {
+                        setIsReady(false);
                         }
-                        else {
-                            setIsReady(true);
-                        }
+                    else setIsReady(true);
                     }
-                    else setIsReady(false);
-                }
                 else setIsReady(true);
             }
         }
@@ -239,6 +234,22 @@ export default function GameSelect() {
         handleGameSelect(gameInfo[0])
     }, [])
 
+    const startGameBtnClicked = () => {
+        if (gameInfo[0] === '무궁화 꽃이 피었습니다' && gameInfo[1]) {
+            if (redGreenInfo[0] && redGreenInfo[0] > 0) {
+                if (redGreenInfo[0] > gameInfo[1]) {
+                    alert('우승자 수가 참여 인원보다 많습니다.')
+                    setRedGreenInfo([gameInfo[1], redGreenInfo[1]])
+                }
+                else {
+                    router.push("/gamePage")
+                }
+            }
+            else router.push("/gamePage")
+        }
+        else router.push("/gamePage")
+    }
+
 
     type Game = {
         name: string,
@@ -288,20 +299,23 @@ export default function GameSelect() {
                 <div className='input_alert'>
                     {(gameInfo[0] === '' || gameInfo[0] === null) ? '' :
                         <TextInfoCustom
-                            id="outlined-number"
+                            id="outlined-number1"
                             label="인원 수"
                             placeholder='인원 수를 입력해주세요'
                             type="number"
+                            inputProps={{ min: 0, max: 100 }}
                             value={gameInfo[1]}
                             onChange={(e) => setGameInfo([gameInfo[0], parseInt(e.target.value)])}
                             InputLabelProps={{
                                 shrink: true,
                             }}
                             color='primary'
+                            colorStyle={colorStyle}
                         />}{gameInfo[0] === '무궁화 꽃이 피었습니다' ? <>
                             <TextInfoCustom
-                                id="outlined-number"
+                                id="outlined-number2"
                                 label="우승자"
+                                inputProps={{ min: 0, max: 100 }}
                                 placeholder='우승자 수를 입력해주세요'
                                 type="number"
                                 value={redGreenInfo[0]}
@@ -310,6 +324,7 @@ export default function GameSelect() {
                                     shrink: true,
                                 }}
                                 color='primary'
+                                colorStyle={colorStyle}
                             />
                             <FormControl >
                                 <InputLabel id="demo-simple-select-label" sx={{ color: colorStyle }}>거리</InputLabel>
@@ -319,6 +334,7 @@ export default function GameSelect() {
                                     value={redGreenInfo[1]}
                                     label="Age"
                                     onChange={(e) => setRedGreenInfo([redGreenInfo[0], parseInt(e.target.value as string)])}
+                                    colorStyle={colorStyle}
                                 >
                                     <MenuItem value={50}>짧게</MenuItem>
                                     <MenuItem value={100}>중간</MenuItem>
@@ -327,7 +343,7 @@ export default function GameSelect() {
                             </FormControl></> : ''}
                 </div>
             </div>
-            <BootstrapButton variant='contained' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
+            <BootstrapButton variant='contained' size="large" onClick={() => startGameBtnClicked()} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
         </div>
         <style jsx>{`
             .gameSelectContainer{
