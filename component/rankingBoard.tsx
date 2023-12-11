@@ -80,9 +80,9 @@ export default function RankingBoard(
                         >
                           {index + 1}등
                         </TableCell>
-                        <TableCell align="right" sx={{textAlign:'center'}}>{player.name}</TableCell>
-                        <TableCell align="right" sx={{textAlign:'center'}}>{playerFixedDistance}</TableCell>
-                        <TableCell align="right" sx={{textAlign:'center'}}>{player.state}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center', backgroundColor: 'rgba(250, 249, 246, 0.5)'}}>{player.name}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center', backgroundColor: 'rgba(250, 249, 246, 0.5)'}}>{playerFixedDistance}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center', backgroundColor: 'rgba(250, 249, 246, 0.5)'}}>{player.state}</TableCell>
                         </TableRow>
                     );
                   })}
