@@ -327,7 +327,7 @@ export default function RedGreen({socket}: {socket : Socket}) {
       return (
         <>
           <div className='redGreenContainer'>
-            <div className="ranking">
+            <div className="rankContainer">
               <RankingBoard socket={socket as Socket} length = {gameInfo[1] as number}></RankingBoard>
             </div>
             
@@ -372,9 +372,11 @@ export default function RedGreen({socket}: {socket : Socket}) {
               align-items: center;
               flex-direction: column;
             }
-            .ranking{
-              top: 10%,
-              left: 10%
+            .rankContainer{
+              position: fixed;
+              top: 10%;
+              left: 10%;
+              z-index: 999;
             }
 
             .playerDiv{
