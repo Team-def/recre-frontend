@@ -71,13 +71,14 @@ export default function RedGreen({socket}: {socket : Socket}) {
   }
 
     useEffect(() => {
-        // socket.on('players_status', (res) => {
+        socket.on('players_status', (res) => {
 
-        //   console.log(res.player_info)
+          console.log(res.player_info)
+          console.log('redGreenPage')
         //   if(res.player_info){
         //     setPlayerInfo(res.player_info.filter((player: playerInfo) => player.state === state.alive));
-        //   }
-        // });
+          // }
+        });
 
         setModalHeader('곧 게임이 시작됩니다!');
         setModalContent(<CounterModal/>);
