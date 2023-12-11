@@ -24,4 +24,4 @@ jobs:
             pm2 kill
             npm i --force
             npm run build
-            pm2 start dist/main.js
+            pm2 --name recre-front start npm -- start
