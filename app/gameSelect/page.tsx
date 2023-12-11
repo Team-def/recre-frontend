@@ -163,23 +163,17 @@ export default function GameSelect() {
     useEffect(() => {
 
         if (gameInfo[1] && gameInfo[1] > 0 && gameInfo[0]) {
-            if (gameInfo[1] > 1000) {
-                alert('한 게임 당 참여가능한 인원은 1000명 이하입니다.')
-                setGameInfo([gameInfo[0], 0])
+            if (gameInfo[1] > 100) {
+                alert('한 게임 당 참여가능한 인원은 100명 이하입니다.')
+                setGameInfo([gameInfo[0], 100])
             }
             else {
                 if (gameInfo[0] === '무궁화 꽃이 피었습니다') {
-                    if (redGreenInfo[0] && redGreenInfo[0] > 0) {
-                        if (redGreenInfo[0] > gameInfo[1]) {
-                            alert('우승자 수가 참여 인원보다 많습니다.')
-                            setRedGreenInfo([gameInfo[1], redGreenInfo[1]])
+                    if (!redGreenInfo[0] || redGreenInfo[0] <= 0) {
+                        setIsReady(false);
                         }
-                        else {
-                            setIsReady(true);
-                        }
+                    else setIsReady(true);
                     }
-                    else setIsReady(false);
-                }
                 else setIsReady(true);
             }
         }
@@ -239,6 +233,22 @@ export default function GameSelect() {
         handleGameSelect(gameInfo[0])
     }, [])
 
+    const startGameBtnClicked = () => {
+        if (gameInfo[0] === '무궁화 꽃이 피었습니다' && gameInfo[1]) {
+            if (redGreenInfo[0] && redGreenInfo[0] > 0) {
+                if (redGreenInfo[0] > gameInfo[1]) {
+                    alert('우승자 수가 참여 인원보다 많습니다.')
+                    setRedGreenInfo([gameInfo[1], redGreenInfo[1]])
+                }
+                else {
+                    router.push("/gamePage")
+                }
+            }
+            else router.push("/gamePage")
+        }
+        else router.push("/gamePage")
+    }
+
 
     type Game = {
         name: string,
@@ -292,6 +302,7 @@ export default function GameSelect() {
                             label="인원 수"
                             placeholder='인원 수를 입력해주세요'
                             type="number"
+                            inputProps={{ min: 0, max: 100 }}
                             value={gameInfo[1]}
                             onChange={(e) => setGameInfo([gameInfo[0], parseInt(e.target.value)])}
                             InputLabelProps={{
@@ -302,6 +313,7 @@ export default function GameSelect() {
                             <TextInfoCustom
                                 id="outlined-number"
                                 label="우승자"
+                                inputProps={{ min: 0, max: 100 }}
                                 placeholder='우승자 수를 입력해주세요'
                                 type="number"
                                 value={redGreenInfo[0]}
@@ -327,7 +339,7 @@ export default function GameSelect() {
                             </FormControl></> : ''}
                 </div>
             </div>
-            <BootstrapButton variant='contained' size="large" onClick={() => router.push("/gamePage")} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
+            <BootstrapButton variant='contained' size="large" onClick={() => startGameBtnClicked()} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
         </div>
         <style jsx>{`
             .gameSelectContainer{
