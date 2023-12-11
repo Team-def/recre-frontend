@@ -374,8 +374,8 @@ export default function RedGreen({socket}: {socket : Socket}) {
             }
             .rankContainer{
               position: fixed;
-              top: 10%;
-              left: 5%;
+              top: 5%;
+              right: 3%;
               z-index: 999;
             }
 
