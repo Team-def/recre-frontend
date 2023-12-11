@@ -170,7 +170,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
         socket.on('touchdown', (res) => {
             const elapsedTime = timeCheck(new Date(res.elapsed_time)); //게임 시간 계산
             setModalHeader('통과!');
-            setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}<br></br> 등수 : {myrank} / {total_num}</div>);
+            setModalContent(<div>{res.name}님 축하합니다!<br></br> 이동 거리: {length} / {length}<br></br>걸린 시간: {elapsedTime}</div>);
             setOpen(true);
             let isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
             if (!isSafari) {
