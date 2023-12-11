@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
@@ -30,6 +30,88 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
+
+const TextInfoCustom = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
+    width: 170,
+    textAlign: 'center',
+    "& .MuiOutlinedInput-input": {
+        color: colorStyle,
+        textAlign: 'center',
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "&:hover .MuiInputLabel-root": {
+        color: colorStyle
+    },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+        color: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiInputLabel-root": {
+        color: colorStyle,
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+        borderWidth: 2,
+    },
+
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+    },
+}));
+
+const CustomSelect = styled(Select)(({colorStyle}:{colorStyle:string})=>({
+    width: 170,
+    textAlign: 'center',
+    "& .MuiOutlinedInput-input": {
+        color: colorStyle,
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "&:hover .MuiInputLabel-root": {
+        color: colorStyle
+    },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+        color: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiInputLabel-root": {
+        color: colorStyle,
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+        borderWidth: 2,
+    },
+
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+    },
+    "&:focus": {
+        borderColor: colorStyle,
+    }
+}));
+
+
 export default function GameSelect() {
     const [gameInfo, setGameInfo] = useAtom(gameAtoms);
     const [isLogin,] = useAtom(loginAtom);
@@ -43,87 +125,6 @@ export default function GameSelect() {
     const [addClass, setAddClass] = useState(false);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const [colorStyle, setColorStyle] = useState<string>('#525051');
-
-
-    const TextInfoCustom = styled(TextField)({
-        width: 170,
-        textAlign: 'center',
-        "& .MuiOutlinedInput-input": {
-            color: colorStyle,
-            textAlign: 'center',
-        },
-
-        "&:hover .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "&:hover .MuiInputLabel-root": {
-            color: colorStyle
-        },
-        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "& .MuiInputLabel-root.Mui-focused": {
-            color: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiInputLabel-root": {
-            color: colorStyle,
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-            borderWidth: 2,
-        },
-
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-        },
-    });
-
-    const CustomSelect = styled(Select)({
-        width: 170,
-        textAlign: 'center',
-        "& .MuiOutlinedInput-input": {
-            color: colorStyle,
-        },
-
-        "&:hover .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "&:hover .MuiInputLabel-root": {
-            color: colorStyle
-        },
-        "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-            color: colorStyle
-        },
-        "& .MuiInputLabel-root.Mui-focused": {
-            color: colorStyle
-        },
-        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle
-        },
-        "& .MuiInputLabel-root": {
-            color: colorStyle,
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-            borderWidth: 2,
-        },
-
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: colorStyle,
-        },
-        '&:focus': {
-            borderColor: colorStyle,
-        },
-    });
 
     const BootstrapButton = styled(Button)({
         boxShadow: '0 0 10px rgba(0,0,0,0.3)',
@@ -298,7 +299,7 @@ export default function GameSelect() {
                 <div className='input_alert'>
                     {(gameInfo[0] === '' || gameInfo[0] === null) ? '' :
                         <TextInfoCustom
-                            id="outlined-number"
+                            id="outlined-number1"
                             label="인원 수"
                             placeholder='인원 수를 입력해주세요'
                             type="number"
@@ -309,9 +310,10 @@ export default function GameSelect() {
                                 shrink: true,
                             }}
                             color='primary'
+                            colorStyle={colorStyle}
                         />}{gameInfo[0] === '무궁화 꽃이 피었습니다' ? <>
                             <TextInfoCustom
-                                id="outlined-number"
+                                id="outlined-number2"
                                 label="우승자"
                                 inputProps={{ min: 0, max: 100 }}
                                 placeholder='우승자 수를 입력해주세요'
@@ -322,6 +324,7 @@ export default function GameSelect() {
                                     shrink: true,
                                 }}
                                 color='primary'
+                                colorStyle={colorStyle}
                             />
                             <FormControl >
                                 <InputLabel id="demo-simple-select-label" sx={{ color: colorStyle }}>거리</InputLabel>
@@ -331,6 +334,7 @@ export default function GameSelect() {
                                     value={redGreenInfo[1]}
                                     label="Age"
                                     onChange={(e) => setRedGreenInfo([redGreenInfo[0], parseInt(e.target.value as string)])}
+                                    colorStyle={colorStyle}
                                 >
                                     <MenuItem value={50}>짧게</MenuItem>
                                     <MenuItem value={100}>중간</MenuItem>
