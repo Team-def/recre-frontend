@@ -38,11 +38,10 @@ export default function RankingBoard(
     socket.on("players_status", (res) => {
         res.player_info.sort((a:playerInfo, b:playerInfo) => {
             if (a.distance !== b.distance) {
-                return a.distance - b.distance;
+                return b.distance - a.distance;
             }
-            return (a.distance);
+            return (b.distance);
         });
-        console.log(res.player_info);
         setPlayerInfo(res.player_info);
     });
 
