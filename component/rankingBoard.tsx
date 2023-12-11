@@ -37,7 +37,7 @@ export default function RankingBoard(
     
 
     socket.on("players_status", (res) => {
-        res.playerInfo.sort((a:playerInfo, b:playerInfo) => {
+        res.player_info.sort((a:playerInfo, b:playerInfo) => {
             if (a.distance !== b.distance) {
                 return a.distance - b.distance;
             }
