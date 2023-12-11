@@ -143,7 +143,7 @@ export default function Catch({ socket }: { socket: Socket }) {
 
       context.stroke();
 
-      console.log(context)
+      // console.log(context)
     }
   };
 
@@ -166,6 +166,7 @@ export default function Catch({ socket }: { socket: Socket }) {
           drawLine(mousePosition, newMousePosition);
           setMousePosition(newMousePosition);
           socket.emit('draw', {
+            access_token: localStorage.getItem('access_token')??'' as string,
             room_id: userInfo.id,
             x: newMousePosition.x,
             y: newMousePosition.y,
@@ -196,6 +197,7 @@ export default function Catch({ socket }: { socket: Socket }) {
     if (context) {
       context.clearRect(0, 0, canvas.width, canvas.height);
       socket.emit('clear_draw', {
+        access_token: localStorage.getItem('access_token')??'' as string,
         room_id: userInfo.id,
       });
     }

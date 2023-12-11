@@ -594,10 +594,12 @@ const YoungHee = ({
     if (isStart) {
       if (go) {
         socket.emit("resume", {
+          access_token: localStorage.getItem('access_token')??'' as string,
           result: go,
         });
       } else {
         socket.emit("stop", {
+          access_token: localStorage.getItem('access_token')??'' as string,
           result: go,
         });
       }
