@@ -96,8 +96,10 @@ export default function QR() {
 
         socket.current.on("start_catch_game", (response) => {
             // console.log(response)
-            if(response.result === true)
+            if(response.result === true){
+                setEmotions([])
                 setOpen(false);
+            }
             else
                 alert(response.message)
         });
@@ -199,6 +201,13 @@ export default function QR() {
                 ;
             }    
         },[]);    
+
+        useEffect(()=>{
+            console.log(emotions.length)
+            if(emotions.length>150){
+                setEmotions([])
+            }
+        },[emotions])
 
         return (<>
             <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage gamePageUrlAns={gamePageUrlAns} gamePageUrl={gamePageUrl} nowPeople={nowPeople} total={gameInfo[1]??0} startGame={startGame}/>} closeFunc={() => { }} myref={modalRef}/>
