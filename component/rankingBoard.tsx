@@ -42,6 +42,7 @@ export default function RankingBoard(
             }
             return (a.distance);
         });
+        console.log(res.player_info);
         setPlayerInfo(res.player_info);
     });
 
@@ -57,7 +58,6 @@ export default function RankingBoard(
                     <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>순위</TableCell>
                     <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>이름</TableCell>
                     <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>거리</TableCell>
-                    <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>시간</TableCell>
                     <TableCell sx={{textAlign:'center', fontWeight:'bold'}}>상태</TableCell>
                     </TableRow>
                 </TableHead>
