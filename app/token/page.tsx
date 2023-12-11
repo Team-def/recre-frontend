@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { tokenAtoms } from "@/app/modules/tokenAtoms";
 import { useAtom } from "jotai";
 import { useCookies } from 'next-client-cookies';
+import { isMobile } from "react-device-detect";
 
 const GetTokenParams = () => {
     const cookies = useCookies();
@@ -21,7 +22,9 @@ const GetTokenParams = () => {
             cookies.remove('access_token')
             // cookies.remove('refresh_token')
             // cookies.set('refresh_token', refresh_token, {secure:true, sameSite:'Lax'})
-            router.push("/");
+            if(isMobile)
+                router.push("/catchAnswer");
+            else router.push("/");
         }else{
             alert('로그인에 실패했습니다.');
             router.push("/");
