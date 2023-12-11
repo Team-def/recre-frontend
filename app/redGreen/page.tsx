@@ -157,6 +157,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
       if (confirm("게임을 나가시겠습니까?")) {
         setIsStart(false);
         socket.emit("end_game", {
+          access_token: localStorage.getItem("access_token") ?? ("" as string),
           result: true,
         });
 
@@ -168,6 +169,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
     } else {
       setIsStart(false);
       socket.emit("end_game", {
+        access_token: localStorage.getItem("access_token") ?? ("" as string),
         result: true,
       });
 

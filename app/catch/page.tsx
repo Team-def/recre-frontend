@@ -99,7 +99,7 @@ export default function Catch({ socket }: { socket: Socket }) {
   const handleBeforeUnload = () => {
     const user_t = JSON.parse(localStorage.getItem('userInfo') || 'null');
     socket.emit('end_game', {
-      access_token: acc_token,
+      access_token: localStorage.getItem("access_token") ?? ("" as string),
       room_id: user_t.id
     });
 
@@ -244,7 +244,7 @@ export default function Catch({ socket }: { socket: Socket }) {
 
       if (confirm("게임을 나가시겠습니까?")) {
         socket.emit('end_game', {
-          access_token: acc_token,
+          access_token: localStorage.getItem("access_token") ?? ("" as string),
           room_id: userInfo.id,
         });
 
@@ -258,7 +258,7 @@ export default function Catch({ socket }: { socket: Socket }) {
     } else {
 
       socket.emit('end_game', {
-        access_token: acc_token,
+        access_token: localStorage.getItem("access_token") ?? ("" as string),
         room_id: userInfo.id,
       });
 
