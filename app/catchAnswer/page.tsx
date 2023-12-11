@@ -10,10 +10,70 @@ import OauthButtons from '@/component/OauthButtons';
 import { loginAtom } from '../modules/loginAtoms';
 import {v4 as uuidv4} from 'uuid';
 import { socketApi } from '../modules/socketApi';
-import { Alert } from '@mui/material';
+import { Alert, TextField, styled } from '@mui/material';
 import useVH from 'react-viewport-height';
 import {isMobile} from 'react-device-detect';
 import MyModal from '@/component/MyModal';
+import Image from 'next/image';
+
+const BootstrapButton = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
+    boxShadow: '0 0 10px rgba(0,0,0,0.3)',
+    textTransform: 'none',
+    fontWeight: 'bold',
+    backgroundColor: colorStyle,
+    color: 'rgb(48,67,143)',
+    '&:hover': {
+        backgroundColor: colorStyle,
+        boxShadow: '0 0 12px rgba(0,0,0,0.7)',
+    },
+    '&:active': {
+        boxShadow: 'none',
+        backgroundColor: colorStyle,
+        borderColor: '#005cbf',
+    },
+    '&:focus': {
+        boxShadow: '0 0 12px rgba(0,0,0,0.7)',
+    },
+}));
+
+const TextInfoCustom = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
+    width: 170,
+    textAlign: 'center',
+    "& .MuiOutlinedInput-input": {
+        color: colorStyle,
+        textAlign: 'center',
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "&:hover .MuiInputLabel-root": {
+        color: colorStyle
+    },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+        color: colorStyle
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+        color: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiInputLabel-root": {
+        color: colorStyle,
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+        borderWidth: 2,
+    },
+
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+    },
+}));
 
 //Answer setting page (for host)
 export default function CatchAnswer() {
@@ -25,6 +85,7 @@ export default function CatchAnswer() {
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
     const [open, setOpen] = useState<boolean>(!isLogin);
+    const [colorStyle, setColorStyle] = useState<string>('orange');
 
     const socket = useRef(io(`${socketApi}/catch?uuId=${uuId}`,{
         withCredentials: true,
@@ -76,22 +137,26 @@ export default function CatchAnswer() {
             <div className="nickname-container">
                     <div className="headerContainer">
                         <div className="logo">
-                            <h1>RecRe</h1>
+                        <Image src={"/yellow_!.png"} alt={'recre'} width={220} height={60}></Image>
                             <span className='teamdef'>정답 입력 화면</span>
                         </div>
                     </div>
                     <div className='alertDiv'><Alert severity="info">문제의 정답을 입력해주시고 아래 '정답 제출' 버튼을 눌러주세요!</Alert></div>
                     <div className='nickDiv'>
-                        <label className="nickname-label">정답: </label>
-                        <input
-                type="text"
-                className="catchAnswer-input nickname-input"
-                value={catchAnswer}
-                onChange={(e) => setCatchAnswer(e.target.value)}
-                placeholder={isLogin?'문제의 정답을 입력해주세요!':'로그인이 필요합니다.'}
-                disabled={!isLogin}
-                ></input>
-                        <Button variant="contained" className="nickname-change" onClick={handleAnswerSubmit} disabled={!isLogin}>제출</Button></div>
+                <TextInfoCustom
+                            className="catchAnswer-input nickname-input"
+                            id="outlined-number1"
+                            label={isLogin?'문제의 정답을 입력해주세요!':'로그인이 필요합니다.'}
+                            type="text"
+                            value={catchAnswer}
+                            onChange={(e) => setCatchAnswer(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            color='primary'
+                            colorStyle={colorStyle}
+                        />
+                        <BootstrapButton className="nickname-change" onClick={handleAnswerSubmit} disabled={!isLogin} colorStyle={colorStyle}>제출</BootstrapButton></div>
                 </div>
                 <MyModal open={open} modalHeader={'먼저 로그인을 해주세요'} modalContent={<OauthButtons/>} closeFunc={()=>{}} myref={null}/>
             <style jsx>{`
@@ -101,14 +166,14 @@ export default function CatchAnswer() {
                     flex-direction: column;
                     align-items: center;
                     justify-content: space-around;
-                    background-color: #F5F5F5;
-                    border-radius: 10px;
+                    background-color: rgb(48,67,143);
                 }
 
                 .nickname-label {
                     font-size: 20px;
                     font-weight: bold;
                     margin-bottom: 10px;
+                    color:orange
                 }
 
                 .nickname-input {
@@ -161,7 +226,7 @@ export default function CatchAnswer() {
                 .teamdef{
                     font-size: 22px;
                     font-weight: 500;
-                    color: gray;
+                    color: orange;
                 }
             `}</style>
             <style jsx global>{`
