@@ -149,7 +149,7 @@ export default function Home() {
     <div className='container'>
       {/* <div> */}
         <div className='middleLogo' onClick={selectGame}>
-          <Image src={'/yellow_!.png'} alt='logo' width={500} height={200}></Image>
+          <Image src={'/brickRecRe.png'} alt='logo' width={300} height={100}></Image>
         </div>
         <div onClick={selectGame} className='knight'>
           <div className='dialog'><Image src={'/dialog.png'} alt='dialog' width={200} height={100}></Image></div>
@@ -166,13 +166,13 @@ export default function Home() {
               align-items: center;
               flex-direction: column;
               height: 100vh;
-              background: url('/BG1.jpg') center / 100% repeat-x;
+              background: url('/BG_04.png') center / 100% repeat-x;
               background-size: 50% 100%;
               animation: movebg 2s linear infinite;
             }
             .middleLogo{
               position: absolute;
-              top: 10vh;
+              top: 20vh;
               text-align: center;
               background-color: transparent;
               transition: transform 0.3s ease;
