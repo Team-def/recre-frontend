@@ -18,8 +18,7 @@
 
 ## Architectures
 
-![최종 수정](https://github.com/Team-def/recre-frontend/assets/18757823/06dae069-abe4-46e7-93da-eb1e8e9e2015)
-
+![최종(read_me 용)](https://github.com/Team-def/recre-frontend/assets/18757823/30481f49-b772-44fa-bdae-160b6b1fb198)
 
 - Backend
   - 호스트 유저 정보 관리: PostgreSQL
