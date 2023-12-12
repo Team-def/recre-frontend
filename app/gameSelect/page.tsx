@@ -34,35 +34,43 @@ const Item = styled(Paper)(({ theme }) => ({
 const TextInfoCustom = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
     width: 170,
     textAlign: 'center',
+    fontFamily: 'myfont',
     "& .MuiOutlinedInput-input": {
         color: colorStyle,
         textAlign: 'center',
+        fontFamily: 'myfont',
     },
 
     "&:hover .MuiOutlinedInput-input": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "&:hover .MuiInputLabel-root": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle
     },
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiInputLabel-root.Mui-focused": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle
     },
     "& .MuiInputLabel-root": {
         color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle,
         borderWidth: 2,
+        fontFamily: 'myfont',
     },
 
     "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -75,32 +83,39 @@ const CustomSelect = styled(Select)(({colorStyle}:{colorStyle:string})=>({
     textAlign: 'center',
     "& .MuiOutlinedInput-input": {
         color: colorStyle,
+        fontFamily: 'myfont',
     },
 
     "&:hover .MuiOutlinedInput-input": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "&:hover .MuiInputLabel-root": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle
     },
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiInputLabel-root.Mui-focused": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle
     },
     "& .MuiInputLabel-root": {
         color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle,
         borderWidth: 2,
+        fontFamily: 'myfont',
     },
 
     "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -299,7 +314,7 @@ export default function GameSelect() {
                 <div className='input_alert'>
                     {(gameInfo[0] === '' || gameInfo[0] === null) ? '' :
                         <TextInfoCustom
-                            id="outlined-number1"
+                            id="outlined-number"
                             label="인원 수"
                             placeholder='인원 수를 입력해주세요'
                             type="number"
@@ -313,7 +328,7 @@ export default function GameSelect() {
                             colorStyle={colorStyle}
                         />}{gameInfo[0] === '무궁화 꽃이 피었습니다' ? <>
                             <TextInfoCustom
-                                id="outlined-number2"
+                                id="outlined-number"
                                 label="우승자"
                                 inputProps={{ min: 0, max: 100 }}
                                 placeholder='우승자 수를 입력해주세요'
@@ -327,7 +342,7 @@ export default function GameSelect() {
                                 colorStyle={colorStyle}
                             />
                             <FormControl >
-                                <InputLabel id="demo-simple-select-label" sx={{ color: colorStyle }}>거리</InputLabel>
+                                <InputLabel id="demo-simple-select-label" sx={{ color: colorStyle,fontFamily: 'myfont', }}>거리</InputLabel>
                                 <CustomSelect
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
@@ -336,14 +351,14 @@ export default function GameSelect() {
                                     onChange={(e) => setRedGreenInfo([redGreenInfo[0], parseInt(e.target.value as string)])}
                                     colorStyle={colorStyle}
                                 >
-                                    <MenuItem value={50}>짧게</MenuItem>
-                                    <MenuItem value={100}>중간</MenuItem>
-                                    <MenuItem value={160}>길게</MenuItem>
+                                    <MenuItem value={50} style={{fontFamily: 'myfont'}}>짧게</MenuItem>
+                                    <MenuItem value={100} style={{fontFamily: 'myfont'}}>중간</MenuItem>
+                                    <MenuItem value={160} style={{fontFamily: 'myfont'}}>길게</MenuItem>
                                 </CustomSelect>
                             </FormControl></> : ''}
                 </div>
             </div>
-            <BootstrapButton variant='contained' size="large" onClick={() => startGameBtnClicked()} disabled={!isReady}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
+            <BootstrapButton variant='contained' size="large" onClick={() => startGameBtnClicked()} disabled={!isReady} style={{fontFamily: 'myfont'}}>{gameInfo[0] ? `${gameInfo[0]} 게임 시작하기` : '게임을 선택해주세요'}</BootstrapButton>
         </div>
         <style jsx>{`
             .gameSelectContainer{
@@ -409,6 +424,7 @@ export default function GameSelect() {
                 color: white;
                 text-shadow: 0 0 12px rgba(0,0,0,0.5);
                 background-color: transparent;
+                font-family: 'myfont';
             }
             .gameDiv:hover .gameTitle{
                 filter: opacity(1);

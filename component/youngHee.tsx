@@ -764,7 +764,7 @@ const YoungHee = ({
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      <Box sx={{ height: 330, flexGrow: 1, zIndex: 100 }}>
+      <Box sx={{ height: 330, flexGrow: 1, zIndex: 100, fontFamily:'myfont' }}>
         <Backdrop open={open} />
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
@@ -781,6 +781,7 @@ const YoungHee = ({
               tooltipTitle={action.name}
               tooltipOpen
               onClick={() => action.onclick()}
+              sx={{fontFamily: 'myfont'}}
             />
           ))}
         </SpeedDial>

@@ -111,7 +111,7 @@ export default function Header() {
                 : <div></div>}
             {/* 로그인 버튼 */}
             <div className='no-login'>
-                <Button onClick={isLogin ? handleLogout : handleOpenLogin}>{isLogin ? "로그아웃" : "로그인 / 회원가입"}</Button>
+                <Button onClick={isLogin ? handleLogout : handleOpenLogin} style={{fontFamily: 'myfont'}}>{isLogin ? "로그아웃" : "로그인 / 회원가입"}</Button>
             </div>
         </div>
     </div>

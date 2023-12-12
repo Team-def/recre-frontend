@@ -42,7 +42,9 @@ export default function RootLayout({
   return (
     <ClientCookiesProvider value={cookies().getAll()}>
     <html lang="en">
-      <body className={inter.className}>
+    <body 
+      // className={inter.className}
+      >
         <Header />
         {children}
         <Footer />

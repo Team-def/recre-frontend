@@ -108,9 +108,9 @@ export default function Profile({setOpen}: ProfileProps) {
             >
                 <div className='nickDiv'><TextField id="outlined-nick" variant="standard" value={nickname} disabled={!nicknameChange} 
                 InputProps={{
-                    startAdornment: <InputAdornment position="start">닉네임</InputAdornment>,
-                  }} onChange={(e)=>setNickname(e.target.value)} placeholder={userInfo.nickname}/> 
-                {nicknameChange?<><Button className='editBtn' onClick={changeNickname}>변경</Button><Button onClick={cancleEditNickname}>취소</Button></>:<Button onClick={()=>setNicknameChange(!nicknameChange)}>변경</Button>}</div>
+                    startAdornment: <InputAdornment position="start" style={{fontFamily: 'myfont'}}>닉네임</InputAdornment>,
+                  }} onChange={(e)=>setNickname(e.target.value)} placeholder={userInfo.nickname} style={{fontFamily: 'myfont'}}/> 
+                {nicknameChange?<><Button className='editBtn' onClick={changeNickname} style={{fontFamily: 'myfont'}}>변경</Button><Button onClick={cancleEditNickname} style={{fontFamily: 'myfont'}}>취소</Button></>:<Button onClick={()=>setNicknameChange(!nicknameChange)} style={{fontFamily: 'myfont'}}>변경</Button>}</div>
             </Box>
             <Box
                 component="form"
@@ -121,14 +121,14 @@ export default function Profile({setOpen}: ProfileProps) {
                 autoComplete="off"
             >
                 <TextField id="outlined-basic" variant="standard" value='' disabled InputProps={{
-                    startAdornment: <InputAdornment position="start">{`이메일 : ${userInfo.email}`}</InputAdornment>,
-                  }}/>
+                    startAdornment: <InputAdornment position="start" style={{fontFamily: 'myfont'}}>{`이메일 : ${userInfo.email}`}</InputAdornment>,
+                  }} style={{fontFamily: 'myfont'}}/>
                 <TextField id="outlined-basic" variant="standard" value='' disabled InputProps={{
-                    startAdornment: <InputAdornment position="start">{`공급자 : ${userInfo.provider}`}</InputAdornment>,
-                  }}/>
+                    startAdornment: <InputAdornment position="start" style={{fontFamily: 'myfont'}}>{`공급자 : ${userInfo.provider}`}</InputAdornment>,
+                  }} style={{fontFamily: 'myfont'}}/>
             </Box>
             <div>
-                <Button className="withdrawl" onClick={memberWithdrawl}>회원 탈퇴</Button>
+                <Button className="withdrawl" onClick={memberWithdrawl} style={{fontFamily: 'myfont'}}>회원 탈퇴</Button>
             </div>
         </div>
         <style jsx>{`

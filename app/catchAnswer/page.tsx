@@ -16,11 +16,12 @@ import {isMobile} from 'react-device-detect';
 import MyModal from '@/component/MyModal';
 import Image from 'next/image';
 
-const BootstrapButton = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
+const BootstrapButton = styled(Button)(({colorStyle}:{colorStyle:string})=>({
     boxShadow: '0 0 10px rgba(0,0,0,0.3)',
     textTransform: 'none',
     fontWeight: 'bold',
     backgroundColor: colorStyle,
+    fontFamily:'myfont',
     color: 'rgb(48,67,143)',
     '&:hover': {
         backgroundColor: colorStyle,
@@ -37,37 +38,45 @@ const BootstrapButton = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
 }));
 
 const TextInfoCustom = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
-    width: 170,
+    width: 200,
     textAlign: 'center',
+    fontFamily: 'myfont',
     "& .MuiOutlinedInput-input": {
         color: colorStyle,
         textAlign: 'center',
+        fontFamily: 'myfont',
     },
 
     "&:hover .MuiOutlinedInput-input": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "&:hover .MuiInputLabel-root": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle
     },
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiInputLabel-root.Mui-focused": {
-        color: colorStyle
+        color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle
     },
     "& .MuiInputLabel-root": {
         color: colorStyle,
+        fontFamily: 'myfont',
     },
     "& .MuiOutlinedInput-notchedOutline": {
         borderColor: colorStyle,
         borderWidth: 2,
+        fontFamily: 'myfont',
     },
 
     "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -126,6 +135,10 @@ export default function CatchAnswer() {
             alert('정답을 입력해주세요!')
             return;
         }
+        if(catchAnswer.length > 10){
+            alert('10글자 이하로 작성해주세요!')
+            return;
+        }
         socket.current.connect();
         setAnswer(catchAnswer)
         socket.current.emit("set_catch_answer", { room_id : userInfo.id , ans : catchAnswer , access_token : token });
@@ -141,7 +154,7 @@ export default function CatchAnswer() {
                             <span className='teamdef'>정답 입력 화면</span>
                         </div>
                     </div>
-                    <div className='alertDiv'><Alert severity="info">문제의 정답을 입력해주시고 아래 '정답 제출' 버튼을 눌러주세요!</Alert></div>
+                    <div className='alertDiv'><Alert severity="info" style={{fontFamily:'myfont', backgroundColor:'orange'}}>문제의 정답을 입력해주시고 아래 '정답 제출' 버튼을 눌러주세요!</Alert></div>
                     <div className='nickDiv'>
                 <TextInfoCustom
                             className="catchAnswer-input nickname-input"
@@ -165,7 +178,7 @@ export default function CatchAnswer() {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: space-around;
+                    justify-content: space-evenly;
                     background-color: rgb(48,67,143);
                 }
 
@@ -186,7 +199,9 @@ export default function CatchAnswer() {
                     text-align: center;
                     font-size: 16px;
                 }
-
+                .headerContainer{
+                    background-color: rgb(48,67,143)
+                }
                 .nickname-change {
                     width: 120px;
                     height: 40px;
@@ -199,8 +214,12 @@ export default function CatchAnswer() {
                     transition: background-color 0.3s ease;
                 }
                 .logo{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
                     font-size: 32px;
-                    bakcground-color: #F5F5F5;
+                    bakcground-color: rgb(48,67,143);
                 }
                 .nickDiv{
                     display: flex;
@@ -227,6 +246,8 @@ export default function CatchAnswer() {
                     font-size: 22px;
                     font-weight: 500;
                     color: orange;
+                    background-color:rgb(48,67,143);
+                    margin-top:20px;
                 }
             `}</style>
             <style jsx global>{`

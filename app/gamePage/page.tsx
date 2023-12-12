@@ -135,16 +135,29 @@ export default function QR() {
 
         const makeRoom = (acc_token: string) => {
             const game_t = JSON.parse(localStorage.getItem('game') || 'null');
-            socket.current.emit('make_room', {
-                // goalDistance : redGreenInfo[1],
-                // winnerNum : redGreenInfo[0],
-                goalDistance : JSON.parse(localStorage.getItem('redGreenInfo') || 'null')[1],
-                winnerNum : JSON.parse(localStorage.getItem('redGreenInfo') || 'null')[0],
-                game_type: game_t[0],
-                user_num: game_t[1],
-                answer: answer,
-                access_token: acc_token
-            });
+            if (game_t[0] === '그림 맞추기'){
+                socket.current.emit('make_room', {
+                    // goalDistance : redGreenInfo[1],
+                    // winnerNum : redGreenInfo[0],
+                    goalDistance : JSON.parse(localStorage.getItem('redGreenInfo') || 'null')[1],
+                    winnerNum : JSON.parse(localStorage.getItem('redGreenInfo') || 'null')[0],
+                    game_type: game_t[0],
+                    user_num: game_t[1],
+                    answer: answer,
+                    access_token: acc_token
+                });
+            } else {
+                socket.current.emit('make_room', {
+                    // goalDistance : redGreenInfo[1],
+                    // winnerNum : redGreenInfo[0],
+                    goalDistance : null,
+                    winnerNum : null,
+                    game_type: game_t[0],
+                    user_num: game_t[1],
+                    answer: answer,
+                    access_token: acc_token
+                });
+            }
         };
 
         const startGame = () => {

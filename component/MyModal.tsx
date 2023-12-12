@@ -33,9 +33,10 @@ function MyModal({open, modalHeader, modalContent ,closeFunc, myref}: {open: boo
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
             disableEscapeKeyDown = {modalHeader==="QR코드를 찍고 입장해주세요!" ? true : false}
+            sx={{zIndex:1700}}
         >
             <Box sx={modalStyle} ref={myref}>
-            <Typography id="modal-modal-title" variant="h5" component="h2">
+            <Typography id="modal-modal-title" variant="h5" component="h2" style={{fontFamily: 'myfont'}}>
                 {modalHeader}
             </Typography>
             <Typography id="modal-modal-description" sx={{ mt: 2 }}>
@@ -49,11 +50,13 @@ function MyModal({open, modalHeader, modalContent ,closeFunc, myref}: {open: boo
                 justify-content: center;
                 align-items: center;
                 gap: 10px;
+                font-family: 'myfont';
             }
             #modal-modal-description{
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                font-family: 'myfont';
             }
         `}</style>
         </>
