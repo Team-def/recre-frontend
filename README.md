@@ -60,8 +60,6 @@ npm run start -- -p <port>
 
 ## Project Directory Structure
 
-%% 아래에 NextJS 디렉토리 구조에 관한 내용을 적어주세요 %%
-
 **app/**
 
 ```
