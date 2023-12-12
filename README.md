@@ -66,20 +66,18 @@ npm run start -- -p <port>
 
 ```
 app
-├── catch
+├── catch ######################## Host page - 캐치마인드
 │   └── page.tsx
-├── catchAnswer
+├── catchAnswer ################## Host page - 캐치마인드 정답 설정하기
 │   └── page.tsx
 ├── favicon.ico
-├── gamePage
+├── gamePage ##################### Host page - 게임 실행 페이지
 │   └── page.tsx
-├── gameSelect
+├── gameSelect ################### Host page - 게임 선택 페이지
 │   └── page.tsx
 ├── globals.css
 ├── layout.tsx
-├── login
-│   └── login.tsx
-├── modules
+├── modules ###################### 상태관리(jotai), API 관리 모듈
 │   ├── answerAtom.tsx
 │   ├── backApi.tsx
 │   ├── catchStartAtom.tsx
@@ -92,25 +90,25 @@ app
 │   ├── socketApi.tsx
 │   ├── tokenAtoms.tsx
 │   └── userInfoAtom.tsx
-├── page.tsx
-├── player
-│   └── page.tsx
-├── playerComponent
+├── page.tsx ##################### Host page - 메인 페이지 
+├── player ####################### Player page - 플레이어 페이지
+│   └── page.tsx 
+├── playerComponent ############## Player page - 선택한 게임에 따른 Component
 │   ├── catchPlayer.tsx
 │   └── redGreenPlayer.tsx
-├── profile
+├── profile ###################### Host page - Login 한 Host의 개인정보를 관리하는 Component
 │   └── profile.tsx
 ├── provider.tsx
-├── redGreen
+├── redGreen ##################### Host page - 무궁화 꽃이 피었습니다
 │   └── page.tsx
-└── token
+└── token ######################## Host page - token 관리
     └── page.tsx
 ```
 
 **component/**
 
 ```
-component
+component ######################## 여러 Host page에서 사용되는 Component들 
 ├── MyModal.tsx
 ├── MyPopover.tsx
 ├── OauthButtons.tsx
@@ -136,9 +134,8 @@ component
 
 - onmouseup 일 때 호스트의 그림을 이미지로 저장하여 canvasData에 담아 ‘draw’로 emit 하는 코드.
 
-```jsx
+```tsx
 useEffect(() => {
-    console.log(234234)
     const canvas: HTMLCanvasElement | null = canvasRef.current;
     if (canvas) {
         const context = canvas.getContext('2d');
@@ -162,7 +159,7 @@ useEffect(() => {
 
 useCallback을 사용하여 호스트가 onmousemove 일 때 실시간으로 그림의 시작 지점과 그려지는 좌표를 emit하게 하여 플레이어한테도 실시간으로 호스트의 그림이 그려지게 방법을 바꾸었다.
 
-```jsx
+```tsx
 const paint = useCallback(
     (event: MouseEvent) => {
       event.preventDefault();   // drag 방지
@@ -203,5 +200,88 @@ const paint = useCallback(
 
 ### 핸드폰을 흔들어서 화면 속 캐릭터가 앞으로 나아가게 만드는 방법
 
-%% 내용 추가 요망 %%
+#### 기본 원리와 문제사항
+스마트폰의 웹브라우저에서 기기의 자이로센서를 통해 기기의 움직임을 확인하는 method로는 DeviceMotionEvent()가 있다. 이 method는 기기가 움직일 때, 매 순간마다 가속도를 측정하는 기능을 가지고 있다.
+이를 통해서 핸드폰을 흔들때 마다 한 걸음씩 화면 속 캐릭터가 나아갈 수 있지만, 문제는 이 method는 단순히 가속도만을 0(멈춘 경우), 양의 실수(점점 빠르게 움직이는 경우), 음의 실수(점점 속도가 느려지는 경우)로 파악하기 때문에 이 method를 통해 측정한 값을 그대로 사용할 수 없다. 
+기기가 크게, 빠르게 흔들리는 경우와 작게, 여리게 흔들리는 경우에 산출되는 값이 다르기 때문에 플레이어의 근력에 따라 유불리가 결정되는 게임이 되어버린다.
+
+#### safari 13 이상 버전에서 requestPermission() 문제
+여기에 더해, safari 13 이상에서는 DeviceMotionEvent() method를 통해서 기기의 움직임을 측정하기 위해 사용자로부터 requestPermission()을 통하여 자이로 센서 허가를 받을 것을 요구한다. 
+게다가 이 requestPermission() method는 useEffect(() => {}, []) 같이 페이지가 로딩되었을 때 즉시 렌더링하는 방법으로는 불러올 수 없다. 반드시 사용자가 버튼을 클릭하거나, 스위치를 클릭하는 등의 활동을 통해서만 불러올 수 있다.
+즉, 기기의 종류에 관계없이 실행시키기 위해선 우선 플레이어가 접속한 브라우저가 safari 13 이상인지 확인한 후, 맞다면 requestPermission()을 통하여 반드시 허가를 받아야 한다.
+
+#### 해결한 방법
+우선 접속한 player의 브라우저가 safari 13 이상 버전인지 확인한다.
+DeviceMotionEvent.requestPermission() method는 유일하게 safari 13 이상 버전에서만 function으로 기능하기 때문에 이를 확인함으로써 player의 브라우저가 safari 13 이상 버전인지 확인할 수 있다.
+
+```tsx
+const isSafariOver13 = typeof window.DeviceMotionEvent.requestPermission === 'function';
+
+const requestPermissionSafari = () => {
+  //iOS
+  if (isSafariOver13) {
+    window.DeviceMotionEvent.requestPermission().then((permissionState) => {
+      if (permissionState === 'denied') {
+        //safari 브라우저를 종료하고 다시 접속하도록 안내하는 화면 필요
+        alert('게임에 참여 하려면 센서 권한을 허용해주세요. Safari를 완전히 종료하고 다시 접속해주세요.');
+        return;
+      } else if (permissionState === 'granted') {
+        window.addEventListener('devicemotion', handleDeviceMotion);
+      };
+    })
+  //android         
+  } else {
+    alert('게임 참여를 위하여 모션 센서를 사용합니다.');
+    window.addEventListener('devicemotion', handleDeviceMotion);
+  };
+}
+```
+
+이후 움직임을 측정할 때에는 다음과 같은 방법을 사용하였다.
+1. 기기에 가속도가 가해졌을 때, 배열에 가속도를 기록한다.
+2. 최대 3의 길이를 유지하는 가속도 기록 배열에서 가속도가 최고점에 도달했다가 감소하기 시작하는 순간을 detectPeak로 기록한다.
+3. 만약 이 순간을 포착했다면 shakeCount 상태의 값을 1 늘린다.
+
+```tsx
+let accelerationData: number[] = [];
+let lastAcceleration = 0;
+
+const handleShake = () => {
+  setShakeCount((prevCount) => prevCount + 1);
+}
+
+//device의 움직임을 읽어오는 함수
+const handleDeviceMotion = (event: DeviceMotionEvent) => {
+  const acceleration= event.acceleration;
+
+  if (acceleration) {
+    const accelerationMagnitude = (acceleration.y??0)
+    const smoothedAcceleration = 0.2 * accelerationMagnitude + 0.8 * lastAcceleration;
+    lastAcceleration = smoothedAcceleration;
+    accelerationData.push(smoothedAcceleration);
+
+    const maxDataLength = 3;
+    if (accelerationData.length > maxDataLength) {
+      accelerationData = accelerationData.slice(1);
+    }
+
+    const peakIndex = detectPeak(accelerationData);
+    //음의 가속도인지 확인
+    if (peakIndex !== -1) {
+      handleShake();
+    }
+  }
+};
+
+const detectPeak = (data: number[]): number => {
+  const threshold = 1.5; // Adjust this threshold based on testing
+
+  for (let i = 1; i < data.length - 1; i++) {
+    if (data[i] > data[i - 1] && data[i] > data[i + 1] && data[i] > threshold) {
+      return i;
+    }
+  }
+  return -1;
+};
+```
 
