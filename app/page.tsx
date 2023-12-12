@@ -205,7 +205,7 @@ export default function Home() {
             <FormGroup >
               <FormControlLabel 
                 className='switch'
-                control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked={isWinter} onChange={handleSwitchChange} />}
+                control={<MaterialUISwitch sx={{ m: 1, position:'absolute', bottom:'3vh', right:'3vh'}} defaultChecked={isWinter} onChange={handleSwitchChange} />}
                 label=""
               />
             </FormGroup>
