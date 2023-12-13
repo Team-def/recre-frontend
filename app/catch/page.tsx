@@ -393,10 +393,10 @@ export default function Catch({ socket }: { socket: Socket }) {
           z-index : 1500;
         }
 
-        @media (max-width: 1000px) {
+        @media (max-width: 1280px) {
           .canvasDiv {
-            width: 600px;
-            height: 600px;
+            width: 500px;
+            height: 500px;
           }
         }
 
