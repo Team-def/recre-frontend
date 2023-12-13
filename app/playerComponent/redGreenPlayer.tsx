@@ -42,7 +42,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             const timeDifference =elapsed_time.getTime();
             const minutes = Math.floor(timeDifference / (1000 * 60));
             const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-            const formattedElapsedTime = `${minutes}분 ${seconds}초`;
+            const formattedElapsedTime = `${minutes}분\n${seconds}초`;
             return formattedElapsedTime;
         }
         return alert('시간 측정 불가');
@@ -127,7 +127,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                 <TableHead sx={{ backgroundColor:'antiquewhite' }}>
                 <TableRow>
                         <th>순위</th>
-                        <th>이름</th>
+                        <th> 이름 </th>
                         <th>거리</th>
                         <th>시간</th>
                         <th>상태</th>
@@ -150,7 +150,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                                     textAlign: 'center',
                                 }}
                             >
-                                {index + 1}등
+                                {index + 1}
                                 </TableCell>
                             <TableCell align="right" sx={{textAlign:'center', fontFamily:'myfont'}}>{player.name}</TableCell>
                             <TableCell align="right" sx={{textAlign:'center', fontFamily:'myfont'}}>{playerFixedDistance}</TableCell>
