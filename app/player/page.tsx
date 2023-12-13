@@ -364,6 +364,7 @@ export default function Player() {
         <>{isGame ? gameContent :
             <>
                     <div className='wrapper' ref={containerRef}>
+                        <div className='lightbulb'></div>
                     <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
                 <div className="nickname-container">
                     <div className="p_headerContainer">
@@ -525,6 +526,14 @@ export default function Player() {
                     justify-content: center;
                     align-items: center;
                     text-align: center;
+                }
+                .lightbulb{
+                    position: absolute;
+                    background-image: url('/lightbulb.gif');
+                    background-size: cover;
+                    width: 100vw;
+                    height: 100px;
+                    top: 3vh;
                 }
             `}</style>
             <style jsx global>{`

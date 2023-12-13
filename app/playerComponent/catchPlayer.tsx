@@ -88,8 +88,6 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
                 });
 
                 socket.on('clear_draw', (res) => {
-                    console.log(res)
-
                     if (res.result && context) {
                         context.clearRect(0, 0, canvas.width, canvas.height);
                     }

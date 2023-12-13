@@ -36,8 +36,6 @@ export default function Home() {
       return
     }
     const acc_token : string = localStorage.getItem('access_token')??''
-    // console.log("acc_token: ")
-    // console.log(acc_token)
       checkLogin(acc_token)
   }, []);
 
@@ -64,7 +62,6 @@ export default function Home() {
       checkIsHostPhone()
     })
       .catch((res) => {
-        // console.log("checkLogin2 error")
         alert('로그인에 실패했습니다. 다시 로그인해주세요.\n 문제가 있을 시 캐시를 삭제해보세요.')
         checkIsHostPhone()
       })
@@ -80,14 +77,11 @@ export default function Home() {
         withCredentials: true
       }
     }).then((response) => {
-      console.log("checkLogin")
       setUserInfo(response.data)
       setIsLogin(true)
       checkIsHostPhone()
     })
       .catch((res) => {
-        // console.log(res)
-        // console.log("checkLogin error")
         if (res.response['status'] === 410 || res.response['status'] === 401) {
             sendRefresh()
         }
@@ -119,14 +113,10 @@ export default function Home() {
         withCredentials: true
       }
     }).then((response) => {
-      // console.log("sendRefresh")
-      // console.log("response.data.access_token: ")
-      // console.log(response.data.access_token)
       setToken(response.data.access_token)
       checkLogin2(response.data.access_token)
     })
       .catch((res) => {
-        // console.log("sendRefresh error")
         alert('인증 시간이 만료되었습니다. 다시 로그인해주세요.')
         setToken('');
         setUserInfo({

@@ -53,7 +53,6 @@ export default function Catch({ socket }: { socket: Socket }) {
 
   useEffect(() => {
     socket.on('correct', (res) => {
-      // console.log(res)
       if (res.result === true) {
         setAnswer(res.answer)
         setCorrectNick(res.nickname)
@@ -67,7 +66,6 @@ export default function Catch({ socket }: { socket: Socket }) {
     });
 
     socket.on('incorrect', (res) => {
-      // console.log(res)
       if (res.result === true) {
         setRecievedAns({
           ans: res.incorrectAnswer,
@@ -145,8 +143,6 @@ export default function Catch({ socket }: { socket: Socket }) {
       context.closePath();
 
       context.stroke();
-
-      // console.log(context)
     }
   };
 

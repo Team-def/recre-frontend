@@ -690,7 +690,6 @@ const YoungHee = ({
 
   //오징어가 달림
   async function run(playerId: string, distance: number) {
-    // console.log(playerMap.current.size);
     let moveDistance = (120 / length) * distance;
     if (playerMap.current.has(playerId)) {
       // Add your code here
@@ -719,7 +718,6 @@ const YoungHee = ({
 
   // currentWinNum이 바뀔 때마다 실행
   useEffect(() => {
-    // console.log(currentAliveNum);
     if (numberBoard.current.length === 0) return;
 
     if (finishCountText.current) {
@@ -760,7 +758,6 @@ const YoungHee = ({
       // 이동 벡터를 초기화합니다.
       var moveVector = new THREE.Vector3(0, 0, 0);
 
-      // console.log(key);
       switch (key) {
         case "1":
           cameraMove1();
@@ -836,7 +833,6 @@ const YoungHee = ({
           break;
 
         default:
-          console.log("다른 키 눌림");
           break;
       }
       // var newCameraPosition = myCamera.current.position.clone().add(moveVector);
