@@ -365,7 +365,7 @@ export default function Player() {
                     <div className='wrapper' ref={containerRef}>
                     <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
                 <div className="nickname-container">
-                    <div className="headerContainer">
+                    <div className="p_headerContainer">
                         <div className="logo">
                             <span className='logoSpan'>RecRe</span>
                             {ready?'':<Image src="/teamDEF_logo.png" alt='logo' width={100} height={100} />}
@@ -390,7 +390,7 @@ export default function Player() {
                                 },
                             }}
                         ><span>호스트 화면에 이모티콘을 띄워보세요!</span>
-                            <ButtonGroup aria-label="medium button group">{emotions.map((emotion, index) => {
+                            <ButtonGroup aria-label="medium button group" sx={{boxShadow:'2.5px 2.5px 7px #262626'}}>{emotions.map((emotion, index) => {
                                 return <Button className="nickname-change" size='large' variant='outlined' key={index} disabled={!ready} onClick={() => expressEmotion(emotion)} sx={{borderColor:colorStyle}}>{'' + emotion + ''}</Button>
                             })}</ButtonGroup></Box>
                     </div></>:null
@@ -467,9 +467,6 @@ export default function Player() {
                     text-align: center;
                     font-size: 16px;
                 }
-                .headerContainer{
-                    background-color: transparent;
-                }
                 .nickname-change {
                     width: 120px;
                     height: 40px;
@@ -492,7 +489,7 @@ export default function Player() {
                     justify-content: center;
                     gap: 10px;
                 }
-                .headerContainer{
+                .p_headerContainer{
                     height:auto;
                     display: flex;
                     flex-direction: column;

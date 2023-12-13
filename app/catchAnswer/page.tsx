@@ -148,7 +148,7 @@ export default function CatchAnswer() {
     return (
         <>
             <div className="nickname-container">
-                    <div className="headerContainer">
+                    <div className="p_headerContainer">
                         <div className="logo">
                         <Image src={"/yellow_!.png"} alt={'recre'} width={220} height={60}></Image>
                             <span className='teamdef'>정답 입력 화면</span>
@@ -199,7 +199,7 @@ export default function CatchAnswer() {
                     text-align: center;
                     font-size: 16px;
                 }
-                .headerContainer{
+                .p_headerContainer{
                     background-color: rgb(48,67,143)
                 }
                 .nickname-change {

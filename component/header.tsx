@@ -95,7 +95,7 @@ export default function Header() {
 
     return (<>{hideHeader ? '' : <>
     <div className="headerContainer">
-        {isAnswer ? null : <div className="logo">
+        {isAnswer ? null : <div className="logonick">
             <div onClick={() => router.push("/")}>
                 <Image src={"/black.png"} alt={'recre'} width={120} height={35}></Image>
             </div>
@@ -117,7 +117,7 @@ export default function Header() {
     </div>
         <MyModal open={open} modalHeader={modalHeader} modalContent={modalContent} closeFunc={handleClose} myref={null}/></>}
         <style jsx global>{`
-            .logo{
+            .logonick{
                 cursor: pointer;
                 margin-left:1%;
             }
@@ -128,8 +128,8 @@ export default function Header() {
                 height: 60px;
                 background-color: rgb(255,255,255,0.5);
                 color: black;
-                position:absolute;
-                width:100vw;
+                ${isAnswer? '':'position:absolute;'}
+                ${isAnswer? '':'width:100vw;'}
             }
             .userInfoBtn{
                 display: flex;
@@ -138,6 +138,7 @@ export default function Header() {
                 flex-direction: row;
                 ${isAnswer ? 'justify-content: space-between;' : ''}
                 margin-right:1%;
+                margin-left:2%;
             }
             .login{
                 display: flex;
