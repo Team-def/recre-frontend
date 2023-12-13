@@ -253,6 +253,7 @@ export default function Player() {
             return;
         } else if (playerNickname.length > 5) {
             alert('닉네임은 5글자 이하로 입력해주세요.');
+            setPlayerNickname('')
             return;
         }
 
@@ -299,6 +300,14 @@ export default function Player() {
                 if (!isSafari) {
                     navigator.vibrate([1000]);
                 }
+                setTimeout(() => {
+                    setColorStyle('rgb(48,67,143)')
+                }, 200)
+                if(containerRef.current && circleRef.current){
+                    containerRef.current.style.setProperty('background-color', 'orange')
+                    circleRef.current.style.setProperty('background-color', 'orange')
+                    setAddClass(true)
+                }
             }
         }
     }, [shakeCount])
@@ -311,7 +320,7 @@ export default function Player() {
                     <div className='readyModalHeader'>흔들어서 준비하기! </div>
                     <div className='readyModalContent'>호스트가 준비를 완료하면 게임이 시작됩니다.</div>
                     <div className='readyModalCount'> {shakeCount} / 10 </div>
-                    <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button>
+                    {/* <button onClick={() => setShakeCount((prev)=>prev + 1)}>test</button> */}
                 </div>
             )
         }
@@ -357,7 +366,7 @@ export default function Player() {
                     <div className='wrapper' ref={containerRef}>
                     <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
                 <div className="nickname-container">
-                    <div className="headerContainer">
+                    <div className="p_headerContainer">
                         <div className="logo">
                             <span className='logoSpan'>RecRe</span>
                             {ready?'':<Image src="/teamDEF_logo.png" alt='logo' width={100} height={100} />}
@@ -382,7 +391,7 @@ export default function Player() {
                                 },
                             }}
                         ><span>호스트 화면에 이모티콘을 띄워보세요!</span>
-                            <ButtonGroup aria-label="medium button group">{emotions.map((emotion, index) => {
+                            <ButtonGroup aria-label="medium button group" sx={{boxShadow:'2.5px 2.5px 7px #262626'}}>{emotions.map((emotion, index) => {
                                 return <Button className="nickname-change" size='large' variant='outlined' key={index} disabled={!ready} onClick={() => expressEmotion(emotion)} sx={{borderColor:colorStyle}}>{'' + emotion + ''}</Button>
                             })}</ButtonGroup></Box>
                     </div></>:null
@@ -459,9 +468,6 @@ export default function Player() {
                     text-align: center;
                     font-size: 16px;
                 }
-                .headerContainer{
-                    background-color: transparent;
-                }
                 .nickname-change {
                     width: 120px;
                     height: 40px;
@@ -484,7 +490,7 @@ export default function Player() {
                     justify-content: center;
                     gap: 10px;
                 }
-                .headerContainer{
+                .p_headerContainer{
                     height:auto;
                     display: flex;
                     flex-direction: column;

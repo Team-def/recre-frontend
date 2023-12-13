@@ -93,7 +93,7 @@ export default function CatchAnswer() {
     const [isLogin,] = useAtom(loginAtom);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
-    const [open, setOpen] = useState<boolean>(!isLogin);
+    const [open, setOpen] = useState<boolean>(!(JSON.parse(localStorage.getItem('login') || 'null')));
     const [colorStyle, setColorStyle] = useState<string>('orange');
 
     const socket = useRef(io(`${socketApi}/catch?uuId=${uuId}`,{
@@ -109,7 +109,6 @@ export default function CatchAnswer() {
             window.close();
         }
         
-        setOpen(!isLogin);
 
         socket.current.on("set_catch_answer", (res)=>{
 
@@ -137,18 +136,19 @@ export default function CatchAnswer() {
         }
         if(catchAnswer.length > 10){
             alert('10글자 이하로 작성해주세요!')
+            setCatchAnswer('')
             return;
         }
         socket.current.connect();
         setAnswer(catchAnswer)
-        socket.current.emit("set_catch_answer", { room_id : userInfo.id , ans : catchAnswer , access_token : token });
+        socket.current.emit("set_catch_answer", { room_id : (JSON.parse(localStorage.getItem('userInfo') || 'null')).id , ans : catchAnswer , access_token : (localStorage.getItem("access_token")||'null') });
         console.log("catchAnswer",catchAnswer)
     }
 
     return (
         <>
             <div className="nickname-container">
-                    <div className="headerContainer">
+                    <div className="p_headerContainer">
                         <div className="logo">
                         <Image src={"/yellow_!.png"} alt={'recre'} width={220} height={60}></Image>
                             <span className='teamdef'>정답 입력 화면</span>
@@ -199,7 +199,7 @@ export default function CatchAnswer() {
                     text-align: center;
                     font-size: 16px;
                 }
-                .headerContainer{
+                .p_headerContainer{
                     background-color: rgb(48,67,143)
                 }
                 .nickname-change {

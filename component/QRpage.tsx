@@ -17,7 +17,14 @@ const QRpage = ({gamePageUrlAns, gamePageUrl, nowPeople, total, startGame}:{game
                 <h2>{JSON.parse(localStorage.getItem('game') || 'null')[0]}</h2>
                 {/* 게임 종류가 catch mind인 경우 */}
                 {JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기' ?
-                    <div className='alertSt'><Alert severity="info" onClick={()=>handlePopover(document.body)} style={{fontFamily: 'myfont'}}>
+                    <div className='alertSt'><Alert severity="info" onClick={()=>handlePopover(document.body)} sx={[
+                        {
+                            border:'1px solid transparent',
+                          '&:hover': {
+                            border: '1px solid blue',
+                          },
+                        },
+                      ]} style={{fontFamily: 'myfont',boxShadow: '0px 0px 5px 0px rgba(0,0,0,0.75)',}}>
                     <AlertTitle style={{fontFamily: 'myfont'}}>정답을 입력해주세요</AlertTitle>
                     호스트는 이 창을 클릭하여 QR을 찍고 문제의 정답을 입력해 주세요. <strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
                 </Alert><MyPopover url={gamePageUrlAns.current}/></div> : <></>}
@@ -63,9 +70,9 @@ const QRpage = ({gamePageUrlAns, gamePageUrl, nowPeople, total, startGame}:{game
         border: 1px solid transparent;
         margin-bottom: 15px;
     }
-    .alertSt:hover{
-        border: 1px solid blue;
-    }
+    // .alertSt:hover{
+    //     border: 1px solid blue;
+    // }
     .headers{
         display: flex;
         align-items: center;
