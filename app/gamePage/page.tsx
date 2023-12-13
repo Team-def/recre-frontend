@@ -135,7 +135,7 @@ export default function QR() {
 
         const makeRoom = (acc_token: string) => {
             const game_t = JSON.parse(localStorage.getItem('game') || 'null');
-            if (game_t[0] === '그림 맞추기'){
+            if (game_t[0] === '무궁화 꽃이 피었습니다'){
                 socket.current.emit('make_room', {
                     // goalDistance : redGreenInfo[1],
                     // winnerNum : redGreenInfo[0],
