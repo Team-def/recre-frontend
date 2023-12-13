@@ -49,6 +49,7 @@ export default function Catch({ socket }: { socket: Socket }) {
   const [, setAnsAtom] = useAtom(answerAtom);
   const [catchStarted,setCatchStarted] = useAtom(catchStartAtom)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [isBGMOn, setIsBGMOn] = useState<boolean>(true);
 
   useEffect(() => {
     socket.on('correct', (res) => {
@@ -293,10 +294,15 @@ export default function Catch({ socket }: { socket: Socket }) {
     )
   }
 
+  const handleBGM = () => {
+    setIsBGMOn((prevBGMStatus) => !prevBGMStatus);
+  } 
+
   return (
     <>
-      <div>
-        <BackgroundMusic />
+      <div className="BGM-container">
+        {isBGMOn? <BackgroundMusic /> : <></>}
+        {isBGMOn? <Button onClick={handleBGM} className='handle-BGM-mute'>🔇</Button> : <Button onClick={handleBGM} className='handle-BGM-unmute'>🔈</Button> }
       </div>
       <Particle/>
       <div className="canvasContainer">
@@ -477,6 +483,16 @@ export default function Catch({ socket }: { socket: Socket }) {
         }
         #tsparticles{
           z-index: -5;
+        }
+        .handle-BGM-mute{
+          position: absolute;
+          top: 10%;
+          right: 10%;
+        }
+        .handle-BGM-unmute{
+          position: absolute;
+          top: 10%;
+          right: 10%;
         }
       `}</style>
     </>
