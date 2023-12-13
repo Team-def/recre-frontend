@@ -487,8 +487,12 @@ export default function Catch({ socket }: { socket: Socket }) {
         .BGM-container{
           position: absolute;
           top: 1%;
-          right: 20%;
+          right: 26%;
+          scale: 1.5;
+          border: 1px solid gray;
+          border-radius: 5px;
           cursor: pointer;
+          background-color: #3498db
         }
         .button-mute {
           appearance: button;
