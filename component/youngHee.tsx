@@ -71,6 +71,7 @@ const YoungHee = ({
   const finishCountText = useRef<THREE.Mesh>();
   const finishCountTextBack = useRef<THREE.Mesh>();
   const aliveNumRef = useRef<number>(0);
+  const numberBoard = useRef<THREE.Mesh[]>([]);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -404,6 +405,36 @@ const YoungHee = ({
       setMixers([mixer]);
     });
 
+    const playerLangth = JSON.parse(
+      localStorage.getItem("game") || "null"
+    )[1] as number;
+
+    for (let i = 0; i <= playerLangth; i++) {
+      const fontLoader = new FontLoader();
+      const font = fontLoader.parse(
+        require("three/examples/fonts/droid/droid_sans_bold.typeface.json")
+      );
+      const textGeometry = new TextGeometry(i.toString(), {
+        font: font,
+        size: 10,
+        height: 1,
+        curveSegments: 12,
+        bevelEnabled: true,
+        bevelThickness: 0.1,
+        bevelSize: 0.02,
+        bevelOffset: 0,
+        bevelSegments: 5,
+      });
+      const textMaterial = new THREE.MeshStandardMaterial({
+        color: 0xdd2222,
+      });
+      let text = new THREE.Mesh(textGeometry, textMaterial);
+      text.geometry.center();
+      text.castShadow = true;
+      text.position.set(0, 50, -100);
+      numberBoard.current.push(text);
+    }
+
     //================================================================================================
     function animate() {
       // wait(1000);
@@ -688,46 +719,28 @@ const YoungHee = ({
 
   // currentWinNum이 바뀔 때마다 실행
   useEffect(() => {
-    console.log(currentAliveNum);
+    // console.log(currentAliveNum);
+    if (numberBoard.current.length === 0) return;
+
     if (finishCountText.current) {
       useRefScene.current?.remove(finishCountText.current);
       finishCountText.current.clear();
     }
-    const fontLoader = new FontLoader();
-    const font = fontLoader.parse(
-      require("three/examples/fonts/droid/droid_sans_bold.typeface.json")
-    );
-    const textGeometry = new TextGeometry(currentAliveNum.toString(), {
-      font: font,
-      size: 10,
-      height: 1,
-      curveSegments: 12,
-      bevelEnabled: true,
-      bevelThickness: 0.1,
-      bevelSize: 0.02,
-      bevelOffset: 0,
-      bevelSegments: 5,
-    });
-    const textMaterial = new THREE.MeshStandardMaterial({
-      color: 0xdd2222,
-    });
-    let text = new THREE.Mesh(textGeometry, textMaterial);
-    text.geometry.center();
-    text.castShadow = true;
-    text.position.set(0, 50, -100);
+    let text = numberBoard.current[currentAliveNum];
+
     useRefScene.current?.add(text);
     finishCountText.current = text;
 
-    if (finishCountTextBack.current) {
-      useRefScene.current?.remove(finishCountTextBack.current);
-      finishCountTextBack.current.clear();
-    }
-    const backText = text.clone();
-    backText.geometry.scale(1.4, 1.4, 1.4);
-    finishCountTextBack.current = backText;
-    backText.position.set(0, 50, 160);
-    backText.rotateY(Math.PI);
-    useRefScene.current?.add(backText);
+    // if (finishCountTextBack.current) {
+    //   useRefScene.current?.remove(finishCountTextBack.current);
+    //   finishCountTextBack.current.clear();
+    // }
+    // const backText = text.clone();
+    // backText.geometry.scale(1.4, 1.4, 1.4);
+    // finishCountTextBack.current = backText;
+    // backText.position.set(0, 50, 160);
+    // backText.rotateY(Math.PI);
+    // useRefScene.current?.add(backText);
   }, [currentAliveNum]);
 
   useEffect(() => {
@@ -888,7 +901,7 @@ const YoungHee = ({
         width={window.innerWidth}
         height={window.innerHeight}
       ></canvas>
-      <Box sx={{ height: 330, flexGrow: 1, zIndex: 100, fontFamily:'myfont' }}>
+      <Box sx={{ height: 330, flexGrow: 1, zIndex: 100, fontFamily: "myfont" }}>
         <Backdrop open={open} />
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
@@ -905,7 +918,7 @@ const YoungHee = ({
               tooltipTitle={action.name}
               tooltipOpen
               onClick={() => action.onclick()}
-              sx={{fontFamily: 'myfont'}}
+              sx={{ fontFamily: "myfont" }}
             />
           ))}
         </SpeedDial>
