@@ -487,7 +487,7 @@ export default function Catch({ socket }: { socket: Socket }) {
         .BGM-container{
           position: absolute;
           top: 1%;
-          right: 26%;
+          right: 20%;
           cursor: pointer;
         }
         .button-mute {
