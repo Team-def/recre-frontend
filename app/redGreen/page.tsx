@@ -64,8 +64,6 @@ export default function RedGreen({ socket }: { socket: Socket }) {
   //   endtime: '',
   // }]);
   const [go, setGo] = useState(false);
-  const [isBGMOn, setIsBGMOn] = useState<boolean>(true);
-
 
   interface playerInfo {
     name: string;
@@ -367,16 +365,11 @@ export default function RedGreen({ socket }: { socket: Socket }) {
     );
   };
 
-  const handleBGM = () => {
-    setIsBGMOn((prevBGMStatus) => !prevBGMStatus);
-  } 
-
   return (
     <>
       <div className="redGreenContainer">
-        <div className="BGM-container" onClick={handleBGM}>
-          {isBGMOn? <BackgroundMusicRedGreen /> : <></>}
-          {isBGMOn? <Button className='button-mute'>🔇</Button> : <Button className='button-unmute'>🔈</Button> }
+        <div className="BGM-container" >
+          <BackgroundMusicRedGreen />
         </div>
         <div className="rankContainer">
           <RankingBoard
@@ -439,6 +432,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           align-items: center;
           flex-direction: column;
         }
+
         .rankContainer {
           position: fixed;
           top: 5%;
@@ -487,6 +481,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           font-weight: bold;
           margin-bottom: 10px;
         }
+        
         .redGreenBtns {
           display: flex;
           justify-content: space-evenly;
