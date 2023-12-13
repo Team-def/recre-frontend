@@ -208,7 +208,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
 
   const stateToEmoji = (state: state) => {
     if (state === 'ALIVE') {
-        return "🦑";
+        return "🏃";
       } else if (state === 'DEAD') {
         return "💀";
       } else if (state === 'FINISH') {

@@ -105,7 +105,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
     const stateToEmoji = (state: state) => {
         if (state === 'ALIVE') {
-            return "🦑";
+            return "🏃";
         } else if (state === 'DEAD') {
             return "💀";
         } else if (state === 'FINISH') {
