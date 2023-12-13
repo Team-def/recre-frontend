@@ -97,7 +97,7 @@ export default function Header() {
     <div className="headerContainer">
         {isAnswer ? null : <div className="logonick">
             <div onClick={() => router.push("/")}>
-                <Image src={"/black.png"} alt={'recre'} width={120} height={35}></Image>
+                <Image src={"/black.png"} alt={'recre'} width={120} height={35} style={{position:'relative',top:'2px'}}></Image>
             </div>
         </div>}
         <div className="userInfoBtn">

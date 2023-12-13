@@ -12,6 +12,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
     const [myans, setMyans] = useState<string[]>([]);
+    const [isCorrect, setIsCorrect] = useState<boolean>(false);[]
     const vh = useVH();
     
     const leave_game = () => {
@@ -35,6 +36,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         }
         if(playerAnswer.length > 10){
             alert('10글자 이하로 작성해주세요!')
+            setPlayerAnswer("");
             return;
         }
         setMyans([playerAnswer,...myans])
@@ -46,7 +48,10 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         setButtonDisabled(true);
         setTimeout(()=>setButtonDisabled(false), 3000);
     }
-    const handleClose = () => { setOpen(false); };
+    const handleClose = () => { 
+        if(!isCorrect)
+            setOpen(false); 
+    };
     const canvasRef = useRef<HTMLCanvasElement>(null);
     
     useEffect(() => {
@@ -96,6 +101,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             setModalHeader('정답입니다!');
             setModalContent(<div>{res.nickname}님께서 정답을 맞추셨습니다!<br></br> 정답 : {res.answer}</div>);
             setOpen(true);
+            setIsCorrect(true);
         })
 
         socket.on('incorrect', (res) => {
@@ -154,7 +160,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
       }}
       subheader={<li />}
     >
-         <ListSubheader sx={{backgroundColor:'rgba(0,0,0,1)', color:'white', fontWeight:'bold', fontFamily:'myfont', textAlign:'center'}}>{`내가 제출한 정답`}</ListSubheader>
+         <ListSubheader sx={{backgroundColor:'rgba(0,0,0,1)', color:'white', fontWeight:'bold', fontFamily:'myfont', textAlign:'center'}}>{`내가 제출한 오답`}</ListSubheader>
         {myans.map((item, index) => (
             <ListItem key={`item-${index}-${item}`} sx={{fontFamily:'myfont', textAlign:'center'}}>
             <ListItemText style={{fontFamily:'myfont'}} primary={`${item}`}/>

@@ -136,6 +136,7 @@ export default function CatchAnswer() {
         }
         if(catchAnswer.length > 10){
             alert('10글자 이하로 작성해주세요!')
+            setCatchAnswer('')
             return;
         }
         socket.current.connect();
