@@ -534,6 +534,7 @@ export default function Player() {
                     width: 100vw;
                     height: 100px;
                     top: 3vh;
+                    z-index: 1;
                 }
             `}</style>
             <style jsx global>{`
