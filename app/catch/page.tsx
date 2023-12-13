@@ -12,6 +12,8 @@ import { tokenAtoms } from '../modules/tokenAtoms';
 import Popover from '@mui/material/Popover';
 import Particle from '@/component/Particle';
 import { catchStartAtom } from '../modules/catchStartAtom';
+import BackgroundMusic from '@/component/BackgroundMusic';
+
 
 interface recievedAns {
   ans: string;
@@ -106,8 +108,6 @@ export default function Catch({ socket }: { socket: Socket }) {
     });
 
   };
-
-
 
   // 좌표 얻는 함수
   const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
@@ -295,6 +295,9 @@ export default function Catch({ socket }: { socket: Socket }) {
 
   return (
     <>
+      <div>
+        <BackgroundMusic />
+      </div>
       <Particle/>
       <div className="canvasContainer">
         <div className="ButtonContainer">
