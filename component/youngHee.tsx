@@ -92,6 +92,7 @@ const YoungHee = ({
     isAlive: number;
     mixer: THREE.AnimationMixer;
     object: GLTF;
+    label: CSS2DObject;
     deadCnt: number = 0;
     constructor(plyerId: number, name: string, position: number) {
       this.plyerId = plyerId;
@@ -100,6 +101,7 @@ const YoungHee = ({
       this.isAlive = 0;
       this.mixer = undefined as any;
       this.object = undefined as any;
+      this.label = undefined as any;
     }
   }
 
@@ -467,10 +469,12 @@ const YoungHee = ({
             mixer.setTime(0);
             player.deadCnt++;
             if (player.deadCnt === 30) {
+              object.scene.remove(player.label);
               player.isAlive = 2;
             } else {
               object.scene.rotateX(Math.PI / 2 / 30);
-              object.scene.position.y -= 0.1;
+              if (player.plyerId <= 50) object.scene.position.y -= 0.1;
+              else object.scene.position.y -= 0.3166;
             }
           } else {
           }
@@ -594,9 +598,15 @@ const YoungHee = ({
       playerMap.current.set(id, player);
 
       if (count % 2 === 0) {
-        object.scene.position.set(-count * 2, -0.5, 40);
+        if (count <= 50) object.scene.position.set(-count * 2, -0.5, 40);
+        else {
+          object.scene.position.set(-(count - 53) * 2, 6, 40);
+        }
       } else {
-        object.scene.position.set(count * 2, -0.5, 40);
+        if (count <= 50) object.scene.position.set(count * 2, -0.5, 40);
+        else {
+          object.scene.position.set((count - 47) * 2, 6, 40);
+        }
       }
       if (useRefScene.current) {
         useRefScene.current.add(object.scene);
@@ -640,6 +650,7 @@ const YoungHee = ({
 
       player.mixer = mixer;
       player.object = object;
+      player.label = label;
     });
   }
 
