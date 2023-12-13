@@ -206,13 +206,23 @@ export default function RedGreen({ socket }: { socket: Socket }) {
     });
   };
 
+  const stateToEmoji = (state: state) => {
+    if (state === 'ALIVE') {
+        return "🦑";
+      } else if (state === 'DEAD') {
+        return "💀";
+      } else if (state === 'FINISH') {
+        return "🥳";
+      }
+  }
+
   //시간 측정 함수
   const timeCheck = (elapsed_time: Date): string | void => {
     if (elapsed_time) {
       const timeDifference = elapsed_time.getTime();
       const minutes = Math.floor(timeDifference / (1000 * 60));
       const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-      const formattedElapsedTime = `${minutes}분 ${seconds}초`;
+      const formattedElapsedTime = `${minutes}분\n${seconds}초`;
       return formattedElapsedTime;
     }
     return alert("시간 측정 불가");
@@ -229,27 +239,27 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                   <TableHead sx={{ backgroundColor: "antiquewhite" }}>
                     <TableRow>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '17%' }}
                       >
                         순위
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '32%' }}
                       >
                         이름
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '20%' }}
                       >
                         거리
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '30%'  }}
                       >
                         시간
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '20%' }}
                       >
                         상태
                       </TableCell>
@@ -285,7 +295,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                               fontFamily: 'myfont'
                             }}
                           >
-                            {index + 1}등
+                            {index + 1}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {player.name}
@@ -297,7 +307,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                             {elapsedTime ?? ""}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
-                            {player.state}
+                            {stateToEmoji(player.state)}
                           </TableCell>
                         </TableRow>
                       );

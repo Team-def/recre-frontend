@@ -48,7 +48,15 @@ export default function RankingBoard(
         setPlayerInfo(sortedFilteredPlayerInfo);
     });
 
-    
+    const stateToEmoji = (state: state) => {
+      if (state === 'ALIVE') {
+          return "🦑";
+        } else if (state === 'DEAD') {
+          return "💀";
+        } else if (state === 'FINISH') {
+          return "🥳";
+        }
+    }
 
     return (
         <>
@@ -79,11 +87,11 @@ export default function RankingBoard(
                             fontFamily: 'myfont'
                           }}
                         >
-                          {index + 1}등
+                          {index + 1}
                         </TableCell>
                         <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{player.name}</TableCell>
                         <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{playerFixedDistance}</TableCell>
-                        <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{player.state}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{stateToEmoji(player.state)}</TableCell>
                         </TableRow>
                     );
                   })}
