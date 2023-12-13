@@ -215,12 +215,12 @@ export default function QR() {
             }    
         },[]);    
 
-        useEffect(()=>{
-            console.log(emotions.length)
-            if(emotions.length>150){
-                setEmotions([])
-            }
-        },[emotions])
+        // useEffect(()=>{
+        //     console.log(emotions.length)
+        //     if(emotions.length>150){
+        //         setEmotions([])
+        //     }
+        // },[emotions])
 
         return (<>
             <MyModal open={open} modalHeader={"QR코드를 찍고 입장해주세요!"} modalContent={<QRpage gamePageUrlAns={gamePageUrlAns} gamePageUrl={gamePageUrl} nowPeople={nowPeople} total={gameInfo[1]??0} startGame={startGame}/>} closeFunc={() => { }} myref={modalRef}/>

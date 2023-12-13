@@ -449,7 +449,6 @@ export default function Catch({ socket }: { socket: Socket }) {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
           background-color: #636363;
           color: white;
-          z-index: 9999;
         }
         .lineWidthButton {
           border: 0px solid gray;
