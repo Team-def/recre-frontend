@@ -11,7 +11,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
     const [open, setOpen] = useState(false);
     const [modalHeader, setModalHeader] = useState<string>('');
     const [modalContent, setModalContent] = useState<JSX.Element>(<></>);
-    const [myans, setMyans] = useState<string[]>([]);
+    // const [myans, setMyans] = useState<string[]>([]);
     const [isCorrect, setIsCorrect] = useState<boolean>(false);[]
     const vh = useVH();
     
@@ -39,7 +39,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             setPlayerAnswer("");
             return;
         }
-        setMyans([playerAnswer,...myans])
+        // setMyans([playerAnswer,...myans])
         socket.emit("throw_catch_answer", {
             room_id: roomId,
             ans: playerAnswer,
@@ -144,7 +144,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
                 style={{ maxWidth: '90vw', maxHeight: '90vw', border: '0px solid black', boxShadow:'0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);' }}>
             </canvas>
         </div>
-        <List
+        {/* <List
       sx={{
         width: '90%',
         maxWidth: '90%',
@@ -166,7 +166,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             <ListItemText style={{fontFamily:'myfont'}} primary={`${item}`}/>
             </ListItem>
         ))}
-    </List>
+    </List> */}
         <Button color="error" variant="contained" onClick={leave_game} sx={{fontFamily:'myfont', position:'static', marginBottom:'5%'}}>게임 나가기</Button>
     </div>
         <style jsx>{`

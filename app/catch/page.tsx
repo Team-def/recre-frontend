@@ -395,8 +395,8 @@ export default function Catch({ socket }: { socket: Socket }) {
 
         @media (max-width: 1000px) {
           .canvasDiv {
-            width: 800px;
-            aspect-ratio: 1 / 1;
+            width: 600px;
+            height: 600px;
           }
         }
 
