@@ -119,15 +119,17 @@ export default function Header() {
         <style jsx global>{`
             .logo{
                 cursor: pointer;
+                margin-left:1%;
             }
             .headerContainer{
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 0 20px;
                 height: 60px;
-                background-color: #f2f2f2;
+                background-color: rgb(255,255,255,0.5);
                 color: black;
+                position:absolute;
+                width:100vw;
             }
             .userInfoBtn{
                 display: flex;
@@ -135,6 +137,7 @@ export default function Header() {
                 align-items: center;
                 flex-direction: row;
                 ${isAnswer ? 'justify-content: space-between;' : ''}
+                margin-right:1%;
             }
             .login{
                 display: flex;
