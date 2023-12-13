@@ -236,8 +236,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
         <div className={outlineClassName}>
             <div className="speech-bubble-player">
-                <h1>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
-                <h1>나의 등수 : {myrank} / {total_num} 등</h1>
+            <h1 style={{fontSize:'8vw'}}>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
+                <h1 style={{fontSize:'8vw'}}>나의 등수 : {myrank} / {total_num} 등</h1>
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>
