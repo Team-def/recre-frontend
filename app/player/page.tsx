@@ -299,6 +299,14 @@ export default function Player() {
                 if (!isSafari) {
                     navigator.vibrate([1000]);
                 }
+                setTimeout(() => {
+                    setColorStyle('rgb(48,67,143)')
+                }, 200)
+                if(containerRef.current && circleRef.current){
+                    containerRef.current.style.setProperty('background-color', 'orange')
+                    circleRef.current.style.setProperty('background-color', 'orange')
+                    setAddClass(true)
+                }
             }
         }
     }, [shakeCount])

@@ -141,7 +141,7 @@ export default function CatchAnswer() {
         }
         socket.current.connect();
         setAnswer(catchAnswer)
-        socket.current.emit("set_catch_answer", { room_id : userInfo.id , ans : catchAnswer , access_token : token });
+        socket.current.emit("set_catch_answer", { room_id : (JSON.parse(localStorage.getItem('userInfo') || 'null')).id , ans : catchAnswer , access_token : (localStorage.getItem("access_token")||'null') });
         console.log("catchAnswer",catchAnswer)
     }
 
