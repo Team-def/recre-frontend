@@ -221,7 +221,6 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
             const end = performance.now();
             const latency = (end - res.start) / 2;
             setLatency(latency);
-            console.log(`latency: ${latency}ms`);
           });
         }, 2000);
         

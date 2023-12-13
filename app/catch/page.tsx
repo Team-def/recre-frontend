@@ -53,7 +53,6 @@ export default function Catch({ socket }: { socket: Socket }) {
 
   useEffect(() => {
     socket.on('correct', (res) => {
-      // console.log(res)
       if (res.result === true) {
         setAnswer(res.answer)
         setCorrectNick(res.nickname)
@@ -67,7 +66,6 @@ export default function Catch({ socket }: { socket: Socket }) {
     });
 
     socket.on('incorrect', (res) => {
-      // console.log(res)
       if (res.result === true) {
         setRecievedAns({
           ans: res.incorrectAnswer,
@@ -145,8 +143,6 @@ export default function Catch({ socket }: { socket: Socket }) {
       context.closePath();
 
       context.stroke();
-
-      // console.log(context)
     }
   };
 
@@ -389,7 +385,7 @@ export default function Catch({ socket }: { socket: Socket }) {
         }
         .canvasDiv {
           width: 800px;
-          aspect-ratio: 1 / 1;
+          height: 800px;
           border: 1px solid gray;
           border-radius: 20px;
           overflow: hidden;
@@ -397,13 +393,86 @@ export default function Catch({ socket }: { socket: Socket }) {
           z-index : 1500;
         }
 
-        @media (max-width: 1280px) {
+        //각 노트북 별 높이와 넓이 둘다 맞게 조정
+        @media all and (max-width:1920px) {
+          .canvasDiv {
+            width: 800px;
+            height: 800px;
+          }
+        }
+        @media all and (max-width:1600px) {
+          .canvasDiv {
+            width: 700px;
+            height: 700px;
+          }
+        }
+        @media all and (max-width:1440px) {
+          .canvasDiv {
+            width: 600px;
+            height: 600px;
+          }
+        }
+        @media all and (max-width:1366px) {
+          .canvasDiv {
+            width: 550px;
+            height: 550px;
+          }
+        }
+        @media all and (max-width:1280px) {
           .canvasDiv {
             width: 500px;
             height: 500px;
           }
         }
-
+        @media all and (max-width:1024px) {
+          .canvasDiv {
+            width: 400px;
+            height: 400px;
+          }
+        }
+        @media all and (max-width:768px) {
+          .canvasDiv {
+            width: 300px;
+            height: 300px;
+          }
+        }
+        @media all and (max-width:600px) {
+          .canvasDiv {
+            width: 250px;
+            height: 250px;
+          }
+        }
+        @media all and (max-width:480px) {
+          .canvasDiv {
+            width: 200px;
+            height: 200px;
+          }
+        }
+        @media all and (max-width:360px) {
+          .canvasDiv {
+            width: 150px;
+            height: 150px;
+          }
+        }
+        @media all and (max-width:320px) {
+          .canvasDiv {
+            width: 100px;
+            height: 100px;
+          }
+        }
+        @media all and (max-width:280px) {
+          .canvasDiv {
+            width: 50px;
+            height: 50px;
+          }
+        }
+        @media all and (max-width:240px) {
+          .canvasDiv {
+            width: 30px;
+            height: 30px;
+          }
+        }
+        
         .colorContainer {
           display: flex;
           flex-direction: row;
@@ -449,7 +518,6 @@ export default function Catch({ socket }: { socket: Socket }) {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
           background-color: #636363;
           color: white;
-          z-index: 9999;
         }
         .lineWidthButton {
           border: 0px solid gray;

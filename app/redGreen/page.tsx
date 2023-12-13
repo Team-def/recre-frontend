@@ -102,12 +102,10 @@ export default function RedGreen({ socket }: { socket: Socket }) {
         <FinishedModal player_info={res.player_info as playerInfo[]} />
       );
       // setWinners(res.winners);
-      console.log(res.player_info);
       setIsStart(false);
     });
 
     socket.on("start_game", (response) => {
-      // console.log(response)
       setOpenModal(false);
       setGo(true);
       setIsStart(true);
@@ -120,7 +118,6 @@ export default function RedGreen({ socket }: { socket: Socket }) {
   }, []);
 
   useEffect(() => {
-    console.log(isReady);
     if (isReady) {
       socket.emit("close_gate", {
         room_id: userInfo.id,
@@ -138,7 +135,6 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           result: true,
         });
         setIsReady(false);
-        console.log("game start");
         setStartTime(new Date());
       }, 3000);
     }
@@ -190,7 +186,6 @@ export default function RedGreen({ socket }: { socket: Socket }) {
 
       setTimeout(() => {
         clearInterval(timer);
-        console.log("game start");
       }, 3000);
 
       return () => clearInterval(timer);

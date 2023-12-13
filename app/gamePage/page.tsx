@@ -77,13 +77,11 @@ export default function QR() {
         socket.current.connect();
 
         socket.current.volatile.on("connect", () => {
-            // console.log("disconnect_check:", socket.current.connected);
             makeRoom(localStorage.getItem('access_token')??'' as string);
         });
 
 
         socket.current.volatile.on("disconnect", () => {
-            // console.log("disconnect_check:", socket.current.connected);
         });
 
         if (JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기') {
@@ -95,7 +93,6 @@ export default function QR() {
         }
 
         socket.current.on("start_catch_game", (response) => {
-            // console.log(response)
             if(response.result === true){
                 setEmotions([])
                 setOpen(false);
@@ -105,24 +102,20 @@ export default function QR() {
         });
 
         socket.current.on('set_catch_answer', (res)=>{
-            // console.log(res)
             if(res.type === 'answer_success'){
                 setAnswer(res.answer)
             }
         });
 
         socket.current.on('player_list_add', (res)=>{
-            // console.log(res)
             setNowPeople(res.player_cnt)
         });
 
         socket.current.on('player_list_remove', (res)=>{
-            // console.log(res)
             setNowPeople(res.player_cnt)
         });
 
         socket.current.on('express_emotion', (res)=>{
-            // console.log(emotions);
             makeEmotion(res.emotion);
         })
 
@@ -197,14 +190,12 @@ export default function QR() {
         const makeEmotion = useCallback(async(emotion : string) => {
             if (modalRef.current) {
                 const { left, top, right, bottom } = modalRef.current.getBoundingClientRect() as DOMRect;
-                // console.log(left, top, right, bottom);
                 let randomX = window.innerWidth/2
                 let randomY = window.innerHeight/2
                 while (randomX > left && randomX < right && randomY > top && randomY < bottom) {
                     randomX = Math.floor(Math.random() * window.innerWidth);
                     randomY = Math.floor(Math.random() * window.innerHeight);
                 }
-                // console.log(randomX, randomY);
 
                 if(emotions.length > 20){
                     setEmotions((prevEmotions) => [...prevEmotions.slice(1),{ x: randomX, y: randomY, emotion: emotion }]);
@@ -217,7 +208,7 @@ export default function QR() {
 
         useEffect(()=>{
             console.log(emotions.length)
-            if(emotions.length>150){
+            if(emotions.length>200){
                 setEmotions([])
             }
         },[emotions])
