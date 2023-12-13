@@ -93,7 +93,7 @@ export default function CatchAnswer() {
     const [isLogin,] = useAtom(loginAtom);
     const [uuId,] = useState<string>(uuidv4());
     const vh = useVH();
-    const [open, setOpen] = useState<boolean>(!isLogin);
+    const [open, setOpen] = useState<boolean>(!(JSON.parse(localStorage.getItem('login') || 'null')));
     const [colorStyle, setColorStyle] = useState<string>('orange');
 
     const socket = useRef(io(`${socketApi}/catch?uuId=${uuId}`,{
@@ -109,7 +109,6 @@ export default function CatchAnswer() {
             window.close();
         }
         
-        setOpen(!isLogin);
 
         socket.current.on("set_catch_answer", (res)=>{
 
