@@ -9,11 +9,58 @@ import { io } from "socket.io-client";
 import { v4 as uuidv4 } from 'uuid';
 import { socketApi } from '../modules/socketApi';
 import useVH from 'react-viewport-height';
-import { Alert, Box, ButtonGroup } from '@mui/material';
+import { Alert, Box, ButtonGroup, TextField, styled } from '@mui/material';
 import { isMobile, browserName } from 'react-device-detect';
 import Image from 'next/image';
 import MyModal from '@/component/MyModal';
 import { type } from 'os';
+
+const TextInfoCustom = styled(TextField)(({colorStyle}:{colorStyle:string})=>({
+    width: 200,
+    textAlign: 'center',
+    fontFamily: 'myfont',
+    "& .MuiOutlinedInput-input": {
+        color: colorStyle,
+        textAlign: 'center',
+        fontFamily: 'myfont',
+    },
+
+    "&:hover .MuiOutlinedInput-input": {
+        color: colorStyle,
+        fontFamily: 'myfont',
+    },
+    "&:hover .MuiInputLabel-root": {
+        color: colorStyle,
+        fontFamily: 'myfont',
+    },
+    "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+        color: colorStyle,
+        fontFamily: 'myfont',
+    },
+    "& .MuiInputLabel-root.Mui-focused": {
+        color: colorStyle,
+        fontFamily: 'myfont',
+    },
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle
+    },
+    "& .MuiInputLabel-root": {
+        color: colorStyle,
+        fontFamily: 'myfont',
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+        borderWidth: 2,
+        fontFamily: 'myfont',
+    },
+
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: colorStyle,
+    },
+}));
 
 export default function Player() {
     const params = useSearchParams();
@@ -28,6 +75,10 @@ export default function Player() {
     const [gameContent, setGameContent] = useState<JSX.Element | null>(null);
     const [modalOpen, setModalOpen] = useState<boolean>(false);
     const [uuId,] = useState<string>(uuidv4());
+    const [addClass, setAddClass] = useState(false);
+    const circleRef = useRef<HTMLHeadingElement>(null);
+    const [colorStyle, setColorStyle] = useState<string>('orange');
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const vh = useVH();
 
@@ -218,6 +269,14 @@ export default function Player() {
                 room_id: parseInt(data[0]),
                 nickname: playerNickname
             });
+            setTimeout(() => {
+                setColorStyle('rgb(48,67,143)')
+            }, 200)
+            if(containerRef.current && circleRef.current){
+                containerRef.current.style.setProperty('background-color', 'orange')
+                circleRef.current.style.setProperty('background-color', 'orange')
+                setAddClass(true)
+            }
             return;
         //redgreen
         } else if (data[1] === 'redgreen') {
@@ -261,10 +320,26 @@ export default function Player() {
     const cancelReady = () => {
         socket.current.emit("leave_game", {
         });
+        setTimeout(() => {
+            setColorStyle('orange')
+        }, 200)
+        if(containerRef.current && circleRef.current){
+            containerRef.current.style.setProperty('background-color', 'rgb(48,67,143)')
+            circleRef.current.style.setProperty('background-color', 'rgb(48,67,143)')
+        }
         setShakeCount((prev) => prev = 0);
         setIsReadySent(false);
         setReady(false);
+        setAddClass(true)
     }
+
+    useEffect(() => {
+        if (addClass) {
+            setTimeout(() => {
+                setAddClass(false)
+            }, 500)
+        }
+    }, [addClass])
 
     const expressEmotion = (emotion: string) => {
         socket.current.emit("express_emotion", {
@@ -279,14 +354,16 @@ export default function Player() {
     return (
         <>{isGame ? gameContent :
             <>
+                    <div className='wrapper' ref={containerRef}>
+                    <div className={`circleDiv ${addClass ? 'active' : ''}`} ref={circleRef}></div>
                 <div className="nickname-container">
                     <div className="headerContainer">
                         <div className="logo">
                             <span className='logoSpan'>RecRe</span>
-                            <Image src="/teamDEF_logo.png" alt='logo' width={100} height={100} />
+                            {ready?'':<Image src="/teamDEF_logo.png" alt='logo' width={100} height={100} />}
                         </div>
                     </div>
-                    <div className='alertDiv'><Alert severity={ready ? "success" : "info"}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
+                    <div className='alertDiv'><Alert severity={ready ? "success" : "info"} style={{fontFamily:'myfont',backgroundColor:colorStyle,color:ready?'orange':'rgb(48,67,143)'}}>{ready ? "잠시 기다려 주시면 게임이 곧 시작됩니다!" : "닉네임을 입력하신 후 '준비 완료!' 버튼을 눌러주세요!"}</Alert></div>
                     {ready?<>
                     <div className='emotionDiv'>
                         <Box
@@ -297,49 +374,79 @@ export default function Player() {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 fontStyle:'italic',
-                                color: 'gray',
+                                color: colorStyle,
+                                border: `1px solid ${colorStyle}`,
+                                borderRadius:'3px',
                                 '& > *': {
                                     m: 2,
                                 },
                             }}
-                            onClick={() => ready?null:alert('먼저 준비를 완료해주세요!')}
                         ><span>호스트 화면에 이모티콘을 띄워보세요!</span>
                             <ButtonGroup aria-label="medium button group">{emotions.map((emotion, index) => {
-                                return <Button className="nickname-change" size='large' variant='outlined' key={index} disabled={!ready} onClick={() => expressEmotion(emotion)}>{'' + emotion + ''}</Button>
+                                return <Button className="nickname-change" size='large' variant='outlined' key={index} disabled={!ready} onClick={() => expressEmotion(emotion)} sx={{borderColor:colorStyle}}>{'' + emotion + ''}</Button>
                             })}</ButtonGroup></Box>
                     </div></>:null
                     }
                     <div className='nickDiv'>
                         <label className="nickname-label">닉네임을 입력해주세요! </label>
-                        <input
-                            type="text"
+                        <TextInfoCustom
                             className="nickname-input"
+                            id="outlined-text"
+                            label=''
+                            type="text"
                             value={playerNickname ?? ''}
-                            onChange={(e) => setPlayerNickname(e.target.value)}
+                            onChange={(e : any) => setPlayerNickname(e.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            color='primary'
+                            colorStyle={colorStyle}
                             disabled={ready}
-                            placeholder='닉네임을 입력해주세요.'
                         />
-                        <Button variant={ready ? "outlined" : "contained"} className="nickname-change" onClick={ready ? cancelReady : readyToPlay} disabled={isGateClosed}>
+                        <Button variant="contained" className="nickname-change" onClick={ready ? cancelReady : readyToPlay} disabled={isGateClosed} sx={{backgroundColor:colorStyle, fontFamily:'myfont',color:ready?'orange':'rgb(48,67,143)', marginTop:'15px','&:focus': {
+            backgroundColor: colorStyle,
+        },}}>
                             {ready ? "준비 취소!" : "준비 완료!"}
                         </Button></div>
                         <MyModal open={modalOpen} modalHeader={`흔들어서 게임준비`} modalContent={<ReadyModal />} closeFunc={() => { }} myref={null} />
-                </div></>}
+                </div></div></>}
             <style jsx>{`
-                .nickname-container {
+                .wrapper{
                     height: ${100 * vh}px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    justify-content: space-evenly;
-                    background-color: #F5F5F5;
-                    border-radius: 10px;
-                    ${ready?'padding-top: 7%;':''}
+                    justify-content: center;
+                    background-color:rgb(48,67,143);
+                    transition-delay: 0.5s;
+                }
+                .circleDiv{
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: orange;
+                    transition: clip-path 0.5s ease-out;
+                    clip-path: circle(0% at 50% 92%);
+                    z-index: 0;
+                }
+                .circleDiv.active{
+                    clip-path: circle(141.4% at 50% 92%);
+                }
+                .nickname-container {
+                    height: ${90 * vh}px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: space-around;
+                    padding-top:10%;
+                    z-index:2;
                 }
 
                 .nickname-label {
                     font-size: 20px;
                     font-weight: bold;
                     margin-bottom: 10px;
+                    color:${colorStyle}
                 }
 
                 .nickname-input {
@@ -352,7 +459,9 @@ export default function Player() {
                     text-align: center;
                     font-size: 16px;
                 }
-
+                .headerContainer{
+                    background-color: transparent;
+                }
                 .nickname-change {
                     width: 120px;
                     height: 40px;
@@ -366,7 +475,7 @@ export default function Player() {
                 }
                 .logo{
                     font-size: 32px;
-                    bakcground-color: #F5F5F5;
+                    background-color: tranparent;
                 }
                 .nickDiv{
                     display: flex;
@@ -376,11 +485,13 @@ export default function Player() {
                     gap: 10px;
                 }
                 .headerContainer{
+                    height:auto;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    background-color: #F5F5F5;
+                    background-color: tranparent;
+                    border-radius:30px;
                 }
                 .alertDiv{ 
                     width: 70%;
@@ -394,12 +505,13 @@ export default function Player() {
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    background-color: #F5F5F5;
+                    background-color: tranparent;
                 }
                 .logoSpan{
                     font-size: 60px;
                     font-weight: 500;
                     color:black;
+                    color:${colorStyle}
                 }
                 .emotionDiv{
                     width: 70%;

@@ -11,6 +11,7 @@ import { Socket } from 'socket.io-client';
 import { tokenAtoms } from '../modules/tokenAtoms';
 import Popover from '@mui/material/Popover';
 import Particle from '@/component/Particle';
+import { catchStartAtom } from '../modules/catchStartAtom';
 
 interface recievedAns {
   ans: string;
@@ -44,6 +45,7 @@ export default function Catch({ socket }: { socket: Socket }) {
     isAns: false,
   });
   const [, setAnsAtom] = useAtom(answerAtom);
+  const [catchStarted,setCatchStarted] = useAtom(catchStartAtom)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -74,12 +76,12 @@ export default function Catch({ socket }: { socket: Socket }) {
 
     const canvas = canvasRef.current;
     // 원본 해상도 설정
-    const originalWidth = 600;
-    const originalHeight = 600;
+    const originalWidth = 900;
+    const originalHeight = 900;
 
     // 낮추고 싶은 해상도 설정
-    const targetWidth = 300;
-    const targetHeight = 300;
+    const targetWidth = 450;
+    const targetHeight = 450;
 
     if (canvas) {
       // 캔버스 크기 및 스케일 조정
@@ -277,7 +279,7 @@ export default function Catch({ socket }: { socket: Socket }) {
           <div className="modalText">우승자 : {correctNick}</div>
           <div className="modalText">정답 : {answer}</div>
         </div>
-        <Button variant='contained' size='large' onClick={leaveGame}>게임 끝내기</Button>
+        <Button variant='contained' size='large' onClick={leaveGame} style={{fontFamily: 'myfont'}}>게임 끝내기</Button>
       </div>
       <style jsx>{`
         .winnerInfo{
@@ -296,11 +298,11 @@ export default function Catch({ socket }: { socket: Socket }) {
       <Particle/>
       <div className="canvasContainer">
         <div className="ButtonContainer">
-            <Button size='small' variant="contained" onClick={() => setIsEraser(!isEraser)}>
+            <Button size='small' variant="contained" onClick={() => setIsEraser(!isEraser)} style={{fontFamily: 'myfont'}}>
               {isEraser ? "붓" : '지우개'}
             </Button>
-            <Button size='small' variant="contained" onClick={clearCanvas}>전체 지우기</Button>
-            <Button aria-describedby={id} size='small' variant="contained" onClick={handleClick}>
+            <Button size='small' variant="contained" onClick={clearCanvas} style={{fontFamily: 'myfont'}}>전체 지우기</Button>
+            <Button aria-describedby={id} size='small' variant="contained" onClick={handleClick} style={{fontFamily: 'myfont'}}>
               붓 색상
             </Button>
             <Popover
@@ -309,8 +311,8 @@ export default function Catch({ socket }: { socket: Socket }) {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+                vertical: 'top',
+                horizontal: 'right',
               }}
             >
               {drawColor.map((color) => (
@@ -327,6 +329,7 @@ export default function Catch({ socket }: { socket: Socket }) {
                 <button
                   className={`lineWidthButton ${eraserWidth === info[0] ? 'selectedTool' : ''}`}
                   onClick={() => setEraserWidth(info[0] as number)}
+                  style={{fontFamily: 'myfont'}}
                 >
                   {info[1] as string}
                 </button>
@@ -336,6 +339,7 @@ export default function Catch({ socket }: { socket: Socket }) {
                 <button
                   className={`lineWidthButton ${lineWidth === info[0] ? 'selectedTool' : ''}`}
                   onClick={() => setLineWidth(info[0] as number)}
+                  style={{fontFamily: 'myfont'}}
                 >
                   {info[1] as string}
                 </button>
@@ -345,9 +349,9 @@ export default function Catch({ socket }: { socket: Socket }) {
         <div className='canvasDiv'>
           <canvas ref={canvasRef} style={{ maxWidth: '100%', maxHeight: '100%' }} className="canvas" />
         </div>
-        <Button variant='contained' color='error' onClick={() => { leaveGame() }}>나가기</Button>
+        <Button variant='contained' color='error' onClick={() => { leaveGame() }} style={{fontFamily: 'myfont'}}>나가기</Button>
       </div>
-      <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick} />
+      <IntegrationNotistack isAns={recievedAns.isAns} ans={recievedAns.ans} nick={recievedAns.nick}/>
       <MyModal open={isFinished} modalHeader={`게임 종료`} modalContent={<FinishedModal />} closeFunc={() => { }} myref={null} />
       <style jsx>{`
         .canvasContainer {
@@ -380,18 +384,19 @@ export default function Catch({ socket }: { socket: Socket }) {
           }
         }
         .canvasDiv {
-          width: 500px;
-          height: 500px;
+          width: 800px;
+          aspect-ratio: 1 / 1;
           border: 1px solid gray;
           border-radius: 20px;
           overflow: hidden;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+          z-index : 1500;
         }
 
         @media (max-width: 1000px) {
           .canvasDiv {
-            width: 500px;
-            height: 500px;
+            width: 800px;
+            aspect-ratio: 1 / 1;
           }
         }
 

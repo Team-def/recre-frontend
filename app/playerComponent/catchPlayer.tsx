@@ -42,12 +42,12 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
             const context = canvas.getContext('2d');
             if(context){
                 // 캔버스 크기 및 스케일 조정
-                const originalWidth = 300;
-                const originalHeight = 300;
+                const originalWidth = 450;
+                const originalHeight = 450;
         
                 // 낮추고 싶은 해상도 설정
-                const targetWidth = 300;
-                const targetHeight = 300;
+                const targetWidth = 450;
+                const targetHeight = 450;
             
                 canvas.width = targetWidth;
                 canvas.height = targetHeight;
@@ -121,7 +121,7 @@ export default function CatchPlayer({ roomId, socket }: { roomId: string, socket
         <div>
             <canvas
                 ref={canvasRef}
-                style={{ maxWidth: '100%', maxHeight: '100%', border: '1px solid black' }}>
+                style={{ maxWidth: '90vw', maxHeight: '90vw', border: '1px solid black' }}>
             </canvas>
         </div>
         <Button variant="outlined" onClick={leave_game}>게임 나가기</Button>

@@ -27,6 +27,7 @@ function MyPopover({url}: {url: string}) {
         vertical: 'top',
         horizontal: 'right',
     }}
+    sx={{zIndex:1800}}
 >
         <div className='QR-code-ans'>
             <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${url}`} alt="QR" layout='fill' unoptimized={true} />

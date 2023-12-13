@@ -17,8 +17,8 @@ const QRpage = ({gamePageUrlAns, gamePageUrl, nowPeople, total, startGame}:{game
                 <h2>{JSON.parse(localStorage.getItem('game') || 'null')[0]}</h2>
                 {/* 게임 종류가 catch mind인 경우 */}
                 {JSON.parse(localStorage.getItem('game') || 'null')[0] === '그림 맞추기' ?
-                    <div className='alertSt'><Alert severity="info" onClick={()=>handlePopover(document.body)}>
-                    <AlertTitle>정답을 입력해주세요</AlertTitle>
+                    <div className='alertSt'><Alert severity="info" onClick={()=>handlePopover(document.body)} style={{fontFamily: 'myfont'}}>
+                    <AlertTitle style={{fontFamily: 'myfont'}}>정답을 입력해주세요</AlertTitle>
                     호스트는 이 창을 클릭하여 QR을 찍고 문제의 정답을 입력해 주세요. <strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
                 </Alert><MyPopover url={gamePageUrlAns.current}/></div> : <></>}
                 <div className='QR-code'>
@@ -33,7 +33,7 @@ const QRpage = ({gamePageUrlAns, gamePageUrl, nowPeople, total, startGame}:{game
 
 
                 <div className='gameInfo-start-button'>
-                    <Button disabled={nowPeople === 0} onClick={startGame}>게임 시작</Button>
+                    <Button disabled={nowPeople === 0} onClick={startGame} style={{fontFamily: 'myfont'}}>게임 시작</Button>
                     {/* <Button onClick={startGame}>test</Button> */}
                     {/* <Button onClick={testGame}>TestPlay</Button> */}
                     {/* <Button onClick={()=>makeEmotion('❤️')}>TestHeart</Button> */}

@@ -254,18 +254,20 @@ export default function Home() {
               background: url('/BG_03.png') center / 100% repeat-x;
               background-size: 50% 100%;
               animation: movebg 2s linear infinite;
+              font-family : 'retro_dupna';
             }
             .middleLogo{
+              width:40vw;
+              height:12vw;
               position: absolute;
-              top: 20vh;
+              top: 100px;
               text-align: center;
               background-color: transparent;
-              transition: transform 0.3s ease;
-              animation: shake 1.5s linear infinite;
+              animation: scaleAnimation 2s linear infinite;
             }
-            .middleLogo:hover{
-              transform: scale(1.2);
-            }
+            // .middleLogo:hover{
+            //   transform: scale(1.2);
+            // }
             .knight{
               display: flex;
               flex-direction: column;
@@ -294,22 +296,23 @@ export default function Home() {
               }
             }
 
-            @keyframes shake{
+            @keyframes scaleAnimation{
               0%{
-                rotate: 0deg;
+                transform: scale(1);
               }
               25%{
-                rotate: 5deg;
+                transform: scale(1.05);
               }
               50%{
-                rotate: 0deg;
+                transform: scale(1);
               }
               75%{
-                rotate: -5deg;
+                transform: scale(1.05);
               }
               100%{
-                rotate: 0deg;
+                transform: scale(1);
               }
+            }
             }
         `}</style>
   </>

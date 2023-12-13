@@ -228,27 +228,27 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                   <TableHead sx={{ backgroundColor: "antiquewhite" }}>
                     <TableRow>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         순위
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         이름
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         거리
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         시간
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold" }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         상태
                       </TableCell>
@@ -281,20 +281,21 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                               color:
                                 index + 1 <= gameInfo[0] ? "black" : "gray",
                               textAlign: "center",
+                              fontFamily: 'myfont'
                             }}
                           >
                             {index + 1}등
                           </TableCell>
-                          <TableCell align="right" sx={{ textAlign: "center" }}>
+                          <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {player.name}
                           </TableCell>
-                          <TableCell align="right" sx={{ textAlign: "center" }}>
+                          <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {playerFixedDistance}
                           </TableCell>
-                          <TableCell align="right" sx={{ textAlign: "center" }}>
+                          <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {elapsedTime ?? ""}
                           </TableCell>
-                          <TableCell align="right" sx={{ textAlign: "center" }}>
+                          <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {player.state}
                           </TableCell>
                         </TableRow>

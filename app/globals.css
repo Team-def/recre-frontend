@@ -1,14 +1,26 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif,; */
+  font-family: myfont,sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* off-white background */
   background-color: #f8f8f8 !important;
   box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'myfont';
+  src: url(../public/fonts/DNFBitBitv2.otf);
+}
+
+
+@font-face {
+  font-family: 'retro_dupna1';
+  src: url(../public/fonts/DNFBitBitOTF.otf);
 }
 
 ;
