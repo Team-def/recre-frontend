@@ -152,10 +152,10 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                             >
                                 {index + 1}등
                                 </TableCell>
-                            <TableCell align="right" sx={{textAlign:'center'}}>{player.name}</TableCell>
-                            <TableCell align="right" sx={{textAlign:'center'}}>{playerFixedDistance}</TableCell>
-                            <TableCell align="right" sx={{textAlign:'center'}}>{elapsedTime ?? ''}</TableCell>
-                            <TableCell align="right" sx={{textAlign:'center'}}>{player.state}</TableCell>
+                            <TableCell align="right" sx={{textAlign:'center', fontFamily:'myfont'}}>{player.name}</TableCell>
+                            <TableCell align="right" sx={{textAlign:'center', fontFamily:'myfont'}}>{playerFixedDistance}</TableCell>
+                            <TableCell align="right" sx={{textAlign:'center', fontFamily:'myfont'}}>{elapsedTime ?? ''}</TableCell>
+                            <TableCell align="right" sx={{textAlign:'center', fontFamily:'myfont'}}>{player.state}</TableCell>
                             </TableRow>
                         );
                         })}
@@ -236,8 +236,8 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
 
         <div className={outlineClassName}>
             <div className="speech-bubble-player">
-            <h1 style={{fontSize:'8vw'}}>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
-                <h1 style={{fontSize:'8vw'}}>나의 등수 : {myrank} / {total_num} 등</h1>
+            <h1 style={{fontSize:'6vw'}}>달린 거리 : {shakeCount>length?length:shakeCount} / {length}</h1>
+                <h1 style={{fontSize:'6vw'}}>나의 등수 : {myrank} / {total_num} 등</h1>
                 <button onClick={()=>setShakeCount((prev)=>prev+1)}>test</button>
             </div>
             <div className={minimapClassName}>

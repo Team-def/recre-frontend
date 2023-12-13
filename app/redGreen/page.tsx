@@ -334,7 +334,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
             </div>
           </div>
           <div className="leaveBtn">
-            <Button onClick={leaveGame}>게임 끝내기</Button>
+            <Button variant="contained" sx={{fontFamily:'myfont'}} onClick={leaveGame}>게임 끝내기</Button>
           </div>
         </div>
         <style jsx>{`
