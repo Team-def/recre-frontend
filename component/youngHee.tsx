@@ -10,6 +10,10 @@ import {
   CSS2DRenderer,
 } from "three/examples/jsm/renderers/CSS2DRenderer.js";
 
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+
 import wait from "waait";
 import Box from "@mui/material/Box";
 import Backdrop from "@mui/material/Backdrop";
@@ -55,6 +59,7 @@ const YoungHee = ({
 
   const [mixers, setMixers] = useState<THREE.AnimationMixer[]>();
   const [playerInfo, setPlayerInfo] = useState<playerInfo[]>();
+  const [currentAliveNum, setCurrentAliveNum] = useState<number>(0);
   const rendererRef = useRef<THREE.WebGLRenderer>();
   const labelRenderer = useRef<CSS2DRenderer>(new CSS2DRenderer());
   const playerMap = useRef(new Map<string, Player>());
@@ -63,7 +68,9 @@ const YoungHee = ({
   const isRed = useRef<boolean>(false);
   const lightList = useRef<THREE.DirectionalLight[]>([]);
   const useRefScene = useRef<THREE.Scene>();
-
+  const finishCountText = useRef<THREE.Mesh>();
+  const finishCountTextBack = useRef<THREE.Mesh>();
+  const aliveNumRef = useRef<number>(0);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -107,7 +114,6 @@ const YoungHee = ({
     }
   };
 
-
   function onWindowResize(this: Window, ev: UIEvent) {
     if (myCamera.current) {
       myCamera.current.aspect = window.innerWidth / window.innerHeight;
@@ -126,7 +132,6 @@ const YoungHee = ({
       myCamera.current as THREE.Camera
     );
   }
-
 
   useEffect(() => {
     // 스페이바 스코를 이벤트 비활성화
@@ -160,10 +165,66 @@ const YoungHee = ({
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.setClearColor(0xffffff, 1);
     // document.body.appendChild(renderer.domElement);
+
+    // 라벨 렌더러 설정
     labelRenderer.current.setSize(window.innerWidth, window.innerHeight);
     labelRenderer.current.domElement.style.position = "absolute";
     labelRenderer.current.domElement.style.top = "0px";
     document.body.appendChild(labelRenderer.current.domElement);
+
+    //================================================================================================
+    // 폰트 로드
+
+    // const fontLoader = new FontLoader();
+
+    // fontLoader.load("Hakgyoansim Bombanghak R_Regular.json", (font) => {
+    //   let textGeometry = new TextGeometry("무궁화 꽃이 0", {
+    //     font: font,
+    //     size: 5,
+    //     height: 0.2,
+    //     curveSegments: 12,
+    //     bevelEnabled: true,
+    //     bevelThickness: 0.1,
+    //     bevelSize: 0.02,
+    //     bevelOffset: 0,
+    //     bevelSegments: 5,
+    //   });
+    //   const textMaterial = new THREE.MeshStandardMaterial({
+    //     color: 0x437185,
+    //   });
+    //   const text = new THREE.Mesh(textGeometry, textMaterial);
+    //   text.geometry.center();
+    //   text.castShadow = true;
+    //   text.position.set(0, 30, -100);
+    //   // text.rotateY(Math.PI);
+    //   scene.add(text);
+    //   finishCountText.current = textGeometry;
+    // });
+
+    // const font = fontLoader.parse(
+    //   require("three/examples/fonts/droid/droid_sans_bold.typeface.json")
+    // );
+    // const textGeometry = new TextGeometry(winNum.toString(), {
+    //   font: font,
+    //   size: 10,
+    //   height: 0.2,
+    //   curveSegments: 12,
+    //   bevelEnabled: true,
+    //   bevelThickness: 0.1,
+    //   bevelSize: 0.02,
+    //   bevelOffset: 0,
+    //   bevelSegments: 5,
+    // });
+    // const textMaterial = new THREE.MeshStandardMaterial({
+    //   color: 0xdd2222,
+    // });
+    // let text = new THREE.Mesh(textGeometry, textMaterial);
+    // text.geometry.center();
+    // text.castShadow = true;
+    // text.position.set(0, 50, -100);
+    // // text.rotateY(Math.PI);
+    // scene.add(text);
+    // finishCountText.current = textGeometry;
 
     //================================================================================================
     // 격자, 편의 도구
@@ -191,10 +252,8 @@ const YoungHee = ({
 
     //================================================================================================
 
-
     // 아래가 마우스 스크롤이나 클릭 후 돌리기
     // const controls = new OrbitControls(camera, renderer.domElement);
-
 
     //================================================================================================
     // 게임 필드 오브잭트 생성
@@ -218,7 +277,7 @@ const YoungHee = ({
       });
     });
 
-    // 결승선 
+    // 결승선
     const touchdownGeometry = new THREE.BoxGeometry(250, 10, 5);
     const touchdownMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
@@ -229,7 +288,6 @@ const YoungHee = ({
     const touchdown = new THREE.Mesh(touchdownGeometry, touchdownMaterial);
     touchdown.position.set(0, -3.8, -80);
     scene.add(touchdown);
-
 
     //================================================================================================
     //광원
@@ -346,6 +404,7 @@ const YoungHee = ({
       setMixers([mixer]);
     });
 
+    //================================================================================================
     function animate() {
       // wait(1000);
       // console.log(
@@ -356,6 +415,8 @@ const YoungHee = ({
       // console.log("실행중");
 
       animationId.current = requestAnimationFrame(animate);
+
+      // if (finishCountText.current) finishCountText.current.rotateY(0.01);
 
       playerMap.current.forEach((player: Player) => {
         const object: GLTF = player.object;
@@ -397,6 +458,9 @@ const YoungHee = ({
       if (res.pre_player_info) {
         let players = res.pre_player_info;
         setPlayerInfo(players);
+
+        aliveNumRef.current = players.length;
+        setCurrentAliveNum(aliveNumRef.current);
       }
     });
 
@@ -420,6 +484,16 @@ const YoungHee = ({
           }
         });
       }
+    });
+
+    socket.on("touchdown", (res) => {
+      aliveNumRef.current--;
+      setCurrentAliveNum(aliveNumRef.current);
+    });
+
+    socket.on("youdie", (res) => {
+      aliveNumRef.current--;
+      setCurrentAliveNum(aliveNumRef.current);
     });
 
     return () => {
@@ -503,7 +577,7 @@ const YoungHee = ({
 
       div.className = "squidlabel";
       div.style.color = "black";
-      div.style.width= "100px";
+      div.style.width = "100px";
       div.style.height = "30px";
       div.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
       div.style.borderRadius = "5px";
@@ -543,9 +617,15 @@ const YoungHee = ({
     labelRenderer.current.domElement.addEventListener("mouseup", turnFront);
 
     return () => {
-        // Unmount 시 이벤트 리스터 제거
-        labelRenderer.current.domElement.removeEventListener("mousedown", turnBack);
-        labelRenderer.current.domElement.removeEventListener("mouseup", turnFront);
+      // Unmount 시 이벤트 리스터 제거
+      labelRenderer.current.domElement.removeEventListener(
+        "mousedown",
+        turnBack
+      );
+      labelRenderer.current.domElement.removeEventListener(
+        "mouseup",
+        turnFront
+      );
     };
   }, [turnBack, turnFront]);
 
@@ -594,17 +674,61 @@ const YoungHee = ({
     if (isStart) {
       if (go) {
         socket.emit("resume", {
-          access_token: localStorage.getItem('access_token')??'' as string,
+          access_token: localStorage.getItem("access_token") ?? ("" as string),
           result: go,
         });
       } else {
         socket.emit("stop", {
-          access_token: localStorage.getItem('access_token')??'' as string,
+          access_token: localStorage.getItem("access_token") ?? ("" as string),
           result: go,
         });
       }
     }
   }, [go]);
+
+  // currentWinNum이 바뀔 때마다 실행
+  useEffect(() => {
+    console.log(currentAliveNum);
+    if (finishCountText.current) {
+      useRefScene.current?.remove(finishCountText.current);
+      finishCountText.current.clear();
+    }
+    const fontLoader = new FontLoader();
+    const font = fontLoader.parse(
+      require("three/examples/fonts/droid/droid_sans_bold.typeface.json")
+    );
+    const textGeometry = new TextGeometry(currentAliveNum.toString(), {
+      font: font,
+      size: 10,
+      height: 1,
+      curveSegments: 12,
+      bevelEnabled: true,
+      bevelThickness: 0.1,
+      bevelSize: 0.02,
+      bevelOffset: 0,
+      bevelSegments: 5,
+    });
+    const textMaterial = new THREE.MeshStandardMaterial({
+      color: 0xdd2222,
+    });
+    let text = new THREE.Mesh(textGeometry, textMaterial);
+    text.geometry.center();
+    text.castShadow = true;
+    text.position.set(0, 50, -100);
+    useRefScene.current?.add(text);
+    finishCountText.current = text;
+
+    if (finishCountTextBack.current) {
+      useRefScene.current?.remove(finishCountTextBack.current);
+      finishCountTextBack.current.clear();
+    }
+    const backText = text.clone();
+    backText.geometry.scale(1.4, 1.4, 1.4);
+    finishCountTextBack.current = backText;
+    backText.position.set(0, 50, 160);
+    backText.rotateY(Math.PI);
+    useRefScene.current?.add(backText);
+  }, [currentAliveNum]);
 
   useEffect(() => {
     function handleKeyDown(event: { key: any }) {
@@ -751,9 +875,9 @@ const YoungHee = ({
   }
 
   async function cameraMove4() {
-    myCamera.current?.position.set(0, 173, 0);
+    myCamera.current?.position.set(0, 173, -20);
     myCamera.current?.rotation.set(0, 0, 0);
-    myCamera.current?.lookAt(0, 0, 0);
+    myCamera.current?.lookAt(0, 0, -20);
   }
 
   return (
