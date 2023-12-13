@@ -12,6 +12,8 @@ import { tokenAtoms } from '../modules/tokenAtoms';
 import Popover from '@mui/material/Popover';
 import Particle from '@/component/Particle';
 import { catchStartAtom } from '../modules/catchStartAtom';
+import BackgroundMusicCatch from '@/component/BackgroundMusicCatch';
+
 
 interface recievedAns {
   ans: string;
@@ -47,6 +49,7 @@ export default function Catch({ socket }: { socket: Socket }) {
   const [, setAnsAtom] = useAtom(answerAtom);
   const [catchStarted,setCatchStarted] = useAtom(catchStartAtom)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
 
   useEffect(() => {
     socket.on('correct', (res) => {
@@ -106,8 +109,6 @@ export default function Catch({ socket }: { socket: Socket }) {
     });
 
   };
-
-
 
   // 좌표 얻는 함수
   const getCoordinates = (event: MouseEvent): Coordinate | undefined => {
@@ -295,6 +296,9 @@ export default function Catch({ socket }: { socket: Socket }) {
 
   return (
     <>
+      <div className="BGM-container" >
+        <BackgroundMusicCatch />
+      </div>
       <Particle/>
       <div className="canvasContainer">
         <div className="ButtonContainer">
@@ -445,6 +449,7 @@ export default function Catch({ socket }: { socket: Socket }) {
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
           background-color: #636363;
           color: white;
+          z-index: 9999;
         }
         .lineWidthButton {
           border: 0px solid gray;
@@ -474,6 +479,16 @@ export default function Catch({ socket }: { socket: Socket }) {
         }
         #tsparticles{
           z-index: -5;
+        }
+        .BGM-container{
+          position: absolute;
+          top: 1%;
+          right: 21%;
+          scale: 1.5;
+          border: 1px solid gray;
+          border-radius: 5px;
+          cursor: pointer;
+          background-color: #3498db
         }
       `}</style>
     </>

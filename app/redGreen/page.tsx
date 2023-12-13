@@ -19,6 +19,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import YoungHee from "@/component/youngHee";
 import RankingBoard from "@/component/rankingBoard";
+import BackgroundMusicRedGreen from "@/component/BackgroundMusicRedGreen";
 
 interface Data {
   calories: number;
@@ -367,6 +368,9 @@ export default function RedGreen({ socket }: { socket: Socket }) {
   return (
     <>
       <div className="redGreenContainer">
+        <div className="BGM-container" >
+          <BackgroundMusicRedGreen />
+        </div>
         <div className="rankContainer">
           <RankingBoard
             socket={socket as Socket}
@@ -428,6 +432,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           align-items: center;
           flex-direction: column;
         }
+
         .rankContainer {
           position: fixed;
           top: 5%;
@@ -476,6 +481,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           font-weight: bold;
           margin-bottom: 10px;
         }
+        
         .redGreenBtns {
           display: flex;
           justify-content: space-evenly;
