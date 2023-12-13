@@ -19,6 +19,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import YoungHee from "@/component/youngHee";
 import RankingBoard from "@/component/rankingBoard";
+import BackgroundMusicRedGreen from "@/component/BackgroundMusicRedGreen";
 
 interface Data {
   calories: number;
@@ -63,6 +64,8 @@ export default function RedGreen({ socket }: { socket: Socket }) {
   //   endtime: '',
   // }]);
   const [go, setGo] = useState(false);
+  const [isBGMOn, setIsBGMOn] = useState<boolean>(true);
+
 
   interface playerInfo {
     name: string;
@@ -364,9 +367,17 @@ export default function RedGreen({ socket }: { socket: Socket }) {
     );
   };
 
+  const handleBGM = () => {
+    setIsBGMOn((prevBGMStatus) => !prevBGMStatus);
+  } 
+
   return (
     <>
       <div className="redGreenContainer">
+        <div className="BGM-container" onClick={handleBGM}>
+          {isBGMOn? <BackgroundMusicRedGreen /> : <></>}
+          {isBGMOn? <Button className='button-mute'>🔇</Button> : <Button className='button-unmute'>🔈</Button> }
+        </div>
         <div className="rankContainer">
           <RankingBoard
             socket={socket as Socket}

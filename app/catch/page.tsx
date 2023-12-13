@@ -12,7 +12,7 @@ import { tokenAtoms } from '../modules/tokenAtoms';
 import Popover from '@mui/material/Popover';
 import Particle from '@/component/Particle';
 import { catchStartAtom } from '../modules/catchStartAtom';
-import BackgroundMusic from '@/component/BackgroundMusic';
+import BackgroundMusicCatch from '@/component/BackgroundMusicCatch';
 
 
 interface recievedAns {
@@ -301,7 +301,7 @@ export default function Catch({ socket }: { socket: Socket }) {
   return (
     <>
       <div className="BGM-container" onClick={handleBGM}>
-        {isBGMOn? <BackgroundMusic /> : <></>}
+        {isBGMOn? <BackgroundMusicCatch /> : <></>}
         {isBGMOn? <Button className='button-mute'>🔇</Button> : <Button className='button-unmute'>🔈</Button> }
       </div>
       <Particle/>
