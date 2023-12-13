@@ -731,16 +731,16 @@ const YoungHee = ({
     useRefScene.current?.add(text);
     finishCountText.current = text;
 
-    // if (finishCountTextBack.current) {
-    //   useRefScene.current?.remove(finishCountTextBack.current);
-    //   finishCountTextBack.current.clear();
-    // }
-    // const backText = text.clone();
-    // backText.geometry.scale(1.4, 1.4, 1.4);
-    // finishCountTextBack.current = backText;
-    // backText.position.set(0, 50, 160);
-    // backText.rotateY(Math.PI);
-    // useRefScene.current?.add(backText);
+    if (finishCountTextBack.current) {
+      useRefScene.current?.remove(finishCountTextBack.current);
+      finishCountTextBack.current.clear();
+    }
+    const backText = text.clone();
+    backText.geometry.scale(1.4, 1.4, 1.4);
+    finishCountTextBack.current = backText;
+    backText.position.set(0, 50, 160);
+    backText.rotateY(Math.PI);
+    useRefScene.current?.add(backText);
   }, [currentAliveNum]);
 
   useEffect(() => {
