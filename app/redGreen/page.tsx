@@ -20,6 +20,7 @@ import Paper from "@mui/material/Paper";
 import YoungHee from "@/component/youngHee";
 import RankingBoard from "@/component/rankingBoard";
 import BackgroundMusicRedGreen from "@/component/BackgroundMusicRedGreen";
+import MyModalRank from "@/component/MyModalRank";
 
 interface Data {
   calories: number;
@@ -408,7 +409,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           leaveGame={leaveGame}
           stopGame={stopGame}
         />
-        <MyModal
+        <MyModalRank
           open={openModal}
           modalHeader={modalHeader}
           modalContent={modalContent}

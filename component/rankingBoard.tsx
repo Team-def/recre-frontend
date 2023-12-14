@@ -48,13 +48,13 @@ export default function RankingBoard(
         setPlayerInfo(sortedFilteredPlayerInfo);
     });
 
-    const stateToEmoji = (state: state) => {
+    const stateToString = (state: state) => {
       if (state === 'ALIVE') {
-          return "🏃";
+          return "탈락";
         } else if (state === 'DEAD') {
-          return "💀";
+          return "죽음";
         } else if (state === 'FINISH') {
-          return "🥳";
+          return "생존";
         }
     }
 
@@ -91,7 +91,7 @@ export default function RankingBoard(
                         </TableCell>
                         <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{player.name}</TableCell>
                         <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{playerFixedDistance}</TableCell>
-                        <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{stateToEmoji(player.state)}</TableCell>
+                        <TableCell align="right" sx={{textAlign:'center',fontFamily: 'myfont'}}>{stateToString(player.state)}</TableCell>
                         </TableRow>
                     );
                   })}
