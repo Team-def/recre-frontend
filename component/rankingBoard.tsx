@@ -50,7 +50,7 @@ export default function RankingBoard(
 
     const stateToString = (state: state) => {
       if (state === 'ALIVE') {
-          return "탈락";
+          return " - ";
         } else if (state === 'DEAD') {
           return "죽음";
         } else if (state === 'FINISH') {

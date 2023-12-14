@@ -202,13 +202,13 @@ export default function RedGreen({ socket }: { socket: Socket }) {
     });
   };
 
-  const stateToEmoji = (state: state) => {
+  const stateToString = (state: state) => {
     if (state === 'ALIVE') {
-        return "🏃";
+        return "탈락";
       } else if (state === 'DEAD') {
-        return "💀";
+        return "죽음";
       } else if (state === 'FINISH') {
-        return "🥳";
+        return "생존";
       }
   }
 
@@ -235,27 +235,27 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                   <TableHead sx={{ backgroundColor: "antiquewhite" }}>
                     <TableRow>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '17%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         순위
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '32%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         이름
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '20%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont'}}
                       >
-                        거리
+                        거리 ({gameInfo[1]})
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '30%'  }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         시간
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '20%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         상태
                       </TableCell>
@@ -297,13 +297,13 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                             {player.name}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
-                            {playerFixedDistance}
+                            {playerFixedDistance} / {gameInfo[1]}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {elapsedTime ?? ""}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
-                            {stateToEmoji(player.state)}
+                            {stateToString(player.state)}
                           </TableCell>
                         </TableRow>
                       );

@@ -134,7 +134,7 @@ export default function RedGreenPlayer({ roomId, socket, length, win_num, total_
                         paddingRight:'10px',
                         maxHeight:'70vh',
                         padding: '10px'}}>
-                <Table sx={{ width:'90%',
+                <Table sx={{ width:'95%',
                         overflow:'scroll' }} aria-label="simple table">
                 <TableHead sx={{ backgroundColor:'antiquewhite' }}>
                 <TableRow>
