@@ -20,6 +20,7 @@ import Paper from "@mui/material/Paper";
 import YoungHee from "@/component/youngHee";
 import RankingBoard from "@/component/rankingBoard";
 import BackgroundMusicRedGreen from "@/component/BackgroundMusicRedGreen";
+import MyModalRank from "@/component/MyModalRank";
 
 interface Data {
   calories: number;
@@ -201,13 +202,13 @@ export default function RedGreen({ socket }: { socket: Socket }) {
     });
   };
 
-  const stateToEmoji = (state: state) => {
+  const stateToString = (state: state) => {
     if (state === 'ALIVE') {
-        return "🏃";
+        return "탈락";
       } else if (state === 'DEAD') {
-        return "💀";
+        return "죽음";
       } else if (state === 'FINISH') {
-        return "🥳";
+        return "생존";
       }
   }
 
@@ -234,27 +235,27 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                   <TableHead sx={{ backgroundColor: "antiquewhite" }}>
                     <TableRow>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '17%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         순위
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '32%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         이름
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '20%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont'}}
                       >
-                        거리
+                        거리 ({gameInfo[1]})
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '30%'  }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         시간
                       </TableCell>
                       <TableCell
-                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont', width: '20%' }}
+                        sx={{ textAlign: "center", fontWeight: "bold",fontFamily: 'myfont' }}
                       >
                         상태
                       </TableCell>
@@ -296,13 +297,13 @@ export default function RedGreen({ socket }: { socket: Socket }) {
                             {player.name}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
-                            {playerFixedDistance}
+                            {playerFixedDistance} / {gameInfo[1]}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
                             {elapsedTime ?? ""}
                           </TableCell>
                           <TableCell align="right" sx={{ textAlign: "center",fontFamily: 'myfont' }}>
-                            {stateToEmoji(player.state)}
+                            {stateToString(player.state)}
                           </TableCell>
                         </TableRow>
                       );
@@ -349,6 +350,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            width: 100%;
           }
           .modalText {
             font-size: 20px;
@@ -361,6 +363,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
             padding: 10px;
             background-color: white;
             border-radius: 10px;
+            width:100%;
           }
           .leaveBtn {
             margin-top: 10px;
@@ -408,7 +411,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
           leaveGame={leaveGame}
           stopGame={stopGame}
         />
-        <MyModal
+        <MyModalRank
           open={openModal}
           modalHeader={modalHeader}
           modalContent={modalContent}
