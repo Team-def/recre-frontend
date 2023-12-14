@@ -41,8 +41,8 @@ export default function RootLayout({
 }) {
   return (
     <ClientCookiesProvider value={cookies().getAll()}>
-    <html lang="en">
-    <body 
+    <html lang="ko">
+    <body className="notranslate"
       // className={inter.className}
       >
         <Header />
