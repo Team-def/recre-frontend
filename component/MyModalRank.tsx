@@ -12,7 +12,7 @@ const modalStyle = {
     transform: 'translate(-50%, -50%)',
     width: 500,
     // bgcolor: 'background.paper',
-    bgcolor: 'rgba(242,242,242,0.6)',
+    bgcolor: 'rgba(242,242,242,0.8)',
     border: '0px solid #000',
     boxShadow: 24,
     p: 3,

@@ -350,6 +350,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            width: 100%;
           }
           .modalText {
             font-size: 20px;
@@ -362,6 +363,7 @@ export default function RedGreen({ socket }: { socket: Socket }) {
             padding: 10px;
             background-color: white;
             border-radius: 10px;
+            width:100%;
           }
           .leaveBtn {
             margin-top: 10px;
