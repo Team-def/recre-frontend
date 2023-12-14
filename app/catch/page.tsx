@@ -154,26 +154,54 @@ export default function Catch({ socket }: { socket: Socket }) {
     }
   }, []);
 
+  // const paint = useCallback(
+  //   (event: MouseEvent) => {
+  //     event.preventDefault();   // drag 방지
+  //     event.stopPropagation();  // drag 방지
+
+  //     const newMousePosition = getCoordinates(event);
+  //     if (isPainting) {
+  //       if (mousePosition && newMousePosition) {
+  //         drawLine(mousePosition, newMousePosition);
+  //         setMousePosition(newMousePosition);
+  //         socket.emit('draw', {
+  //           access_token: localStorage.getItem('access_token')??'' as string,
+  //           room_id: userInfo.id,
+  //           x: newMousePosition.x,
+  //           y: newMousePosition.y,
+  //           color: isEraser ? 'white' : curColor,
+  //           lineWidth: isEraser ? eraserWidth : lineWidth,
+  //           first_x: mousePosition.x,
+  //           first_y: mousePosition.y,
+  //         });
+  //       }
+  //     } else {
+
+  //     }
+  //   },
+  //   [isPainting, mousePosition]
+  // );
+
   const paint = useCallback(
     (event: MouseEvent) => {
       event.preventDefault();   // drag 방지
       event.stopPropagation();  // drag 방지
 
       const newMousePosition = getCoordinates(event);
-      if (isPainting) {
+      const canvas: HTMLCanvasElement | null = canvasRef.current;
+      if (isPainting&& canvas) {
         if (mousePosition && newMousePosition) {
           drawLine(mousePosition, newMousePosition);
           setMousePosition(newMousePosition);
-          socket.emit('draw', {
-            access_token: localStorage.getItem('access_token')??'' as string,
-            room_id: userInfo.id,
-            x: newMousePosition.x,
-            y: newMousePosition.y,
-            color: isEraser ? 'white' : curColor,
-            lineWidth: isEraser ? eraserWidth : lineWidth,
-            first_x: mousePosition.x,
-            first_y: mousePosition.y,
-          });
+          const context = canvas.getContext('2d');
+          if (context) {
+            context.beginPath();
+            // 서버에 그림 데이터 및 캔버스 정보 전송
+            const canvasData = canvas.toDataURL();
+            socket.emit('draw', canvasData);
+          }else{
+            console.log("없다");
+          }
         }
       } else {
 
@@ -181,6 +209,25 @@ export default function Catch({ socket }: { socket: Socket }) {
     },
     [isPainting, mousePosition]
   );
+
+  // useEffect(() => {
+  //   console.log(234234)
+  //   const canvas: HTMLCanvasElement | null = canvasRef.current;
+  //   if (canvas) {
+  //       const context = canvas.getContext('2d');
+  //       if (context) {
+  //         context.beginPath();
+  //         // 서버에 그림 데이터 및 캔버스 정보 전송
+  //         const canvasData = {
+  //           data: context.getImageData(0, 0, canvas.width, canvas.height).data,
+  //           width: canvas.width,
+  //           height: canvas.height,
+  //         };
+  //         socket.emit('draw', canvasData);
+  //       }
+  //   }
+  // }, [isPainting])
+
 
   const exitPaint = useCallback(() => {
     setIsPainting(false);
