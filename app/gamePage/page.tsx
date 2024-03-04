@@ -48,6 +48,7 @@ export default function QR() {
     const [emotions, setEmotions] = useState<emotion[]>([]);
     const [redGreenInfo, ] = useAtom(redGreenInfoAtom);
     const [isStart, setIsStart] = useAtom(redGreenStartAtom);
+    const curEmo = useRef(emotions)
     interface emotion {
         x: number;
         y: number;
@@ -197,8 +198,8 @@ export default function QR() {
                     randomY = Math.floor(Math.random() * window.innerHeight);
                 }
 
-                if(emotions.length > 20){
-                    setEmotions((prevEmotions) => [...prevEmotions.slice(1),{ x: randomX, y: randomY, emotion: emotion }]);
+                if(curEmo.current.length > 200){
+                    setEmotions((prevEmotions) => [...prevEmotions.slice(150),{ x: randomX, y: randomY, emotion: emotion }]);
                 }
                 else 
                     setEmotions((prevEmotions) => [...prevEmotions, { x: randomX, y: randomY, emotion: emotion }]);
@@ -207,10 +208,7 @@ export default function QR() {
         },[]);    
 
         useEffect(()=>{
-            console.log(emotions.length)
-            if(emotions.length>200){
-                setEmotions([])
-            }
+            curEmo.current = emotions
         },[emotions])
 
         return (<>
