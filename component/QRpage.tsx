@@ -29,7 +29,7 @@ const QRpage = ({gamePageUrlAns, gamePageUrl, nowPeople, total, startGame}:{game
                     호스트는 이 창을 클릭하여 QR을 찍고 문제의 정답을 입력해 주세요. <strong>로그인 된 호스트만</strong> 정답을 입력할 수 있습니다.
                 </Alert><MyPopover url={gamePageUrlAns.current}/></div> : <></>}
                 <div className='QR-code'>
-                    <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
+                    <Image src={`https://quickchart.io/chart?cht=qr&chs=250x250&chl=${gamePageUrl}`} alt="QR" layout='fill' unoptimized={true} />
                 </div>
                 <div className='online-number'>
                     <label className="icon">
