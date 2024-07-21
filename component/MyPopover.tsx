@@ -30,7 +30,7 @@ function MyPopover({url}: {url: string}) {
     sx={{zIndex:1800}}
 >
         <div className='QR-code-ans'>
-            <Image src={`https://chart.apis.google.com/chart?cht=qr&chs=250x250&chl=${url}`} alt="QR" layout='fill' unoptimized={true} />
+            <Image src={`https://quickchart.io/chart?cht=qr&chs=250x250&chl=${url}`} alt="QR" layout='fill' unoptimized={true} />
         </div>
     </Popover>
         <style jsx>{`
