@@ -75,7 +75,18 @@ export default function Header() {
             profileImage: '',
             provider: '',
         });
-        cookies.remove('refresh_token')
+        
+        cookies.remove('refresh_token', {
+            path: '/',       
+            domain: '.recre.store',
+            sameSite: 'lax'     
+        });
+        cookies.remove('access_token', {
+            path: '/',       
+            domain: '.recre.store',
+            sameSite: 'lax'     
+        });
+        
         setIsLogin(false);
         setGame(["", null])
         localStorage.removeItem('isHostPhone')
@@ -84,7 +95,7 @@ export default function Header() {
             window.open("about:blank", "_self");
             window.close();
         }
-        router.push("/");
+        router.refresh();
     }
 
     const handleClose = () => { setOpen(false); }
