@@ -1,5 +1,5 @@
 # Base image 선택
-FROM node:20-slim AS base
+FROM node:16-alpine
 
 # 컨테이너 내부 작업 디렉토리 설정
 WORKDIR /app
