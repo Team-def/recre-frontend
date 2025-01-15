@@ -16,6 +16,6 @@ COPY . .
 # 앱 빌드 (React의 경우 빌드 스크립트 실행)
 RUN npm run build
 
-# 컨테이너 실행 시 Nginx 실행
-EXPOSE 80
-CMD [ "sh", "-c", "npm next start"]
+# 3000포트로 실행
+EXPOSE 3000
+CMD [ "sh", "-c", "npm run start"]
